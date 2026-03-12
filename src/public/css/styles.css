@@ -158,7 +158,7 @@ nav a:first-of-type {
 .eyebrow {
   display: inline-block;
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -646,11 +646,61 @@ fieldset {
   padding: 12px 0;
 }
 
+.matches-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.matches-header .matches-toolbar,
+.matches-header .season-filter {
+  margin-bottom: 0;
+}
+
 /* ── Matches toolbar ───────────────────────── */
 .matches-toolbar {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 28px;
+}
+
+.season-filter {
+  margin-bottom: 28px;
+}
+
+.season-filter select {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 9px 36px 9px 14px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23828B97' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  color-scheme: dark;
+}
+
+.season-filter select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.season-filter select option {
+  background: var(--bg-raised);
+  color: var(--text-primary);
 }
 
 /* ── Match card ────────────────────────────── */

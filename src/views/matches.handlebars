@@ -3,8 +3,26 @@
   <h1>Partidos</h1>
 </div>
 
-<div class="matches-toolbar">
-  <a href="/matches/new" class="btn-yellow btn-yellow-sm">+ Nuevo Partido</a>
+<div class="matches-header">
+  <form method="GET" action="/matches" class="season-filter">
+    <select name="season" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>
+        Todas las temporadas
+      </option>
+
+      <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>
+        2026
+      </option>
+
+      <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>
+        2025
+      </option>
+    </select>
+  </form>
+
+  <div class="matches-toolbar">
+    <a href="/matches/new" class="btn-yellow btn-yellow-sm">+ Nuevo Partido</a>
+  </div>
 </div>
 
 {{#each matches}}
