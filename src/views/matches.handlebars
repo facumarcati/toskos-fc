@@ -106,6 +106,14 @@
 
   </div>
 
+  <div class="match-card-footer">
+    <form action="/matches/{{this._id}}/delete" method="POST">
+      <button type="submit" class="btn-delete-match">
+        Eliminar partido
+      </button>
+    </form>
+  </div>
+
 </div>
 {{else}}
 <div class="list-empty-state" style="text-align:center; padding:80px 20px">

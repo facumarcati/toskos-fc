@@ -79,4 +79,10 @@ router.post("/", async (req, res) => {
   res.redirect("/matches");
 });
 
+router.post("/:id/delete", async (req, res) => {
+  await Match.findByIdAndDelete(req.params.id);
+
+  res.redirect("/matches");
+});
+
 export default router;
