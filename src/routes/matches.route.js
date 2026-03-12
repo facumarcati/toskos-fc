@@ -45,11 +45,15 @@ router.post("/", async (req, res) => {
   const playerStats = [];
 
   for (const p of players) {
-    let player = await Player.findOne({ name: p.name });
+    const name = p.name.trim();
+
+    let player = await Player.findOne({ name: new RegExp(`^${name}$`, "i") });
+
+    const isGuest = p.guest === "on";
 
     if (!player) {
       player = await Player.create({
-        name: p.name.trim(),
+        name,
       });
     }
 
@@ -58,13 +62,17 @@ router.post("/", async (req, res) => {
       team: p.team,
       goals: Number(p.goals) || 0,
       assists: Number(p.assists) || 0,
+      guest: isGuest,
     });
   }
+
+  const matchDate = new Date(date);
+  matchDate.setHours(matchDate.getHours() + 3);
 
   await Match.create({
     teamA,
     teamB,
-    date,
+    date: matchDate,
     players: playerStats,
   });
 

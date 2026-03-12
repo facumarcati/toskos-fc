@@ -610,6 +610,32 @@ fieldset {
   background: var(--loss-bg);
 }
 
+.btn-guest-player {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.btn-guest-player input[type="checkbox"] {
+  display: none;
+}
+
+.btn-guest-player:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
 .btn-add-player {
   display: flex;
   align-items: center;

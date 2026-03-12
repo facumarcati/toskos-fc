@@ -17,8 +17,8 @@ function addPlayer(team) {
       <input
         type="text"
         name="players[${index}][name]"
-        placeholder="Nombre del jugador"
-        autocomplete="off"
+        placeholder="Jugador"
+        autocomplete="on"
       />
 
       <span class="player-row-label">⚽</span>
@@ -39,6 +39,11 @@ function addPlayer(team) {
       />
 
       <input type="hidden" name="players[${index}][team]" value="${team}" />
+
+      <label class="btn-guest-player">
+        <input type="checkbox" name="players[${index}][guest]" />
+        👤
+      </label>
 
       <button
         type="button"

@@ -7,6 +7,11 @@ router.get("/", async (req, res) => {
   const stats = await Match.aggregate([
     { $unwind: "$players" },
     {
+      $match: {
+        "players.guest": { $ne: true },
+      },
+    },
+    {
       $lookup: {
         from: "players",
         localField: "players.player",
