@@ -1,0 +1,38 @@
+<div class="page-header">
+  <span class="eyebrow">Temporada 2026</span>
+  <h1>Estadísticas</h1>
+</div>
+
+<div class="product-list-section">
+
+  <div class="product-list-header">
+    <span class="col-num"></span>
+    <span>Jugador</span>
+    <span style="text-align:center">PJ</span>
+    <span style="text-align:center">PG</span>
+    <span style="text-align:center">PE</span>
+    <span style="text-align:center">PP</span>
+    <span style="text-align:center">G</span>
+    <span style="text-align:center">A</span>
+  </div>
+
+  <ul class="product-list">
+    {{#each stats}}
+      <li class="product-row stat-row">
+        <span class="col-num">{{add @index 1}}</span>
+        <div class="col-title">
+          <span class="product-row-title">{{this.name}}</span>
+        </div>
+        <span class="stat-cell">{{this.matches}}</span>
+        <span class="stat-cell cell-win">{{this.wins}}</span>
+        <span class="stat-cell cell-draw">{{this.draws}}</span>
+        <span class="stat-cell cell-loss">{{this.losses}}</span>
+        <span class="stat-cell cell-goals">{{this.goals}}</span>
+        <span class="stat-cell cell-assists">{{this.assists}}</span>
+      </li>
+    {{else}}
+      <li class="list-empty-state">Sin estadísticas todavía</li>
+    {{/each}}
+  </ul>
+
+</div>

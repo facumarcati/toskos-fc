@@ -1,0 +1,59 @@
+import { Router } from "express";
+import Match from "../models/match.model.js";
+import Player from "../models/player.model.js";
+
+const router = Router();
+
+router.get("/", async (req, res) => {
+  const matches = await Match.find()
+    .populate("players.player")
+    .sort({ date: -1 });
+
+  res.render("matches", { matches });
+});
+
+router.get("/new", (req, res) => {
+  res.render("newMatch");
+});
+
+router.post("/", async (req, res) => {
+  const { teamA, teamB } = req.body;
+  let players = req.body.players;
+
+  players = Object.values(players || {});
+
+  players = players.filter((p) => p.name && p.name.trim() !== "");
+
+  if (players.length === 0) {
+    return res.send("Debe haber al menos un jugador");
+  }
+
+  const playerStats = [];
+
+  for (const p of players) {
+    let player = await Player.findOne({ name: p.name });
+
+    if (!player) {
+      player = await Player.create({
+        name: p.name.trim(),
+      });
+    }
+
+    playerStats.push({
+      player: player._id,
+      team: p.team,
+      goals: Number(p.goals) || 0,
+      assists: Number(p.assists) || 0,
+    });
+  }
+
+  await Match.create({
+    teamA,
+    teamB,
+    players: playerStats,
+  });
+
+  res.redirect("/matches");
+});
+
+export default router;

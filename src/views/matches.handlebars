@@ -1,0 +1,94 @@
+<div class="page-header">
+  <span class="eyebrow">Historial</span>
+  <h1>Partidos</h1>
+</div>
+
+<div class="matches-toolbar">
+  <a href="/matches/new" class="btn-yellow btn-yellow-sm">+ Nuevo Partido</a>
+</div>
+
+{{#each matches}}
+<div class="match-card">
+
+  <!-- Scoreboard -->
+  <div class="match-scoreboard">
+    <div class="match-team">
+      <span class="match-team-label">Equipo</span>
+      <span class="match-team-name">Blanco</span>
+      {{#if (gt this.teamA this.teamB)}}
+        <span class="match-badge badge-win">Ganador</span>
+      {{else if (eq this.teamA this.teamB)}}
+        <span class="match-badge badge-draw">Empate</span>
+      {{/if}}
+    </div>
+
+    <div class="match-score">
+      <span class="match-score-number">{{this.teamA}} — {{this.teamB}}</span>
+      <span class="match-score-meta">{{this.players.length}} jugadores</span>
+    </div>
+
+    <div class="match-team match-team-right">
+      <span class="match-team-label">Equipo</span>
+      <span class="match-team-name">Negro</span>
+      {{#if (gt this.teamB this.teamA)}}
+        <span class="match-badge badge-win">Ganador</span>
+      {{else if (eq this.teamA this.teamB)}}
+        <span class="match-badge badge-draw">Empate</span>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Players -->
+  <div class="match-players">
+
+    <div class="match-team-col">
+      <p class="section-label">Equipo Blanco</p>
+      <ul class="player-list">
+        {{#each this.players}}
+          {{#if (eq this.team "A")}}
+          <li class="player-item">
+            <span class="player-item-name">{{this.player.name}}</span>
+            <div class="player-item-stats">
+              <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
+                ⚽ {{this.goals}}
+              </span>
+              <span class="player-stat {{#if (gt this.assists 0)}}stat-active{{/if}}">
+                🎯 {{this.assists}}
+              </span>
+            </div>
+          </li>
+          {{/if}}
+        {{/each}}
+      </ul>
+    </div>
+
+    <div class="match-team-col">
+      <p class="section-label">Equipo Negro</p>
+      <ul class="player-list">
+        {{#each this.players}}
+          {{#if (eq this.team "B")}}
+          <li class="player-item">
+            <span class="player-item-name">{{this.player.name}}</span>
+            <div class="player-item-stats">
+              <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
+                ⚽ {{this.goals}}
+              </span>
+              <span class="player-stat {{#if (gt this.assists 0)}}stat-active{{/if}}">
+                🎯 {{this.assists}}
+              </span>
+            </div>
+          </li>
+          {{/if}}
+        {{/each}}
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+{{else}}
+<div class="list-empty-state" style="text-align:center; padding:80px 20px">
+  <p>No hay partidos todavía</p>
+  <a href="/matches/new" class="btn-yellow" style="margin-top:24px; display:inline-flex; width:auto; padding:12px 32px">+ Nuevo Partido</a>
+</div>
+{{/each}}

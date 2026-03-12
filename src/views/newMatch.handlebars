@@ -1,0 +1,76 @@
+<div class="page-header">
+  <span class="eyebrow">Nuevo Partido</span>
+  <h1>Cargar Resultado</h1>
+</div>
+
+<form action="/matches" method="POST">
+
+  <!-- Resultado -->
+  <div class="form-panel">
+    <p class="section-label">Resultado</p>
+
+    <fieldset>
+      <div class="score-inputs">
+
+        <div class="score-team">
+          <label>Blanco</label>
+          <div class="match-score">
+            <span id="scoreA">0</span>
+          </div>
+
+          <!-- valor real enviado al backend -->
+          <input type="hidden" name="teamA" id="teamA_score" value="0" />
+        </div>
+
+        <span class="score-vs">—</span>
+
+        <div class="score-team">
+          <label>Negro</label>
+          <div class="match-score">
+            <span id="scoreB">0</span>
+          </div>
+
+          <!-- valor real enviado al backend -->
+          <input type="hidden" name="teamB" id="teamB_score" value="0" />
+        </div>
+
+      </div>
+    </fieldset>
+  </div>
+
+  <!-- Equipos -->
+  <div class="teams-grid">
+
+    <div class="form-panel">
+      <p class="section-label">Equipo Blanco</p>
+      <fieldset>
+        <div id="teamA">
+          <p class="empty-state">Sin jugadores aún</p>
+        </div>
+      </fieldset>
+      <button type="button" class="btn-add-player" onclick="addPlayer('A')">
+        + Agregar jugador
+      </button>
+    </div>
+
+    <div class="form-panel">
+      <p class="section-label">Equipo Negro</p>
+      <fieldset>
+        <div id="teamB">
+          <p class="empty-state">Sin jugadores aún</p>
+        </div>
+      </fieldset>
+      <button type="button" class="btn-add-player" onclick="addPlayer('B')">
+        + Agregar jugador
+      </button>
+    </div>
+
+  </div>
+
+  <button type="submit" class="btn-yellow">
+    Guardar Partido
+  </button>
+
+</form>
+
+<script src="/js/newMatch.js"></script>
