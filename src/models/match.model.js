@@ -19,6 +19,7 @@ const playerStatsSchema = new mongoose.Schema({
 const matchSchema = new mongoose.Schema({
   date: {
     type: Date,
+    required: true,
     default: Date.now,
   },
   teamA: Number,

@@ -86,8 +86,7 @@ nav {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 0 32px;
-  height: 56px;
+  padding: 20px 32px;
   background: rgba(17, 20, 24, 0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
@@ -364,6 +363,39 @@ fieldset {
   border-radius: var(--radius-md);
   padding: 24px;
   box-shadow: var(--shadow-card);
+}
+
+.match-date-input {
+  width: 100%;
+  background: var(--bg-base);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 14px;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  color-scheme: dark;
+}
+
+.match-date-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.match-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(60%);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.match-date-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 /* Score inputs */
@@ -724,6 +756,11 @@ fieldset {
   color: var(--text-muted);
 }
 
+.match-date {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
 /* Players section */
 .match-players {
   display: grid;
@@ -900,8 +937,11 @@ a {
 /* ── Responsive ────────────────────────────── */
 @media (max-width: 640px) {
   nav {
-    padding: 0 16px;
+    padding: 20px 16px;
     gap: 2px;
+    display: flex;
+    flex-wrap: wrap;
+    height: auto;
   }
   nav a {
     padding: 6px 10px;

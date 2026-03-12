@@ -17,7 +17,7 @@ router.get("/new", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { teamA, teamB } = req.body;
+  const { teamA, teamB, date } = req.body;
   let players = req.body.players;
 
   players = Object.values(players || {});
@@ -50,6 +50,7 @@ router.post("/", async (req, res) => {
   await Match.create({
     teamA,
     teamB,
+    date,
     players: playerStats,
   });
 

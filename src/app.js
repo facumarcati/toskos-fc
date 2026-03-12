@@ -25,6 +25,15 @@ app.engine(
       eq: (a, b) => a === b,
       lt: (a, b) => a < b,
       add: (a, b) => a + b,
+
+      formatDate: (date) => {
+        if (!date) return "";
+        return new Date(date).toLocaleDateString("es-AR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+      },
     },
     runtimeOptions: {
       allowProtoPropertiesByDefault: true,
