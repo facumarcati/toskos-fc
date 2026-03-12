@@ -901,9 +901,12 @@ fieldset {
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
 }
 
-.btn-delete-match {
+.btn-match-action {
+  display: inline-flex;
+  align-items: center;
   background: none;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
@@ -913,6 +916,7 @@ fieldset {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  text-decoration: none;
   padding: 7px 14px;
   cursor: pointer;
   transition:
@@ -921,10 +925,75 @@ fieldset {
     background 0.2s;
 }
 
-.btn-delete-match:hover {
+.btn-match-action.btn-edit:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.btn-match-action.btn-delete:hover {
   border-color: var(--loss);
   color: var(--loss);
   background: var(--loss-bg);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: var(--shadow-card);
+  transform: translateY(8px);
+  transition: transform 0.2s;
+}
+
+.modal-overlay.active .modal {
+  transform: translateY(0);
+}
+
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions form {
+  display: contents;
 }
 
 /* ── Stats table ───────────────────────────── */

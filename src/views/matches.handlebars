@@ -61,7 +61,6 @@
 
   <!-- Players -->
   <div class="match-players">
-
     <div class="match-team-col">
       <p class="section-label">Equipo Blanco</p>
       <ul class="player-list">
@@ -103,15 +102,19 @@
         {{/each}}
       </ul>
     </div>
-
   </div>
 
   <div class="match-card-footer">
-    <form action="/matches/{{this._id}}/delete" method="POST">
-      <button type="submit" class="btn-delete-match">
-        Eliminar partido
-      </button>
-    </form>
+    <a href="/matches/{{this._id}}/edit" class="btn-match-action btn-edit">
+      Editar
+    </a>
+    <button
+      type="button"
+      class="btn-match-action btn-delete"
+      onclick="openDeleteModal('/matches/{{this._id}}/delete')"
+    >
+      Eliminar
+    </button>
   </div>
 
 </div>

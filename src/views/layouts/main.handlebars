@@ -28,5 +28,25 @@
       <span>2017-2026</span>
     </footer>
 
+    <div class="modal-overlay" id="deleteModal">
+      <div class="modal">
+        <p class="modal-title">¿Eliminar partido?</p>
+        <p class="modal-desc">Esta acción no se puede deshacer.</p>
+        <div class="modal-actions">
+          <button
+            class="btn-match-action"
+            onclick="closeDeleteModal()"
+          >Cancelar</button>
+          <form id="deleteForm" method="POST">
+            <button
+              type="submit"
+              class="btn-match-action btn-delete"
+            >Eliminar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/deleteModal.js"></script>
   </body>
 </html>

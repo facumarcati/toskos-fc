@@ -1,0 +1,98 @@
+<div class="page-header">
+  <span class="eyebrow">Editar Partido</span>
+  <h1>Modificar Resultado</h1>
+</div>
+
+<form action="/matches/{{match._id}}/edit" method="POST">
+
+  <div class="form-panel">
+    <p class="section-label">Fecha del partido</p>
+    <input
+      type="date"
+      name="date"
+      class="match-date-input"
+      value="{{match.dateFormatted}}"
+      required
+    />
+  </div>
+
+  <div class="form-panel">
+    <p class="section-label">Resultado</p>
+    <fieldset>
+      <div class="score-inputs">
+        <div class="score-team">
+          <label>Blanco</label>
+          <div class="match-score"><span id="scoreA">{{match.teamA}}</span></div>
+          <input type="hidden" name="teamA" id="teamA_score" value="{{match.teamA}}" />
+        </div>
+        <span class="score-vs">—</span>
+        <div class="score-team">
+          <label>Negro</label>
+          <div class="match-score"><span id="scoreB">{{match.teamB}}</span></div>
+          <input type="hidden" name="teamB" id="teamB_score" value="{{match.teamB}}" />
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="teams-grid">
+    <div class="form-panel">
+      <p class="section-label">Equipo Blanco</p>
+      <fieldset>
+        <div id="teamA">
+          {{#each match.players}}
+            {{#if (eq this.team "A")}}
+            <div class="player-row" data-existing="true">
+              <span class="player-row-label">{{add @index 1}}</span>
+              <input type="text" name="players[{{@index}}][name]" value="{{this.player.name}}" autocomplete="on" />
+              <span class="player-row-label">⚽</span>
+              <input type="number" name="players[{{@index}}][goals]" value="{{this.goals}}" min="0" oninput="updateScore()" />
+              <span class="player-row-label">🎯</span>
+              <input type="number" name="players[{{@index}}][assists]" value="{{this.assists}}" min="0" />
+              <input type="hidden" name="players[{{@index}}][team]" value="A" />
+              <label class="btn-guest-player">
+                <input type="checkbox" name="players[{{@index}}][guest]" {{#if this.guest}}checked{{/if}} />
+                👤
+              </label>
+              <button type="button" class="btn-remove-player" onclick="removePlayer(this)">✕</button>
+            </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </fieldset>
+      <button type="button" class="btn-add-player" onclick="addPlayer('A')">+ Agregar jugador</button>
+    </div>
+
+    <div class="form-panel">
+      <p class="section-label">Equipo Negro</p>
+      <fieldset>
+        <div id="teamB">
+          {{#each match.players}}
+            {{#if (eq this.team "B")}}
+            <div class="player-row" data-existing="true">
+              <span class="player-row-label">{{add @index 1}}</span>
+              <input type="text" name="players[{{@index}}][name]" value="{{this.player.name}}" autocomplete="on" />
+              <span class="player-row-label">⚽</span>
+              <input type="number" name="players[{{@index}}][goals]" value="{{this.goals}}" min="0" oninput="updateScore()" />
+              <span class="player-row-label">🎯</span>
+              <input type="number" name="players[{{@index}}][assists]" value="{{this.assists}}" min="0" />
+              <input type="hidden" name="players[{{@index}}][team]" value="B" />
+              <label class="btn-guest-player">
+                <input type="checkbox" name="players[{{@index}}][guest]" {{#if this.guest}}checked{{/if}} />
+                👤
+              </label>
+              <button type="button" class="btn-remove-player" onclick="removePlayer(this)">✕</button>
+            </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </fieldset>
+      <button type="button" class="btn-add-player" onclick="addPlayer('B')">+ Agregar jugador</button>
+    </div>
+  </div>
+
+  <button type="submit" class="btn-yellow">Guardar Cambios</button>
+
+</form>
+
+<script src="/js/newMatch.js"></script>
