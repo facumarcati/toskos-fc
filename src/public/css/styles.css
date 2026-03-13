@@ -1051,7 +1051,9 @@ fieldset {
 }
 
 .stat-row {
-  height: 52px;
+  min-height: 52px;
+  padding: 10px 20px;
+  height: auto;
 }
 
 .col-num {
@@ -1152,5 +1154,9 @@ a {
     grid-template-columns: 28px 1fr repeat(6, 40px);
     padding: 8px 12px;
     gap: 4px;
+  }
+
+  .stat-row {
+    padding: 10px 12px;
   }
 }

@@ -4,7 +4,19 @@ import Match from "../models/match.model.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
+  const { season = "2026" } = req.query;
+
+  let matchFilter = {};
+
+  if (season && season !== "all") {
+    const start = new Date(`${season}-01-01`);
+    const end = new Date(`${Number(season) + 1}-01-01`);
+
+    matchFilter.date = { $gte: start, $lt: end };
+  }
+
   const stats = await Match.aggregate([
+    { $match: matchFilter },
     { $unwind: "$players" },
     {
       $match: {
@@ -86,7 +98,7 @@ router.get("/", async (req, res) => {
     { $sort: { goals: -1 } },
   ]);
 
-  res.render("stats", { stats });
+  res.render("stats", { stats, selectedSeason: season || "all" });
 });
 
 export default router;

@@ -1,7 +1,32 @@
 <div class="page-header">
-  <span class="eyebrow">Temporada 2026</span>
+  <span class="eyebrow">
+  {{#if (eq selectedSeason "all")}}
+    Todas las temporadas
+  {{else}}
+    Temporada {{selectedSeason}}
+  {{/if}}
+</span>
   <h1>Estadísticas</h1>
 </div>
+
+  <div class="matches-header">
+    <form method="GET" action="/stats" class="season-filter">
+      <select name="season" onchange="this.form.submit()">
+        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>
+          Todas las temporadas
+        </option>
+        <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>
+          2026
+        </option>
+        <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>
+          2025
+        </option>
+        <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>
+          2024
+        </option>
+      </select>
+    </form>
+  </div>
 
 <div class="product-list-section">
 
@@ -34,5 +59,4 @@
       <li class="list-empty-state">Sin estadísticas todavía</li>
     {{/each}}
   </ul>
-
 </div>
