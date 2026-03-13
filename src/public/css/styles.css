@@ -176,6 +176,13 @@ nav a:first-of-type {
   margin-bottom: 14px;
 }
 
+.page-header-meta {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
 /* ── Headings ──────────────────────────────── */
 h1 {
   font-family: var(--font-display);
@@ -883,6 +890,16 @@ fieldset {
   gap: 8px;
 }
 
+.player-item.player-guest .player-item-name {
+  color: var(--text-secondary);
+}
+
+.player-item.player-guest .player-item-name::after {
+  font-style: normal;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
 .player-stat {
   font-size: 12px;
   color: var(--text-muted);
@@ -994,6 +1011,41 @@ fieldset {
 
 .modal-actions form {
   display: contents;
+}
+
+.btn-scroll-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    transform 0.2s;
+  z-index: 99;
+}
+
+.btn-scroll-top.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.btn-scroll-top:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ── Stats table ───────────────────────────── */

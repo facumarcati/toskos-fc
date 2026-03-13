@@ -23,7 +23,11 @@ router.get("/", async (req, res) => {
     .populate("players.player")
     .sort({ date: -1 });
 
-  res.render("matches", { matches, selectedSeason: season || "all" });
+  res.render("matches", {
+    matches,
+    selectedSeason: season || "all",
+    matchCount: matches.length,
+  });
 });
 
 router.get("/new", (req, res) => {

@@ -18,3 +18,10 @@ function openDeleteModal(action) {
 function closeDeleteModal() {
   document.getElementById("deleteModal").classList.remove("active");
 }
+
+// Scroll button
+const scrollTopBtn = document.getElementById("scrollTop");
+
+window.addEventListener("scroll", () => {
+  scrollTopBtn.classList.toggle("visible", window.scrollY > 300);
+});
