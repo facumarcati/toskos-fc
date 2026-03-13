@@ -4,7 +4,8 @@ import Match from "../models/match.model.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const { season = "2026" } = req.query;
+  const { season = "2026", guests } = req.query;
+  const includeGuests = guests === "1";
 
   let matchFilter = {};
 
@@ -18,11 +19,7 @@ router.get("/", async (req, res) => {
   const stats = await Match.aggregate([
     { $match: matchFilter },
     { $unwind: "$players" },
-    {
-      $match: {
-        "players.guest": { $ne: true },
-      },
-    },
+    ...(!includeGuests ? [{ $match: { "players.guest": { $ne: true } } }] : []),
     {
       $lookup: {
         from: "players",
@@ -87,6 +84,7 @@ router.get("/", async (req, res) => {
       $group: {
         _id: "$players.player",
         name: { $first: "$playerInfo.name" },
+        isGuest: { $first: "$players.guest" },
         matches: { $sum: 1 },
         wins: { $sum: "$win" },
         draws: { $sum: "$draw" },
@@ -95,10 +93,10 @@ router.get("/", async (req, res) => {
         assists: { $sum: "$players.assists" },
       },
     },
-    { $sort: { goals: -1 } },
+    { $sort: { goals: -1, assists: -1 } },
   ]);
 
-  res.render("stats", { stats, selectedSeason: season || "all" });
+  res.render("stats", { stats, selectedSeason: season, includeGuests });
 });
 
 export default router;

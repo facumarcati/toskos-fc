@@ -12,26 +12,32 @@
   <div class="matches-header">
     <form method="GET" action="/stats" class="season-filter">
       <select name="season" onchange="this.form.submit()">
-        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>
-          Todas las temporadas
-        </option>
-        <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>
-          2026
-        </option>
-        <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>
-          2025
-        </option>
-        <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>
-          2024
-        </option>
+        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
+        <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
+        <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
+        <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>2024</option>
       </select>
+    </form>
+
+    <form method="GET" action="/stats" class="season-filter">
+      <input type="hidden" name="season" value="{{selectedSeason}}" />
+      <label class="filter-checkbox">
+        <input
+          type="checkbox"
+          name="guests"
+          value="1"
+          {{#if includeGuests}}checked{{/if}}
+          onchange="this.form.submit()"
+        />
+        Incluir invitados
+      </label>
     </form>
   </div>
 
 <div class="product-list-section">
 
   <div class="product-list-header">
-    <span class="col-num"></span>
+    <span class="col-num">#</span>
     <span>Jugador</span>
     <span style="text-align:center">PJ</span>
     <span style="text-align:center">PG</span>
@@ -43,7 +49,7 @@
 
   <ul class="product-list">
     {{#each stats}}
-      <li class="product-row stat-row">
+      <li class="product-row stat-row {{#if this.isGuest}}player-guest{{/if}}">
         <span class="col-num">{{add @index 1}}</span>
         <div class="col-title">
           <span class="product-row-title">{{this.name}}</span>

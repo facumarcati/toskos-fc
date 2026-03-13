@@ -5,7 +5,7 @@ import Player from "../models/player.model.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const { season } = req.query;
+  const { season = "2026" } = req.query;
 
   let filter = {};
 
