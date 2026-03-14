@@ -1134,6 +1134,26 @@ fieldset {
   list-style: none;
 }
 
+.product-list li:nth-child(1) .product-row-title {
+  color: #f5c518;
+}
+.product-list li:nth-child(2) .product-row-title {
+  color: #9e9e9e;
+}
+.product-list li:nth-child(3) .product-row-title {
+  color: #cd7f32;
+}
+
+.product-list li:nth-child(1) .col-num {
+  color: #f5c518;
+}
+.product-list li:nth-child(2) .col-num {
+  color: #9e9e9e;
+}
+.product-list li:nth-child(3) .col-num {
+  color: #cd7f32;
+}
+
 .product-row {
   display: grid;
   grid-template-columns: 36px 1fr repeat(6, 52px);

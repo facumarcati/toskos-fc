@@ -24,45 +24,69 @@
       <label class="filter-checkbox">
         <input
           type="checkbox"
+          id="toggleGuests"
           name="guests"
           value="1"
           {{#if includeGuests}}checked{{/if}}
-          onchange="this.form.submit()"
         />
         Incluir invitados
       </label>
     </form>
   </div>
 
-<div class="product-list-section">
+<div id="stats-table">
+  <div class="product-list-section">
 
-  <div class="product-list-header">
-    <span class="col-num">#</span>
-    <span>Jugador</span>
-    <span style="text-align:center">PJ</span>
-    <span style="text-align:center">PG</span>
-    <span style="text-align:center">PE</span>
-    <span style="text-align:center">PP</span>
-    <span style="text-align:center">G</span>
-    <span style="text-align:center">A</span>
+    <div class="product-list-header">
+      <span class="col-num">#</span>
+      <span>Jugador</span>
+      <span style="text-align:center">PJ</span>
+      <span style="text-align:center">PG</span>
+      <span style="text-align:center">PE</span>
+      <span style="text-align:center">PP</span>
+      <span style="text-align:center">G</span>
+      <span style="text-align:center">A</span>
+    </div>
+
+    <ul class="product-list">
+      {{#each stats}}
+        <li class="product-row stat-row {{#if this.isGuest}}player-guest{{/if}}">
+          <span class="col-num">{{add @index 1}}</span>
+          <div class="col-title">
+            <span class="product-row-title">{{this.name}}</span>
+          </div>
+
+          <span class="stat-cell">
+            {{#if (isEC this.name)}}-{{else}}{{this.matches}}{{/if}}
+          </span>
+
+          <span class="stat-cell cell-win">
+            {{#if (isEC this.name)}}-{{else}}{{this.wins}}{{/if}}
+          </span>
+
+          <span class="stat-cell cell-draw">
+            {{#if (isEC this.name)}}-{{else}}{{this.draws}}{{/if}}
+          </span>
+
+          <span class="stat-cell cell-loss">
+            {{#if (isEC this.name)}}-{{else}}{{this.losses}}{{/if}}
+          </span>
+
+          <span class="stat-cell cell-goals">
+            {{this.goals}}
+          </span>
+
+          <span class="stat-cell cell-assists">
+            {{#if (isEC this.name)}}-{{else}}{{this.assists}}{{/if}}
+          </span>
+        </li>
+
+      {{else}}
+        <li class="list-empty-state">Sin estadísticas todavía</li>
+      {{/each}}
+    </ul>
+
   </div>
-
-  <ul class="product-list">
-    {{#each stats}}
-      <li class="product-row stat-row {{#if this.isGuest}}player-guest{{/if}}">
-        <span class="col-num">{{add @index 1}}</span>
-        <div class="col-title">
-          <span class="product-row-title">{{this.name}}</span>
-        </div>
-        <span class="stat-cell">{{this.matches}}</span>
-        <span class="stat-cell cell-win">{{this.wins}}</span>
-        <span class="stat-cell cell-draw">{{this.draws}}</span>
-        <span class="stat-cell cell-loss">{{this.losses}}</span>
-        <span class="stat-cell cell-goals">{{this.goals}}</span>
-        <span class="stat-cell cell-assists">{{this.assists}}</span>
-      </li>
-    {{else}}
-      <li class="list-empty-state">Sin estadísticas todavía</li>
-    {{/each}}
-  </ul>
 </div>
+
+<script src="/js/stats.js"></script>

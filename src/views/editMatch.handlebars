@@ -4,7 +4,6 @@
 </div>
 
 <form action="/matches/{{match._id}}/edit" method="POST">
-
   <div class="form-panel">
     <p class="section-label">Fecha del partido</p>
     <input
@@ -70,7 +69,7 @@
           {{#each match.players}}
             {{#if (eq this.team "B")}}
             <div class="player-row" data-existing="true">
-              <span class="player-row-label">{{add @index 1}}</span>
+              <span class="player-row-label"></span>
               <input type="text" name="players[{{@index}}][name]" value="{{this.player.name}}" autocomplete="on" />
               <span class="player-row-label">⚽</span>
               <input type="number" name="players[{{@index}}][goals]" value="{{this.goals}}" min="0" oninput="updateScore()" />
@@ -94,5 +93,9 @@
   <button type="submit" class="btn-yellow">Guardar Cambios</button>
 
 </form>
+
+<script>
+  window.index = {{match.players.length}};
+</script>
 
 <script src="/js/newMatch.js"></script>

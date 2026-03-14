@@ -93,7 +93,7 @@ router.get("/", async (req, res) => {
         assists: { $sum: "$players.assists" },
       },
     },
-    { $sort: { goals: -1, assists: -1 } },
+    { $sort: { goals: -1, assists: -1, matches: 1 } },
   ]);
 
   res.render("stats", { stats, selectedSeason: season, includeGuests });

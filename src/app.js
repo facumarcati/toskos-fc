@@ -1,5 +1,7 @@
 import express from "express";
 import { engine } from "express-handlebars";
+import { Server } from "socket.io";
+import { createServer } from "http";
 import connectMongoDB from "./config/db.js";
 import dotenv from "dotenv";
 
@@ -9,7 +11,11 @@ import statsRouter from "./routes/stats.route.js";
 dotenv.config();
 
 const app = express();
+const http = createServer(app);
+const io = new Server(http);
 const PORT = process.env.PORT || 8081;
+
+export { io };
 
 connectMongoDB();
 
@@ -25,7 +31,7 @@ app.engine(
       eq: (a, b) => a === b,
       lt: (a, b) => a < b,
       add: (a, b) => a + b,
-
+      isEC: (name) => name === "E/C",
       formatDate: (date) => {
         if (!date) return "";
         return new Date(date).toLocaleDateString("es-AR", {
@@ -51,6 +57,6 @@ app.get("/", (req, res) => {
 app.use("/matches", matchesRouter);
 app.use("/stats", statsRouter);
 
-app.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log("Servidor iniciado en http://localhost:" + PORT);
 });

@@ -1,4 +1,4 @@
-let index = 0;
+let index = window.index ?? 0;
 
 function addPlayer(team) {
   const container =
@@ -12,7 +12,7 @@ function addPlayer(team) {
 
   const html = `
     <div class="player-row">
-      <span class="player-row-label">${container.children.length + 1}</span>
+      <span class="player-row-label">${container.querySelectorAll(".player-row").length + 1}</span>
 
       <input
         type="text"
@@ -112,3 +112,14 @@ function updateScore() {
   document.getElementById("teamA_score").value = scoreA;
   document.getElementById("teamB_score").value = scoreB;
 }
+
+function renumberPlayers() {
+  ["teamA", "teamB"].forEach((teamId) => {
+    const rows = document.querySelectorAll(`#${teamId} .player-row`);
+    rows.forEach((row, i) => {
+      row.querySelector(".player-row-label").textContent = i + 1;
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", renumberPlayers);

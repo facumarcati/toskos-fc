@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { io } from "../app.js";
 import Match from "../models/match.model.js";
 import Player from "../models/player.model.js";
 
@@ -80,6 +81,7 @@ router.post("/", async (req, res) => {
     players: playerStats,
   });
 
+  io.emit("match:created");
   res.redirect("/matches");
 });
 
@@ -98,13 +100,13 @@ router.post("/:id/edit", async (req, res) => {
   let players = req.body.players;
 
   players = Object.values(players || {}).filter(
-    (p) => p.name && p.name.trim() !== "",
+    (p) => typeof p.name === "string" && p.name.trim() !== "",
   );
 
   const playerStats = [];
 
   for (const p of players) {
-    const name = p.name.trim();
+    const name = String(p.name).trim();
     let player = await Player.findOne({ name: new RegExp(`^${name}$`, "i") });
 
     if (!player) player = await Player.create({ name });
@@ -128,12 +130,14 @@ router.post("/:id/edit", async (req, res) => {
     players: playerStats,
   });
 
+  io.emit("match:updated");
   res.redirect("/matches");
 });
 
 router.post("/:id/delete", async (req, res) => {
   await Match.findByIdAndDelete(req.params.id);
 
+  io.emit("match:deleted");
   res.redirect("/matches");
 });
 
