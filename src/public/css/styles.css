@@ -117,8 +117,9 @@ nav a:hover {
   background: var(--bg-hover);
 }
 
-nav a:first-of-type {
+nav a.nav-active {
   color: var(--text-primary);
+  background: var(--bg-hover);
 }
 
 /* ── Page wrapper ──────────────────────────── */
@@ -1242,12 +1243,12 @@ a {
 /* ── Responsive ────────────────────────────── */
 @media (max-width: 640px) {
   nav {
-    padding: 20px 16px;
+    padding: 12px 16px;
     gap: 2px;
-    display: flex;
     flex-wrap: wrap;
-    height: auto;
+    justify-content: center;
   }
+
   nav a {
     padding: 6px 10px;
     font-size: 11px;
@@ -1278,12 +1279,50 @@ a {
 
   .product-list-header,
   .product-row {
-    grid-template-columns: 28px 1fr repeat(6, 40px);
-    padding: 8px 12px;
-    gap: 4px;
+    grid-template-columns: 24px 1fr repeat(6, 32px);
+    padding: 8px 10px;
+    gap: 2px;
   }
 
   .stat-row {
-    padding: 10px 12px;
+    padding: 10px 10px;
+  }
+
+  .product-list-header span {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+
+  .stat-cell {
+    font-size: 12px;
+  }
+
+  .product-row-title {
+    font-size: 12px;
+  }
+
+  .col-num {
+    font-size: 10px;
+  }
+
+  .match-date-input {
+    min-height: 48px;
+  }
+
+  .matches-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .matches-toolbar {
+    order: -1;
+  }
+
+  .btn-yellow-sm {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    white-space: nowrap;
   }
 }

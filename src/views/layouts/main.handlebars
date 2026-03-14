@@ -12,10 +12,19 @@
   <body>
 
     <nav>
-      <a href="/">Inicio</a>
-      <a href="/matches">Partidos</a>
-      <a href="/matches/new">Nuevo Partido</a>
-      <a href="/stats">Estadísticas</a>
+      <a href="/" class="nav-link {{navActive activePage '/'}}">Inicio</a>
+      <a
+        href="/matches"
+        class="nav-link {{navActive activePage '/matches'}}"
+      >Partidos</a>
+      <a
+        href="/matches/new"
+        class="nav-link {{navActive activePage '/matches/new'}}"
+      >Nuevo Partido</a>
+      <a
+        href="/stats"
+        class="nav-link {{navActive activePage '/stats'}}"
+      >Estadísticas</a>
     </nav>
 
     <div class="page">

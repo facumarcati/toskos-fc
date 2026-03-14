@@ -23,6 +23,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("src/public"));
 
+app.use((req, res, next) => {
+  res.locals.activePage = req.originalUrl;
+  next();
+});
+
 app.engine(
   "handlebars",
   engine({
@@ -32,6 +37,9 @@ app.engine(
       lt: (a, b) => a < b,
       add: (a, b) => a + b,
       isEC: (name) => name === "E/C",
+      navActive: (current, page) => {
+        return current === page ? "nav-active" : "";
+      },
       formatDate: (date) => {
         if (!date) return "";
         return new Date(date).toLocaleDateString("es-AR", {
@@ -47,6 +55,7 @@ app.engine(
     },
   }),
 );
+
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 
