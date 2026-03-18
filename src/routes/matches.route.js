@@ -6,11 +6,13 @@ import Player from "../models/player.model.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const { season = "2026" } = req.query;
+  const { season = "2026", order = "desc" } = req.query;
 
   let filter = {};
 
-  if (season && season !== "all") {
+  const validSeasons = ["2024", "2025", "2026"];
+
+  if (season && season !== "all" && validSeasons.includes(season)) {
     const start = new Date(`${season}-01-01`);
     const end = new Date(`${Number(season) + 1}-01-01`);
 
@@ -22,12 +24,13 @@ router.get("/", async (req, res) => {
 
   const matches = await Match.find(filter)
     .populate("players.player")
-    .sort({ date: -1 });
+    .sort({ date: order === "asc" ? 1 : -1 });
 
   res.render("matches", {
     matches,
     selectedSeason: season || "all",
     matchCount: matches.length,
+    selectedOrder: order,
   });
 });
 
