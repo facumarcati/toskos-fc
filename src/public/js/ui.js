@@ -25,3 +25,12 @@ const scrollTopBtn = document.getElementById("scrollTop");
 window.addEventListener("scroll", () => {
   scrollTopBtn.classList.toggle("visible", window.scrollY > 300);
 });
+
+// Nav active state basado en URL actual
+const path = window.location.pathname;
+document.querySelectorAll("nav a").forEach((link) => {
+  link.classList.remove("nav-active");
+  if (link.getAttribute("href") === path) {
+    link.classList.add("nav-active");
+  }
+});

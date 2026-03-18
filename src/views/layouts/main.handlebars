@@ -14,19 +14,10 @@
   <body>
 
     <nav>
-      <a href="/" class="nav-link {{navActive activePage '/'}}">Inicio</a>
-      <a
-        href="/matches"
-        class="nav-link {{navActive activePage '/matches'}}"
-      >Partidos</a>
-      <a
-        href="/matches/new"
-        class="nav-link {{navActive activePage '/matches/new'}}"
-      >Nuevo Partido</a>
-      <a
-        href="/stats"
-        class="nav-link {{navActive activePage '/stats'}}"
-      >Estadísticas</a>
+      <a href="/">Inicio</a>
+      <a href="/matches">Partidos</a>
+      <a href="/matches/new">Nuevo Partido</a>
+      <a href="/stats">Estadísticas</a>
     </nav>
 
     <div class="page">
@@ -66,7 +57,7 @@
       ↑
     </button>
 
-    <script src="/js/deleteModal.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/realTime.js"></script>
   </body>
