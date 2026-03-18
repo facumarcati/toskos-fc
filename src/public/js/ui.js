@@ -34,3 +34,19 @@ document.querySelectorAll("nav a").forEach((link) => {
     link.classList.add("nav-active");
   }
 });
+
+// Guardar scroll al clickear editar
+document.querySelectorAll(".btn-edit").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    sessionStorage.setItem("scrollPos", window.scrollY);
+  });
+});
+
+// Restaurar scroll al cargar matches
+if (window.location.pathname === "/matches") {
+  const scrollPos = sessionStorage.getItem("scrollPos");
+  if (scrollPos) {
+    window.scrollTo(0, parseInt(scrollPos));
+    sessionStorage.removeItem("scrollPos");
+  }
+}

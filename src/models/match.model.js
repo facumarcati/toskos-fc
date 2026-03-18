@@ -26,6 +26,7 @@ const matchSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
+  venue: { type: String, default: "" },
   teamA: Number,
   teamB: Number,
   players: [playerStatsSchema],

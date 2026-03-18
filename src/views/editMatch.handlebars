@@ -3,16 +3,29 @@
   <h1>Modificar Resultado</h1>
 </div>
 
-<form action="/matches/{{match._id}}/edit" method="POST">
+<form action="/matches/{{match._id}}/edit?season={{season}}" method="POST">
   <div class="form-panel">
-    <p class="section-label">Fecha del partido</p>
-    <input
-      type="date"
-      name="date"
-      class="match-date-input"
-      value="{{match.dateFormatted}}"
-      required
-    />
+    <div class="form-row">
+      <div>
+        <p class="section-label">Fecha del partido</p>
+        <input
+          type="date"
+          name="date"
+          class="match-date-input"
+          value="{{match.dateFormatted}}"
+          required
+        />
+      </div>
+      <div>
+        <p class="section-label">Cancha</p>
+        <input
+          type="text"
+          name="venue"
+          class="match-venue-input"
+          value="{{match.venue}}"
+        />
+      </div>
+    </div>
   </div>
 
   <div class="form-panel">

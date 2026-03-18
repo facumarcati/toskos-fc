@@ -48,11 +48,11 @@
     </div>
 
     <div class="match-score">
-      <div class="match-date">
-        {{formatDate this.date}}
-      </div>
+      <div class="match-date">{{formatDate this.date}}</div>
       <span class="match-score-number">{{this.teamA}} — {{this.teamB}}</span>
-      <span class="match-score-meta">{{this.players.length}} jugadores</span>
+      {{#if this.venue}}
+        <span class="match-score-meta">{{this.venue}}</span>
+      {{/if}}
     </div>
 
     <div class="match-team match-team-right">
@@ -112,7 +112,7 @@
   </div>
 
   <div class="match-card-footer">
-    <a href="/matches/{{this._id}}/edit" class="btn-match-action btn-edit">
+    <a href="/matches/{{this._id}}/edit?season={{../selectedSeason}}" class="btn-match-action btn-edit">
       Editar
     </a>
     <button

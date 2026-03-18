@@ -39,7 +39,7 @@ router.get("/new", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { teamA, teamB, date } = req.body;
+  const { teamA, teamB, date, venue } = req.body;
   let players = req.body.players;
 
   players = Object.values(players || {});
@@ -81,6 +81,7 @@ router.post("/", async (req, res) => {
     teamA,
     teamB,
     date: matchDate,
+    venue,
     players: playerStats,
   });
 
@@ -89,17 +90,19 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/:id/edit", async (req, res) => {
+  const { season = "2026" } = req.query;
   const match = await Match.findById(req.params.id).populate("players.player");
 
   if (!match) return res.status(404).send("Partido no encontrado");
 
   match.dateFormatted = match.date.toISOString().split("T")[0];
 
-  res.render("editMatch", { match });
+  res.render("editMatch", { match, season });
 });
 
 router.post("/:id/edit", async (req, res) => {
-  const { teamA, teamB, date } = req.body;
+  const { season = "2026" } = req.query;
+  const { teamA, teamB, date, venue } = req.body;
   let players = req.body.players;
 
   players = Object.values(players || {}).filter(
@@ -130,18 +133,20 @@ router.post("/:id/edit", async (req, res) => {
     teamA,
     teamB,
     date: matchDate,
+    venue,
     players: playerStats,
   });
 
   io.emit("match:updated");
-  res.redirect("/matches");
+  res.redirect(`/matches?season=${season}`);
 });
 
 router.post("/:id/delete", async (req, res) => {
+  const { season = "2026" } = req.query;
   await Match.findByIdAndDelete(req.params.id);
 
   io.emit("match:deleted");
-  res.redirect("/matches");
+  res.redirect(`/matches?season=${season}`);
 });
 
 export default router;

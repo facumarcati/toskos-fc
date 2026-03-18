@@ -6,9 +6,21 @@
 <form action="/matches" method="POST">
 
   <div class="form-panel">
-    <p class="section-label">Fecha del partido</p>
-
-    <input type="date" name="date" class="match-date-input" required />
+    <div class="form-row">
+      <div>
+        <p class="section-label">Fecha del partido</p>
+        <input type="date" name="date" class="match-date-input" required />
+      </div>
+      <div>
+        <p class="section-label">Cancha</p>
+        <input
+          type="text"
+          name="venue"
+          class="match-venue-input"
+          value="{{match.venue}}"
+        />
+      </div>
+    </div>
   </div>
 
   <!-- Resultado -->
