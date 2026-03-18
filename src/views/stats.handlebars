@@ -9,8 +9,11 @@
   <h1>Estadísticas</h1>
 </div>
 
-  <div class="matches-header">
+<div class="matches-header">
+  <div style="display:flex; gap:8px; align-items:center;">
     <form method="GET" action="/stats" class="season-filter">
+      <input type="hidden" name="guests" value="{{#if includeGuests}}1{{/if}}" />
+      <input type="hidden" name="sortBy" value="{{selectedSort}}" />
       <select name="season" onchange="this.form.submit()">
         <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
         <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
@@ -21,18 +24,31 @@
 
     <form method="GET" action="/stats" class="season-filter">
       <input type="hidden" name="season" value="{{selectedSeason}}" />
-      <label class="filter-checkbox">
-        <input
-          type="checkbox"
-          id="toggleGuests"
-          name="guests"
-          value="1"
-          {{#if includeGuests}}checked{{/if}}
-        />
-        Incluir invitados
-      </label>
+      <input type="hidden" name="guests" value="{{#if includeGuests}}1{{/if}}" />
+      <select name="sortBy" onchange="this.form.submit()">
+        <option value="goals"   {{#if (eq selectedSort "goals")}}selected{{/if}}>Goles</option>
+        <option value="assists" {{#if (eq selectedSort "assists")}}selected{{/if}}>Asistencias</option>
+        <option value="wins"    {{#if (eq selectedSort "wins")}}selected{{/if}}>Victorias</option>
+        <option value="matches" {{#if (eq selectedSort "matches")}}selected{{/if}}>Partidos</option>
+      </select>
     </form>
   </div>
+
+  <form method="GET" action="/stats" class="season-filter">
+    <input type="hidden" name="season" value="{{selectedSeason}}" />
+    <input type="hidden" name="sortBy" value="{{selectedSort}}" />
+    <label class="filter-checkbox">
+      <input
+        type="checkbox"
+        id="toggleGuests"
+        name="guests"
+        value="1"
+        {{#if includeGuests}}checked{{/if}}
+      />
+      Incluir invitados
+    </label>
+  </form>
+</div>
 
 <div id="stats-table">
   <div class="product-list-section">

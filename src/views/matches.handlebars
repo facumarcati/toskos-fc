@@ -22,7 +22,7 @@
       <input type="hidden" name="season" value="{{selectedSeason}}" />
       <input type="hidden" name="order" value="{{#if (eq selectedOrder "asc")}}desc{{else}}asc{{/if}}" />
       <button type="submit" class="btn-order">
-        {{#if (eq selectedOrder "asc")}}↑ Antiguo{{else}}↓ Reciente{{/if}}
+        {{#if (eq selectedOrder "asc")}}↑{{else}}↓{{/if}}
       </button>
     </form>
   </div>

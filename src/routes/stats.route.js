@@ -4,8 +4,11 @@ import Match from "../models/match.model.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const { season = "2026", guests } = req.query;
+  const { season = "2026", guests, sortBy = "goals" } = req.query;
   const includeGuests = guests === "1";
+
+  const validSorts = ["goals", "assists", "wins", "matches"];
+  const sort = validSorts.includes(sortBy) ? sortBy : "goals";
 
   let matchFilter = {};
 
@@ -93,13 +96,14 @@ router.get("/", async (req, res) => {
         assists: { $sum: "$players.assists" },
       },
     },
-    { $sort: { goals: -1, assists: -1, matches: 1 } },
+    { $sort: { [sort]: -1, goals: -1, assists: -1 } },
   ]);
 
   res.render("stats", {
     stats,
     selectedSeason: season,
     includeGuests,
+    selectedSort: sort,
   });
 });
 
