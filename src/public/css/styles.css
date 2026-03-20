@@ -1,8 +1,3 @@
-/* =============================================
-   TOSKOS FC — styles.css
-   Dark football dashboard
-   ============================================= */
-
 @import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Montserrat:wght@400;500;600;700&display=swap");
 
 /* ── Variables ─────────────────────────────── */
@@ -842,6 +837,7 @@ fieldset {
   overflow: hidden;
   margin-bottom: 20px;
   box-shadow: var(--shadow-card);
+  scroll-margin-top: 80px;
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
@@ -1386,4 +1382,104 @@ a {
   .form-row {
     grid-template-columns: 1fr;
   }
+}
+
+.records-section {
+  margin-bottom: 48px;
+}
+
+.record-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.record-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.record-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.record-card:last-child {
+  border-bottom: none;
+}
+.record-card:hover {
+  background: var(--bg-hover);
+}
+
+.record-pos {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  min-width: 32px;
+  text-align: center;
+}
+
+.record-pos-1 {
+  color: #f5c518;
+}
+.record-pos-2 {
+  color: #9e9e9e;
+}
+.record-pos-3 {
+  color: #cd7f32;
+}
+
+.record-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.record-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.record-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.record-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.record-main {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.record-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+}
+
+.record-card-link:hover {
+  background: var(--bg-hover);
 }

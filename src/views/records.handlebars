@@ -1,0 +1,159 @@
+<div class="page-header">
+  <span class="eyebrow">Toskos FC</span>
+  <h1>Records</h1>
+</div>
+
+<div class="matches-header">
+  <form method="GET" action="/records" class="season-filter">
+    <select name="season" onchange="this.form.submit()">
+      <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
+      <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
+      <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
+      <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>2024</option>
+    </select>
+  </form>
+</div>
+
+<div class="records-section">
+  <h2 class="record-title">Top goleadores en un partido</h2>
+
+  <div class="record-list">
+    {{#each topScorers}}
+      <div class="record-card">
+        <span class="record-pos record-pos-{{add @index 1}}">{{add
+            @index
+            1
+          }}°</span>
+
+        <div class="record-info">
+          <span class="record-name">{{this.name}}</span>
+          <span class="record-meta">
+            {{formatDate this.date}}
+            {{#if this.venue}} · {{this.venue}}{{/if}}
+          </span>
+        </div>
+
+        <div class="record-score">
+          <span class="record-main">{{this.goals}}</span>
+          <span class="record-meta">{{this.teamA}} — {{this.teamB}}</span>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+<div class="records-section">
+  <h2 class="record-title">Top asistidores en un partido</h2>
+
+  <div class="record-list">
+    {{#each topAssists}}
+      <div class="record-card">
+        <span class="record-pos record-pos-{{add @index 1}}">{{add
+            @index
+            1
+          }}°</span>
+
+        <div class="record-info">
+          <span class="record-name">{{this.name}}</span>
+          <span class="record-meta">
+            {{formatDate this.date}}
+            {{#if this.venue}} · {{this.venue}}{{/if}}
+          </span>
+        </div>
+
+        <div class="record-score">
+          <span class="record-main">{{this.assists}}</span>
+          <span class="record-meta">{{this.teamA}} — {{this.teamB}}</span>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+<div class="records-section">
+  <h2 class="record-title">Top G+A en un partido</h2>
+
+  <div class="record-list">
+    {{#each topGAndA}}
+      <div class="record-card">
+        <span class="record-pos record-pos-{{add @index 1}}">{{add
+            @index
+            1
+          }}°</span>
+
+        <div class="record-info">
+          <span class="record-name">{{this.name}}</span>
+          <span class="record-meta">
+            {{formatDate this.date}}
+            {{#if this.venue}} · {{this.venue}}{{/if}}
+          </span>
+        </div>
+
+        <div class="record-score">
+          <span class="record-main">{{this.ga}}</span>
+          <span class="record-meta">{{this.goals}}
+            ·
+            {{this.assists}}
+            /
+            {{this.teamA}}
+            —
+            {{this.teamB}}</span>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+<div class="records-section">
+  <h2 class="record-title">Mayor goleada</h2>
+  <div class="record-list">
+    {{#each topGoleadas}}
+      <a
+        href="/matches?season=all#match-{{this._id}}"
+        class="record-card record-card-link"
+      >
+        <span class="record-pos record-pos-{{add @index 1}}">{{add
+            @index
+            1
+          }}°</span>
+        <div class="record-info">
+          <span class="record-name">{{this.teamA}} — {{this.teamB}}</span>
+          <span class="record-meta">
+            {{formatDate this.date}}
+            {{#if this.venue}} · {{this.venue}}{{/if}}
+          </span>
+        </div>
+        <div class="record-score">
+          <span class="record-main">+{{this.diff}}</span>
+        </div>
+      </a>
+    {{/each}}
+  </div>
+</div>
+
+<div class="records-section">
+  <h2 class="record-title">Partidos con más goles</h2>
+  <div class="record-list">
+    {{#each topGoals}}
+      <a
+        href="/matches?season=all#match-{{this._id}}"
+        class="record-card record-card-link"
+      >
+        <span class="record-pos record-pos-{{add @index 1}}">{{add
+            @index
+            1
+          }}°</span>
+        <div class="record-info">
+          <span class="record-name">{{this.teamA}} — {{this.teamB}}</span>
+          <span class="record-meta">
+            {{formatDate this.date}}
+            {{#if this.venue}} · {{this.venue}}{{/if}}
+          </span>
+        </div>
+        <div class="record-score">
+          <span class="record-main">{{this.totalGoals}}</span>
+        </div>
+      </a>
+    {{/each}}
+  </div>
+</div>
