@@ -14,7 +14,7 @@ Aplicación web para registrar partidos y estadísticas.
 
 - Registrar partidos con resultado, jugadores, goles y asistencias
 - Editar y eliminar partidos
-- Filtrar partidos y estadísticas por temporada
+- Filtrar partidos, estadísticas y récords por temporada
 - Tabla de estadísticas con ranking
 - Soporte para jugadores invitados
 - Actualizaciones en tiempo real entre pestañas vía Socket.io
@@ -52,6 +52,7 @@ src/
 │       └── stats.js
 ├── routes/
 │   ├── matches.route.js
+│   ├── records.route.js
 │   └── stats.route.js
 ├── views/
 │   ├── layouts/
@@ -60,6 +61,7 @@ src/
 │   ├── home.handlebars
 │   ├── matches.handlebars
 │   ├── newMatch.handlebars
+│   ├── records.handlebars
 │   └── stats.handlebars
 └── app.js
 ```
