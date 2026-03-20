@@ -19,6 +19,16 @@ router.get("/", async (req, res) => {
     matchFilter.date = { $gte: start, $lt: end };
   }
 
+  const sortObj = { isEC: 1, [sort]: -1 };
+  if (sort !== "matches") {
+    sortObj.goals = -1;
+    sortObj.assists = -1;
+    sortObj.matches = 1;
+  } else {
+    sortObj.goals = -1;
+    sortObj.assists = -1;
+  }
+
   const stats = await Match.aggregate([
     { $match: matchFilter },
     { $unwind: "$players" },
@@ -81,6 +91,14 @@ router.get("/", async (req, res) => {
             0,
           ],
         },
+        isEC: { $eq: ["$playerInfo.name", "E/C"] },
+      },
+    },
+    {
+      $addFields: {
+        win: { $cond: ["$isEC", 0, "$win"] },
+        draw: { $cond: ["$isEC", 0, "$draw"] },
+        lose: { $cond: ["$isEC", 0, "$lose"] },
       },
     },
     {
@@ -88,15 +106,30 @@ router.get("/", async (req, res) => {
         _id: "$players.player",
         name: { $first: "$playerInfo.name" },
         isGuest: { $first: "$players.guest" },
-        matches: { $sum: 1 },
-        wins: { $sum: "$win" },
-        draws: { $sum: "$draw" },
-        losses: { $sum: "$lose" },
+        matches: {
+          $sum: { $cond: [{ $eq: ["$playerInfo.name", "E/C"] }, 0, 1] },
+        },
+        wins: {
+          $sum: { $cond: [{ $eq: ["$playerInfo.name", "E/C"] }, 0, "$win"] },
+        },
+        draws: {
+          $sum: { $cond: [{ $eq: ["$playerInfo.name", "E/C"] }, 0, "$draw"] },
+        },
+        losses: {
+          $sum: { $cond: [{ $eq: ["$playerInfo.name", "E/C"] }, 0, "$lose"] },
+        },
         goals: { $sum: "$players.goals" },
         assists: { $sum: "$players.assists" },
       },
     },
-    { $sort: { [sort]: -1, goals: -1, assists: -1 } },
+    {
+      $addFields: {
+        isEC: { $eq: ["$name", "E/C"] },
+      },
+    },
+    {
+      $sort: sortObj,
+    },
   ]);
 
   res.render("stats", {

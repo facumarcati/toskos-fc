@@ -19,7 +19,10 @@
 
   <div class="record-list">
     {{#each topScorers}}
-      <div class="record-card">
+      <a
+        href="/matches?season=all#match-{{this._id}}"
+        class="record-card record-card-link"
+      >
         <span class="record-pos record-pos-{{add @index 1}}">{{add
             @index
             1
@@ -37,7 +40,7 @@
           <span class="record-main">{{this.goals}}</span>
           <span class="record-meta">{{this.teamA}} — {{this.teamB}}</span>
         </div>
-      </div>
+      </a>
     {{/each}}
   </div>
 </div>
@@ -47,7 +50,10 @@
 
   <div class="record-list">
     {{#each topAssists}}
-      <div class="record-card">
+      <a
+        href="/matches?season=all#match-{{this._id}}"
+        class="record-card record-card-link"
+      >
         <span class="record-pos record-pos-{{add @index 1}}">{{add
             @index
             1
@@ -65,7 +71,7 @@
           <span class="record-main">{{this.assists}}</span>
           <span class="record-meta">{{this.teamA}} — {{this.teamB}}</span>
         </div>
-      </div>
+      </a>
     {{/each}}
   </div>
 </div>
@@ -75,7 +81,10 @@
 
   <div class="record-list">
     {{#each topGAndA}}
-      <div class="record-card">
+      <a
+        href="/matches?season=all#match-{{this._id}}"
+        class="record-card record-card-link"
+      >
         <span class="record-pos record-pos-{{add @index 1}}">{{add
             @index
             1
@@ -99,13 +108,13 @@
             —
             {{this.teamB}}</span>
         </div>
-      </div>
+      </a>
     {{/each}}
   </div>
 </div>
 
 <div class="records-section">
-  <h2 class="record-title">Mayor goleada</h2>
+  <h2 class="record-title">Mayores goleadas</h2>
   <div class="record-list">
     {{#each topGoleadas}}
       <a

@@ -1412,7 +1412,7 @@ a {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px 24px;
+  padding: 12px 24px;
   border-bottom: 1px solid var(--border);
   transition: background 0.15s;
 }
@@ -1426,7 +1426,7 @@ a {
 
 .record-pos {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   min-width: 32px;
   text-align: center;
@@ -1450,7 +1450,7 @@ a {
 }
 
 .record-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -1469,7 +1469,7 @@ a {
 
 .record-main {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
 }
