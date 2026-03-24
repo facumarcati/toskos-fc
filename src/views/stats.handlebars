@@ -105,8 +105,17 @@
         <li class="list-empty-state">Sin estadísticas todavía</li>
       {{/each}}
     </ul>
-
   </div>
+</div>
+
+<div class="stats-criteria">
+  <p class="stats-criteria-title">Criterios de desempate</p>
+  <ul class="stats-criteria-list">
+    <li><span class="criteria-label">Goles:</span> Goles → Asistencias → Menos partidos</li>
+    <li><span class="criteria-label">Asistencias:</span> Asistencias → Goles → Menos partidos</li>
+    <li><span class="criteria-label">Victorias:</span> Victorias → Menos partidos → Goles → Asistencias</li>
+    <li><span class="criteria-label">Partidos:</span> Partidos → Victorias → Goles → Asistencias</li>
+  </ul>
 </div>
 
 <script src="/js/stats.js"></script>

@@ -19,12 +19,24 @@ router.get("/", async (req, res) => {
     matchFilter.date = { $gte: start, $lt: end };
   }
 
-  const sortObj = { isEC: 1, [sort]: -1 };
-  if (sort !== "matches") {
-    sortObj.goals = -1;
+  const sortObj = {};
+
+  if (sort !== "goals") sortObj.isEC = 1;
+
+  sortObj[sort] = -1;
+
+  if (sort === "goals") {
     sortObj.assists = -1;
     sortObj.matches = 1;
-  } else {
+  } else if (sort === "assists") {
+    sortObj.goals = -1;
+    sortObj.matches = 1;
+  } else if (sort === "wins") {
+    sortObj.matches = 1;
+    sortObj.goals = -1;
+    sortObj.assists = -1;
+  } else if (sort === "matches") {
+    sortObj.wins = -1;
     sortObj.goals = -1;
     sortObj.assists = -1;
   }

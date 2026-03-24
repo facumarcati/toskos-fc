@@ -1288,6 +1288,43 @@ fieldset {
   font-size: 14px;
 }
 
+.stats-criteria {
+  margin-top: 20px;
+  padding: 16px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.stats-criteria-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.stats-criteria-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stats-criteria-list li {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.criteria-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 6px;
+}
+
 /* ── Utilities ─────────────────────────────── */
 a {
   color: inherit;
