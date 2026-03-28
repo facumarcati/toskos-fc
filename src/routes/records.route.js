@@ -137,12 +137,108 @@ router.get("/", async (req, res) => {
     },
   ]);
 
+  const bottomGoals = await Match.aggregate([
+    { $match: matchFilter },
+    {
+      $addFields: {
+        totalGoals: { $add: ["$teamA", "$teamB"] },
+      },
+    },
+    { $sort: { totalGoals: 1 } },
+    { $limit: 3 },
+    {
+      $project: {
+        teamA: 1,
+        teamB: 1,
+        totalGoals: 1,
+        date: 1,
+        venue: 1,
+      },
+    },
+  ]);
+
+  const winrateStats = await Match.aggregate([
+    { $match: matchFilter },
+    { $unwind: "$players" },
+    { $match: { "players.guest": { $ne: true } } },
+    {
+      $addFields: {
+        playerTeamGoals: {
+          $cond: [{ $eq: ["$players.team", "A"] }, "$teamA", "$teamB"],
+        },
+        opponentGoals: {
+          $cond: [{ $eq: ["$players.team", "A"] }, "$teamB", "$teamA"],
+        },
+      },
+    },
+    {
+      $addFields: {
+        win: {
+          $cond: [{ $gt: ["$playerTeamGoals", "$opponentGoals"] }, 1, 0],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$players.player",
+        matches: { $sum: 1 },
+        wins: { $sum: "$win" },
+      },
+    },
+    { $match: { matches: { $gte: 3 } } },
+    {
+      $addFields: {
+        winrate: {
+          $round: [
+            {
+              $multiply: [{ $divide: ["$wins", "$matches"] }, 100],
+            },
+            1,
+          ],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "players",
+        localField: "_id",
+        foreignField: "_id",
+        as: "playerInfo",
+      },
+    },
+    { $unwind: "$playerInfo" },
+    {
+      $match: {
+        "playerInfo.name": { $ne: "E/C" },
+      },
+    },
+    {
+      $project: {
+        name: "$playerInfo.name",
+        matches: 1,
+        wins: 1,
+        winrate: 1,
+      },
+    },
+  ]);
+
+  const bestWinrate = [...winrateStats]
+    .sort((a, b) => b.winrate - a.winrate)
+    .slice(0, 3);
+
+  const worstWinrate = [...winrateStats]
+    .sort((a, b) => a.winrate - b.winrate)
+    .slice(0, 3);
+
   res.render("records", {
     topScorers,
     topAssists,
     topGAndA,
     topGoleadas,
     topGoals,
+    bottomGoals,
+    bestWinrate,
+    worstWinrate,
     selectedSeason: season,
   });
 });
