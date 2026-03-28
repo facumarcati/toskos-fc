@@ -39,7 +39,7 @@ router.get("/new", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { teamA, teamB, date, venue } = req.body;
+  const { teamA, teamB, date, venue, youtubeUrl } = req.body;
   let players = req.body.players;
 
   players = Object.values(players || {});
@@ -82,6 +82,7 @@ router.post("/", async (req, res) => {
     teamB,
     date: matchDate,
     venue,
+    youtubeUrl,
     players: playerStats,
   });
 
@@ -102,7 +103,7 @@ router.get("/:id/edit", async (req, res) => {
 
 router.post("/:id/edit", async (req, res) => {
   const { season = "2026" } = req.query;
-  const { teamA, teamB, date, venue } = req.body;
+  const { teamA, teamB, date, venue, youtubeUrl } = req.body;
   let players = req.body.players;
 
   players = Object.values(players || {}).filter(
@@ -134,6 +135,7 @@ router.post("/:id/edit", async (req, res) => {
     teamB,
     date: matchDate,
     venue,
+    youtubeUrl,
     players: playerStats,
   });
 

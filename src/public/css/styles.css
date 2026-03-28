@@ -370,7 +370,7 @@ fieldset {
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
 }
 
@@ -1021,7 +1021,18 @@ fieldset {
   padding: 12px 24px;
   border-top: 1px solid var(--border);
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
@@ -1035,6 +1046,7 @@ fieldset {
   font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
+  height: 34px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
@@ -1328,6 +1340,31 @@ fieldset {
 /* ── Utilities ─────────────────────────────── */
 a {
   color: inherit;
+}
+
+.btn-youtube {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border-radius: var(--radius-sm);
+  height: 34px;
+  text-decoration: none;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.btn-youtube svg {
+  width: 38px;
+  height: 38px;
+}
+
+.btn-youtube:hover {
+  background: rgba(255, 0, 0, 0.08);
+  border-color: #ff0000;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.2);
 }
 
 /* ── Responsive ────────────────────────────── */
