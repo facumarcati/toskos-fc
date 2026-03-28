@@ -1,65 +1,83 @@
 let index = window.index ?? 0;
+const registeredUsers = window.registeredUsers || [];
+
+function buildPlayerSelect(idx) {
+  if (!registeredUsers.length) return "";
+  const options = registeredUsers
+    .map((u) => `<option value="${u._id}" data-name="${u.playerName}">${u.displayName || u.username}</option>`)
+    .join("");
+  return `
+    <select class="player-user-select" data-idx="${idx}" onchange="onUserSelect(this, ${idx})">
+      <option value="">— Invitado —</option>
+      ${options}
+    </select>`;
+}
+
+function onUserSelect(select, idx) {
+  const option = select.options[select.selectedIndex];
+  const nameInput = document.querySelector(`input[name="players[${idx}][name]"]`);
+  const userIdInput = document.querySelector(`input[name="players[${idx}][userId]"]`);
+
+  if (option.value) {
+    nameInput.value = option.dataset.name || option.text;
+    nameInput.readOnly = true;
+    userIdInput.value = option.value;
+  } else {
+    nameInput.value = "";
+    nameInput.readOnly = false;
+    userIdInput.value = "";
+  }
+}
 
 function addPlayer(team) {
-  const container =
-    team === "A"
-      ? document.getElementById("teamA")
-      : document.getElementById("teamB");
+  const container = team === "A"
+    ? document.getElementById("teamA")
+    : document.getElementById("teamB");
 
-  // Remove empty state message on first player added
   const emptyState = container.querySelector(".empty-state");
   if (emptyState) emptyState.remove();
+
+  const userSelectHtml = buildPlayerSelect(index);
 
   const html = `
     <div class="player-row">
       <span class="player-row-label">${container.querySelectorAll(".player-row").length + 1}</span>
+
+      ${userSelectHtml}
 
       <input
         type="text"
         name="players[${index}][name]"
         placeholder="Jugador"
         autocomplete="on"
+        ${registeredUsers.length ? "" : ""}
       />
+      <input type="hidden" name="players[${index}][userId]" value="" />
 
       <span class="player-row-label">⚽</span>
-      <input
-        type="number"
-        name="players[${index}][goals]"
-        value="0"
-        min="0"
-        oninput="updateScore()"
-      />
+      <input type="number" name="players[${index}][goals]" value="0" min="0" oninput="updateScore()" />
 
       <span class="player-row-label">🎯</span>
-      <input
-        type="number"
-        name="players[${index}][assists]"
-        value="0"
-        min="0"
-      />
+      <input type="number" name="players[${index}][assists]" value="0" min="0" />
 
       <input type="hidden" name="players[${index}][team]" value="${team}" />
 
-      <label class="btn-guest-player">
+      <label class="btn-guest-player" title="Invitado">
         <input type="checkbox" name="players[${index}][guest]" />
         👤
       </label>
 
-      <button
-        type="button"
-        class="btn-remove-player"
-        onclick="removePlayer(this)"
-      >
-        ✕
-      </button>
+      <button type="button" class="btn-remove-player" onclick="removePlayer(this)">✕</button>
     </div>`;
 
   container.insertAdjacentHTML("beforeend", html);
   index++;
 
-  // Focus name input
   const newRow = container.lastElementChild;
-  newRow.querySelector('input[type="text"]').focus();
+  // Focus name input if no user selector, otherwise focus selector
+  const sel = newRow.querySelector(".player-user-select");
+  if (sel) sel.focus();
+  else newRow.querySelector('input[type="text"]').focus();
 
   updateScore();
 }
@@ -67,20 +85,14 @@ function addPlayer(team) {
 function removePlayer(btn) {
   const row = btn.closest(".player-row");
   const container = row.parentElement;
-
   row.remove();
 
-  // Renumber rows
   container.querySelectorAll(".player-row").forEach((r, i) => {
     r.querySelector(".player-row-label").textContent = i + 1;
   });
 
-  // Restore empty state if needed
   if (container.querySelectorAll(".player-row").length === 0) {
-    container.insertAdjacentHTML(
-      "beforeend",
-      `<p class="empty-state">Sin jugadores aún</p>`,
-    );
+    container.insertAdjacentHTML("beforeend", `<p class="empty-state">Sin jugadores aún</p>`);
   }
 
   updateScore();
@@ -90,33 +102,22 @@ function updateScore() {
   let scoreA = 0;
   let scoreB = 0;
 
-  // Sum goals from Team A
-  document
-    .querySelectorAll("#teamA input[type='number'][name*='[goals]']")
-    .forEach((input) => {
-      scoreA += Number(input.value) || 0;
-    });
+  document.querySelectorAll("#teamA input[type='number'][name*='[goals]']").forEach((input) => {
+    scoreA += Number(input.value) || 0;
+  });
+  document.querySelectorAll("#teamB input[type='number'][name*='[goals]']").forEach((input) => {
+    scoreB += Number(input.value) || 0;
+  });
 
-  // Sum goals from Team B
-  document
-    .querySelectorAll("#teamB input[type='number'][name*='[goals]']")
-    .forEach((input) => {
-      scoreB += Number(input.value) || 0;
-    });
-
-  // Update visible scoreboard
   document.getElementById("scoreA").textContent = scoreA;
   document.getElementById("scoreB").textContent = scoreB;
-
-  // Update hidden inputs sent to backend
   document.getElementById("teamA_score").value = scoreA;
   document.getElementById("teamB_score").value = scoreB;
 }
 
 function renumberPlayers() {
   ["teamA", "teamB"].forEach((teamId) => {
-    const rows = document.querySelectorAll(`#${teamId} .player-row`);
-    rows.forEach((row, i) => {
+    document.querySelectorAll(`#${teamId} .player-row`).forEach((row, i) => {
       row.querySelector(".player-row-label").textContent = i + 1;
     });
   });

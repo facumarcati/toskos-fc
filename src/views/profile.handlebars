@@ -1,0 +1,99 @@
+<div class="page-header">
+  <span class="eyebrow">Mi Cuenta</span>
+  <h1>{{#if currentUser.displayName}}{{currentUser.displayName}}{{else}}{{currentUser.username}}{{/if}}</h1>
+  <p class="page-header-meta">{{currentUser.email}}</p>
+</div>
+
+<div class="profile-grid">
+
+  <!-- Avatar card -->
+  <div class="form-panel profile-avatar-card">
+    <p class="section-label">Foto de perfil</p>
+    <div class="profile-avatar-wrap">
+      {{#if currentUser.avatar}}
+        <img src="{{currentUser.avatar}}" alt="avatar" class="profile-avatar-img" />
+      {{else}}
+        <div class="profile-avatar-placeholder">
+          {{#if currentUser.displayName}}{{currentUser.displayName.[0]}}{{else}}{{currentUser.username.[0]}}{{/if}}
+        </div>
+      {{/if}}
+    </div>
+
+    <form action="/profile/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
+      <label class="btn-upload-avatar">
+        Cambiar foto
+        <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" onchange="this.form.submit()" />
+      </label>
+    </form>
+
+    {{#unless player}}
+    <div class="profile-link-player" style="width:100%;margin-top:24px">
+      <p class="section-label">Vincular jugador</p>
+      <p class="profile-link-desc">Vinculá tu cuenta a tu nombre de jugador para ver tus estadísticas.</p>
+      <form action="/profile/link-player" method="POST" class="link-player-form">
+        <input type="text" name="playerName" placeholder="Tu nombre en los partidos" class="match-venue-input" required />
+        <button type="submit" class="btn-yellow btn-yellow-sm" style="margin-top:12px;width:100%">Vincular</button>
+      </form>
+    </div>
+    {{/unless}}
+
+    {{#if player}}
+    <p class="section-label" style="margin-top:20px">Jugador vinculado</p>
+    <p style="font-size:14px;font-weight:600;color:var(--accent)">{{player.name}}</p>
+    {{/if}}
+  </div>
+
+  <!-- Stats & matches -->
+  <div class="profile-stats-col">
+
+    {{#if stats}}
+    <div class="form-panel profile-stats-card">
+      <p class="section-label">Estadísticas</p>
+      <div class="profile-stats-grid">
+        <div class="profile-stat-item">
+          <span class="profile-stat-value">{{stats.matches}}</span>
+          <span class="profile-stat-label">Partidos</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-goals">{{stats.goals}}</span>
+          <span class="profile-stat-label">Goles</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-assists">{{stats.assists}}</span>
+          <span class="profile-stat-label">Asistencias</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-win">{{stats.wins}}</span>
+          <span class="profile-stat-label">Victorias</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-draw">{{stats.draws}}</span>
+          <span class="profile-stat-label">Empates</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-loss">{{stats.losses}}</span>
+          <span class="profile-stat-label">Derrotas</span>
+        </div>
+      </div>
+    </div>
+    {{else}}
+    <div class="form-panel">
+      <p class="empty-state">Vinculá tu cuenta a un jugador para ver tus estadísticas.</p>
+    </div>
+    {{/if}}
+
+    {{#if recentMatches.length}}
+    <div class="form-panel profile-recent-matches">
+      <p class="section-label">Últimos partidos</p>
+      {{#each recentMatches}}
+      <div class="profile-match-row">
+        <span class="profile-match-date">{{formatDate this.date}}</span>
+        <span class="profile-match-score">{{this.teamA}} — {{this.teamB}}</span>
+        {{#if this.venue}}<span class="profile-match-venue">{{this.venue}}</span>{{/if}}
+      </div>
+      {{/each}}
+    </div>
+    {{/if}}
+
+  </div>
+</div>
