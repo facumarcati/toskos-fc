@@ -8,22 +8,20 @@
     <div class="form-row">
       <div>
         <p class="section-label">Fecha del partido</p>
-        <input
-          type="date"
-          name="date"
-          class="match-date-input"
-          value="{{match.dateFormatted}}"
-          required
-        />
+        <input type="date" name="date" class="match-date-input" value="{{match.dateFormatted}}" />
       </div>
       <div>
         <p class="section-label">Cancha</p>
-        <input
-          type="text"
-          name="venue"
-          class="match-venue-input"
-          value="{{match.venue}}"
-        />
+        <input type="text" name="venue" class="match-venue-input" value="{{match.venue}}" />
+      </div>
+    </div>
+    <div style="margin-top:20px">
+      <p class="section-label">Video del partido (YouTube)</p>
+      <div class="youtube-input-wrap">
+        <svg class="youtube-icon-input" viewBox="0 0 24 24" fill="#FF0000" xmlns="http://www.w3.org/2000/svg">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+        <input type="url" name="youtubeUrl" class="match-venue-input youtube-url-input" placeholder="https://www.youtube.com/watch?v=..." value="{{match.youtubeUrl}}" />
       </div>
     </div>
   </div>
@@ -34,14 +32,12 @@
       <div class="score-inputs">
         <div class="score-team">
           <label>Blanco</label>
-          <div class="match-score"><span id="scoreA">{{match.teamA}}</span></div>
-          <input type="hidden" name="teamA" id="teamA_score" value="{{match.teamA}}" />
+          <input type="number" name="teamA" id="teamA_score" value="{{match.teamA}}" min="0" class="score-number-input" oninput="syncScore('A', this.value)" />
         </div>
         <span class="score-vs">—</span>
         <div class="score-team">
           <label>Negro</label>
-          <div class="match-score"><span id="scoreB">{{match.teamB}}</span></div>
-          <input type="hidden" name="teamB" id="teamB_score" value="{{match.teamB}}" />
+          <input type="number" name="teamB" id="teamB_score" value="{{match.teamB}}" min="0" class="score-number-input" oninput="syncScore('B', this.value)" />
         </div>
       </div>
     </fieldset>
@@ -54,25 +50,28 @@
         <div id="teamA">
           {{#each match.players}}
             {{#if (eq this.team "A")}}
-            <div class="player-row" data-existing="true">
-              <span class="player-row-label">{{add @index 1}}</span>
-              <input type="text" name="players[{{@index}}][name]" value="{{this.player.name}}" autocomplete="on" />
-              <span class="player-row-label">⚽</span>
-              <input type="number" name="players[{{@index}}][goals]" value="{{this.goals}}" min="0" oninput="updateScore()" />
-              <span class="player-row-label">🎯</span>
-              <input type="number" name="players[{{@index}}][assists]" value="{{this.assists}}" min="0" />
-              <input type="hidden" name="players[{{@index}}][team]" value="A" />
-              <label class="btn-guest-player">
-                <input type="checkbox" name="players[{{@index}}][guest]" {{#if this.guest}}checked{{/if}} />
-                👤
-              </label>
-              <button type="button" class="btn-remove-player" onclick="removePlayer(this)">✕</button>
+            <div class="player-row" data-existing="true" data-idx="{{@index}}">
+              <div class="player-row-top">
+                <span class="player-row-label">{{add @index 1}}</span>
+                <input type="text" name="players[{{@index}}][name]" value="{{this.player.name}}" autocomplete="on" />
+              </div>
+              <div class="player-row-bottom">
+                <span class="player-row-stat-label">⚽</span>
+                <input type="number" name="players[{{@index}}][goals]" value="{{this.goals}}" min="0" />
+                <span class="player-row-stat-label">🎯</span>
+                <input type="number" name="players[{{@index}}][assists]" value="{{this.assists}}" min="0" />
+                <input type="hidden" name="players[{{@index}}][team]" value="A" />
+                <label class="btn-guest-player">
+                  <input type="checkbox" name="players[{{@index}}][guest]" {{#if this.guest}}checked{{/if}} />👤
+                </label>
+                <button type="button" class="btn-remove-player">✕</button>
+              </div>
             </div>
             {{/if}}
           {{/each}}
         </div>
       </fieldset>
-      <button type="button" class="btn-add-player" onclick="addPlayer('A')">+ Agregar jugador</button>
+      <button type="button" class="btn-add-player" id="addPlayerA">+ Agregar jugador</button>
     </div>
 
     <div class="form-panel">
@@ -81,26 +80,58 @@
         <div id="teamB">
           {{#each match.players}}
             {{#if (eq this.team "B")}}
-            <div class="player-row" data-existing="true">
-              <span class="player-row-label"></span>
-              <input type="text" name="players[{{@index}}][name]" value="{{this.player.name}}" autocomplete="on" />
-              <span class="player-row-label">⚽</span>
-              <input type="number" name="players[{{@index}}][goals]" value="{{this.goals}}" min="0" oninput="updateScore()" />
-              <span class="player-row-label">🎯</span>
-              <input type="number" name="players[{{@index}}][assists]" value="{{this.assists}}" min="0" />
-              <input type="hidden" name="players[{{@index}}][team]" value="B" />
-              <label class="btn-guest-player">
-                <input type="checkbox" name="players[{{@index}}][guest]" {{#if this.guest}}checked{{/if}} />
-                👤
-              </label>
-              <button type="button" class="btn-remove-player" onclick="removePlayer(this)">✕</button>
+            <div class="player-row" data-existing="true" data-idx="{{@index}}">
+              <div class="player-row-top">
+                <span class="player-row-label"></span>
+                <input type="text" name="players[{{@index}}][name]" value="{{this.player.name}}" autocomplete="on" />
+              </div>
+              <div class="player-row-bottom">
+                <span class="player-row-stat-label">⚽</span>
+                <input type="number" name="players[{{@index}}][goals]" value="{{this.goals}}" min="0" />
+                <span class="player-row-stat-label">🎯</span>
+                <input type="number" name="players[{{@index}}][assists]" value="{{this.assists}}" min="0" />
+                <input type="hidden" name="players[{{@index}}][team]" value="B" />
+                <label class="btn-guest-player">
+                  <input type="checkbox" name="players[{{@index}}][guest]" {{#if this.guest}}checked{{/if}} />👤
+                </label>
+                <button type="button" class="btn-remove-player">✕</button>
+              </div>
             </div>
             {{/if}}
           {{/each}}
         </div>
       </fieldset>
-      <button type="button" class="btn-add-player" onclick="addPlayer('B')">+ Agregar jugador</button>
+      <button type="button" class="btn-add-player" id="addPlayerB">+ Agregar jugador</button>
     </div>
+  </div>
+
+  <!-- Momentos del partido -->
+  <div class="form-panel">
+    <p class="section-label">Momentos del partido</p>
+    <p class="moments-hint">Registrá los momentos clave con el minuto en que ocurrieron.</p>
+    <div id="momentsList">
+      {{#each match.moments}}
+      <div class="moment-row" data-midx="{{@index}}">
+        <div class="moment-fields">
+          <div class="moment-minute-wrap">
+            <span class="moment-minute-label">min.</span>
+            <input type="number" name="moments[{{@index}}][minute]" class="moment-minute-input"
+              min="0" max="999" placeholder="0" value="{{this.minute}}" />
+          </div>
+        </div>
+        <div class="moment-type-picker">
+          <button type="button" class="moment-type-btn {{#if (eq this.type 'goal')}}active{{/if}}" data-value="goal" data-idx="{{@index}}" title="Gol">⚽</button>
+          <button type="button" class="moment-type-btn {{#if (eq this.type 'assist')}}active{{/if}}" data-value="assist" data-idx="{{@index}}" title="Asistencia">🎯</button>
+          <button type="button" class="moment-type-btn {{#if (eq this.type 'yellow')}}active{{/if}}" data-value="yellow" data-idx="{{@index}}" title="Tarjeta amarilla">🟨</button>
+          <button type="button" class="moment-type-btn {{#if (eq this.type 'highlight')}}active{{/if}}" data-value="highlight" data-idx="{{@index}}" title="Highlight">⭐</button>
+          <button type="button" class="moment-type-btn {{#if (eq this.type 'robot')}}active{{/if}}" data-value="robot" data-idx="{{@index}}" title="Robótico">🤖</button>
+          <input type="hidden" name="moments[{{@index}}][type]" id="mtype_{{@index}}" value="{{this.type}}" />
+        </div>
+        <button type="button" class="btn-remove-player moment-remove-btn">✕</button>
+      </div>
+      {{/each}}
+    </div>
+    <button type="button" class="btn-add-player" id="addMomentBtn">+ Agregar momento</button>
   </div>
 
   <button type="submit" class="btn-yellow">Guardar Cambios</button>
@@ -109,7 +140,7 @@
 
 <script>
   window.index = {{match.players.length}};
-  window.registeredUsers = {{{json registeredUsers}}};
+  window.momentIndex = {{match.moments.length}};
 </script>
 
 <script src="/js/newMatch.js"></script>

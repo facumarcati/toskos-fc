@@ -7,7 +7,6 @@
       rel="stylesheet"
     />
     <link rel="icon" href="/img/favicon.png" />
-
     <link rel="stylesheet" href="/css/styles.css" />
     <title>Toskos FC</title>
   </head>
@@ -16,14 +15,35 @@
     <nav>
       <a href="/">Inicio</a>
       <a href="/matches">Partidos</a>
-      <a href="/matches/new">Nuevo Partido</a>
+      {{#if currentUser}}
+        {{#if (eq currentUser.role "admin")}}
+          <a href="/matches/new">Nuevo Partido</a>
+        {{/if}}
+        {{#if (eq currentUser.role "superadmin")}}
+          <a href="/matches/new">Nuevo Partido</a>
+        {{/if}}
+      {{/if}}
       <a href="/stats">Estadísticas</a>
       <a href="/records">Récords</a>
+      {{#if currentUser}}
+      <div class="nav-search-wrap">
+        <div class="nav-search-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+        </div>
+        <input type="text" class="nav-search-input" id="playerSearchInput" placeholder="Buscar jugador..." autocomplete="off" />
+        <div class="nav-search-dropdown" id="playerSearchDropdown"></div>
+      </div>
+      {{/if}}
       <div class="nav-auth">
         {{#if currentUser}}
+          {{#if (eq currentUser.role "superadmin")}}
+            <a href="/profile/admin/users" class="btn-nav-admin" title="Gestión de usuarios">⚙</a>
+          {{/if}}
           <a href="/profile" class="nav-profile-link">
-            {{#if currentUser.avatar}}
-              <img src="{{currentUser.avatar}}" alt="avatar" class="nav-avatar" />
+            {{#if currentUser.effectiveAvatar}}
+              <img src="{{currentUser.effectiveAvatar}}" alt="avatar" class="nav-avatar" />
             {{else}}
               <div class="nav-avatar-placeholder">
                 {{#if currentUser.displayName}}{{currentUser.displayName.[0]}}{{else}}{{currentUser.username.[0]}}{{/if}}
@@ -55,27 +75,26 @@
         <p class="modal-title">¿Eliminar partido?</p>
         <p class="modal-desc">Esta acción no se puede deshacer.</p>
         <div class="modal-actions">
-          <button
-            class="btn-match-action"
-            onclick="closeDeleteModal()"
-          >Cancelar</button>
+          <button class="btn-match-action" id="deleteCancelBtn">Cancelar</button>
           <form id="deleteForm" method="POST">
-            <button
-              type="submit"
-              class="btn-match-action btn-delete"
-            >Eliminar</button>
+            <button type="submit" class="btn-match-action btn-delete">Eliminar</button>
           </form>
         </div>
       </div>
     </div>
 
-    <button
-      class="btn-scroll-top"
-      id="scrollTop"
-      onclick="window.scrollTo({top:0,behavior:'smooth'})"
-    >
-      ↑
-    </button>
+    <!-- Error modal -->
+    <div class="modal-overlay" id="errorModal">
+      <div class="modal modal-error">
+        <div class="modal-error-icon">!</div>
+        <p class="modal-title" id="errorModalMsg"></p>
+        <div class="modal-actions" style="justify-content:center">
+          <button type="button" id="errorModalBtn" class="btn-match-action btn-error-ok">Entendido</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-scroll-top" id="scrollTop">↑</button>
 
     <script src="/js/ui.js"></script>
     <script src="/socket.io/socket.io.js"></script>

@@ -3,62 +3,72 @@
   <h1>Cargar Resultado</h1>
 </div>
 
-<!-- Pass registered users to JS -->
-<script>
-  window.registeredUsers = {{{json registeredUsers}}};
-</script>
-
 <form action="/matches" method="POST">
 
   <div class="form-panel">
     <div class="form-row">
       <div>
         <p class="section-label">Fecha del partido</p>
-        <input type="date" name="date" class="match-date-input" required />
+        <input type="date" name="date" class="match-date-input" />
       </div>
       <div>
         <p class="section-label">Cancha</p>
         <input type="text" name="venue" class="match-venue-input" placeholder="Nombre de la cancha" />
       </div>
     </div>
+    <div style="margin-top:20px">
+      <p class="section-label">Video del partido (YouTube)</p>
+      <div class="youtube-input-wrap">
+        <svg class="youtube-icon-input" viewBox="0 0 24 24" fill="#FF0000" xmlns="http://www.w3.org/2000/svg">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+        <input type="url" name="youtubeUrl" class="match-venue-input youtube-url-input" placeholder="https://www.youtube.com/watch?v=..." />
+      </div>
+    </div>
   </div>
 
-  <!-- Resultado -->
   <div class="form-panel">
     <p class="section-label">Resultado</p>
     <fieldset>
       <div class="score-inputs">
         <div class="score-team">
           <label>Blanco</label>
-          <div class="match-score"><span id="scoreA">0</span></div>
-          <input type="hidden" name="teamA" id="teamA_score" value="0" />
+          <input type="number" name="teamA" id="teamA_score" value="0" min="0" class="score-number-input" oninput="syncScore('A', this.value)" />
         </div>
         <span class="score-vs">—</span>
         <div class="score-team">
           <label>Negro</label>
-          <div class="match-score"><span id="scoreB">0</span></div>
-          <input type="hidden" name="teamB" id="teamB_score" value="0" />
+          <input type="number" name="teamB" id="teamB_score" value="0" min="0" class="score-number-input" oninput="syncScore('B', this.value)" />
         </div>
       </div>
     </fieldset>
   </div>
 
-  <!-- Equipos -->
   <div class="teams-grid">
     <div class="form-panel">
       <p class="section-label">Equipo Blanco</p>
+      <div class="team-error" id="errorA"></div>
       <fieldset>
         <div id="teamA"><p class="empty-state">Sin jugadores aún</p></div>
       </fieldset>
-      <button type="button" class="btn-add-player" onclick="addPlayer('A')">+ Agregar jugador</button>
+      <button type="button" class="btn-add-player" id="addPlayerA">+ Agregar jugador</button>
     </div>
     <div class="form-panel">
       <p class="section-label">Equipo Negro</p>
+      <div class="team-error" id="errorB"></div>
       <fieldset>
         <div id="teamB"><p class="empty-state">Sin jugadores aún</p></div>
       </fieldset>
-      <button type="button" class="btn-add-player" onclick="addPlayer('B')">+ Agregar jugador</button>
+      <button type="button" class="btn-add-player" id="addPlayerB">+ Agregar jugador</button>
     </div>
+  </div>
+
+  <!-- Momentos del partido -->
+  <div class="form-panel">
+    <p class="section-label">Momentos del partido</p>
+    <p class="moments-hint">Registrá los momentos clave con el minuto en que ocurrieron.</p>
+    <div id="momentsList"></div>
+    <button type="button" class="btn-add-player" id="addMomentBtn">+ Agregar momento</button>
   </div>
 
   <button type="submit" class="btn-yellow">Guardar Partido</button>

@@ -12,12 +12,16 @@ import rateLimit from "express-rate-limit";
 
 // 🔥 IMPORTAR passport DESPUÉS de dotenv
 import passport from "./config/passport.js";
+import User from "./models/user.model.js";
+import Player from "./models/player.model.js";
+import { requireOnboarding } from "./middleware/auth.middleware.js";
 
 import matchesRouter from "./routes/matches.route.js";
 import statsRouter from "./routes/stats.route.js";
 import recordsRouter from "./routes/records.route.js";
 import authRouter from "./routes/auth.route.js";
 import profileRouter from "./routes/profile.route.js";
+import playersRouter from "./routes/players.route.js";
 
 if (!process.env.SESSION_SECRET) {
   console.error("ERROR: SESSION_SECRET no está definido en .env");
@@ -88,9 +92,24 @@ app.use(passport.session());
 
 // Views context
 app.use((req, res, next) => {
-  res.locals.currentUser = req.user || null;
+  if (!req.user) {
+    res.locals.currentUser = null;
+    return next();
+  }
+  const u = req.user.toObject ? req.user.toObject() : { ...req.user };
+  // Manual upload always wins. Google photo is ignored — users see their initial by default.
+  u.effectiveAvatar = u.avatar || null;
+  res.locals.currentUser = u;
   res.locals.activePage = req.originalUrl;
   next();
+});
+
+// Redirect to onboarding if user hasn't completed it yet
+// (skip for /auth/* routes to avoid redirect loops)
+app.use((req, res, next) => {
+  if (req.path.startsWith("/auth")) return next();
+  if (req.path.startsWith("/api")) return next();
+  requireOnboarding(req, res, next);
 });
 
 // Handlebars
@@ -136,6 +155,38 @@ app.use("/matches", matchesRouter);
 app.use("/stats", statsRouter);
 app.use("/records", recordsRouter);
 app.use("/profile", profileRouter);
+app.use("/players", playersRouter);
+
+// API: search registered users by displayName (for player picker)
+app.get("/api/users/search", async (req, res) => {
+  const q = (req.query.q || "").trim();
+
+  const filter = (q && q !== ".")
+    ? { onboardingDone: true, displayName: { $regex: q, $options: "i" } }
+    : { onboardingDone: true };
+
+  const users = await User.find(filter, "displayName avatar _id").limit(20).lean();
+  const ids = users.map((u) => u._id);
+
+  const players = await Player.find({ userId: { $in: ids } }, "name userId").lean();
+  const playerMap = {};
+  players.forEach((p) => {
+    playerMap[String(p.userId)] = p;
+  });
+
+  const result = users.map((u) => {
+    const p = playerMap[String(u._id)];
+    return {
+      _id: u._id,
+      displayName: u.displayName || u.username || "",
+      avatar: u.avatar || null,
+      playerName: p ? p.name : (u.displayName || u.username || ""),
+      playerId: p ? p._id : null,
+    };
+  });
+
+  res.json(result);
+});
 
 // Error handler
 app.use((err, req, res, next) => {

@@ -1,37 +1,79 @@
 <div class="page-header">
-  <span class="eyebrow">Historial</span>
-  <h1>Partidos</h1>
-  <p class="page-header-meta">
-    {{matchCount}} {{#if (eq matchCount 1)}}partido{{else}}partidos{{/if}}
-  </p>
+  <div class="page-header-text">
+    <span class="eyebrow">Historial</span>
+    <h1>Partidos</h1>
+    <p class="page-header-meta" id="matchCount">
+      {{matchCount}} {{#if (eq matchCount 1)}}partido{{else}}partidos{{/if}}
+    </p>
+  </div>
+  <div class="winrate-chart" id="winrateChart">
+    <svg viewBox="0 0 100 100" class="pie-svg">
+      <circle class="pie-slice" id="pie-teamA" r="25" cx="50" cy="50" />
+      <circle class="pie-slice" id="pie-teamB" r="25" cx="50" cy="50" />
+      <circle class="pie-slice" id="pie-draws" r="25" cx="50" cy="50" />
+    </svg>
+    <div class="pie-legend">
+      <div class="legend-item">
+        <span class="legend-dot" style="background:#ffffff"></span>
+        <span class="legend-label">Blanco</span>
+        <span class="legend-value" id="wr-teamA">{{winrate.teamA}}%</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot" style="background:#4e5563"></span>
+        <span class="legend-label">Negro</span>
+        <span class="legend-value" id="wr-teamB">{{winrate.teamB}}%</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot" style="background:#f5c518"></span>
+        <span class="legend-label">Empate</span>
+        <span class="legend-value" id="wr-draws">{{winrate.draws}}%</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="matches-header">
-  <div style="display:flex; gap:8px; align-items:center;">
-    <form method="GET" action="/matches" class="season-filter">
-      <input type="hidden" name="order" value="{{selectedOrder}}" />
-      <select name="season" onchange="this.form.submit()">
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+    <div class="filter-group">
+      <select name="season" id="seasonSelect" class="filter-select">
         <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
         <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
         <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
         <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>2024</option>
       </select>
-    </form>
+    </div>
 
-    <form method="GET" action="/matches">
-      <input type="hidden" name="season" value="{{selectedSeason}}" />
-      <input type="hidden" name="order" value="{{#if (eq selectedOrder "asc")}}desc{{else}}asc{{/if}}" />
-      <button type="submit" class="btn-order">
-        {{#if (eq selectedOrder "asc")}}↑{{else}}↓{{/if}}
-      </button>
-    </form>
+    <div class="filter-group">
+      <select name="month" id="monthSelect" class="filter-select">
+        <option value="all" {{#if (eq selectedMonth "all")}}selected{{/if}}>Todos los meses</option>
+        <option value="01" {{#if (eq selectedMonth "01")}}selected{{/if}}>Enero</option>
+        <option value="02" {{#if (eq selectedMonth "02")}}selected{{/if}}>Febrero</option>
+        <option value="03" {{#if (eq selectedMonth "03")}}selected{{/if}}>Marzo</option>
+        <option value="04" {{#if (eq selectedMonth "04")}}selected{{/if}}>Abril</option>
+        <option value="05" {{#if (eq selectedMonth "05")}}selected{{/if}}>Mayo</option>
+        <option value="06" {{#if (eq selectedMonth "06")}}selected{{/if}}>Junio</option>
+        <option value="07" {{#if (eq selectedMonth "07")}}selected{{/if}}>Julio</option>
+        <option value="08" {{#if (eq selectedMonth "08")}}selected{{/if}}>Agosto</option>
+        <option value="09" {{#if (eq selectedMonth "09")}}selected{{/if}}>Septiembre</option>
+        <option value="10" {{#if (eq selectedMonth "10")}}selected{{/if}}>Octubre</option>
+        <option value="11" {{#if (eq selectedMonth "11")}}selected{{/if}}>Noviembre</option>
+        <option value="12" {{#if (eq selectedMonth "12")}}selected{{/if}}>Diciembre</option>
+      </select>
+    </div>
+
+    <button type="button" id="orderBtn" class="btn-order" data-order="{{selectedOrder}}">
+      {{#if (eq selectedOrder "asc")}}↑{{else}}↓{{/if}}
+    </button>
   </div>
 
   <div class="matches-toolbar">
-    <a href="/matches/new" class="btn-yellow btn-yellow-sm">+ Nuevo Partido</a>
+    {{#if (eq currentUserRole "admin")}}<a href="/matches/new" class="btn-yellow btn-yellow-sm">+ Nuevo Partido</a>{{/if}}
+    {{#if (eq currentUserRole "superadmin")}}<a href="/matches/new" class="btn-yellow btn-yellow-sm">+ Nuevo Partido</a>{{/if}}
   </div>
 </div>
 
+<div id="matchesContent">
+{{#if matches.length}}
 {{#each matches}}
 <div class="match-card" id="match-{{this._id}}">
 
@@ -48,11 +90,13 @@
     </div>
 
     <div class="match-score">
-      <div class="match-date">{{formatDate this.date}}</div>
-      <span class="match-score-number">{{this.teamA}} — {{this.teamB}}</span>
-      {{#if this.venue}}
-        <span class="match-score-meta">{{this.venue}}</span>
-      {{/if}}
+      <a href="/matches/{{this._id}}" class="match-score-link">
+        <div class="match-date">{{formatDate this.date}}</div>
+        <span class="match-score-number">{{this.teamA}} — {{this.teamB}}</span>
+        {{#if this.venue}}
+          <span class="match-score-meta">{{this.venue}}</span>
+        {{/if}}
+      </a>
     </div>
 
     <div class="match-team match-team-right">
@@ -111,23 +155,188 @@
     </div>
   </div>
 
-  <div class="match-card-footer">
-    <a href="/matches/{{this._id}}/edit?season={{../selectedSeason}}" class="btn-match-action btn-edit">
-      Editar
-    </a>
-    <button
-      type="button"
-      class="btn-match-action btn-delete"
-      onclick="openDeleteModal('/matches/{{this._id}}/delete')"
-    >
-      Eliminar
+  {{#if this.moments.length}}
+  <div class="match-moments-toggle">
+    <button type="button" class="moments-toggle-btn" data-match-id="{{this._id}}">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      <svg class="moments-chevron" viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+        <path d="M7 10l5 5 5-5z"/>
+      </svg>
     </button>
+  </div>
+  <div class="match-moments-panel" id="moments-{{this._id}}">
+    {{#each this.moments}}
+      <div class="moment-item">
+        <span class="moment-minute">{{this.minute}}'</span>
+        <span class="moment-type-icon">
+          {{#if (eq this.type "goal")}}⚽{{/if}}
+          {{#if (eq this.type "assist")}}🎯{{/if}}
+          {{#if (eq this.type "yellow")}}🟨{{/if}}
+          {{#if (eq this.type "highlight")}}⭐{{/if}}
+          {{#if (eq this.type "robot")}}🤖{{/if}}
+        </span>
+        <span class="moment-type-label">{{this.type}}</span>
+      </div>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  <div class="match-card-footer">
+    {{#if this.youtubeUrl}}
+    <a href="{{this.youtubeUrl}}" target="_blank" rel="noopener noreferrer" class="btn-match-action btn-youtube" title="Ver video del partido">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="flex-shrink:0">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+      Ver video
+    </a>
+    {{/if}}
+    {{#if (eq ../currentUserRole "admin")}}
+      <a href="/matches/{{this._id}}/edit?season={{../selectedSeason}}" class="btn-match-action btn-edit">Editar</a>
+      <button type="button" class="btn-match-action btn-delete" data-delete-url="/matches/{{this._id}}/delete?season={{../selectedSeason}}">Eliminar</button>
+    {{/if}}
+    {{#if (eq ../currentUserRole "superadmin")}}
+      <a href="/matches/{{this._id}}/edit?season={{../selectedSeason}}" class="btn-match-action btn-edit">Editar</a>
+      <button type="button" class="btn-match-action btn-delete" data-delete-url="/matches/{{this._id}}/delete?season={{../selectedSeason}}">Eliminar</button>
+    {{/if}}
   </div>
 
 </div>
-{{else}}
-<div class="list-empty-state" style="text-align:center; padding:80px 20px">
-  <p>No hay partidos todavía</p>
-  <a href="/matches/new" class="btn-yellow" style="margin-top:24px; display:inline-flex; width:auto; padding:12px 32px">+ Nuevo Partido</a>
-</div>
 {{/each}}
+</div>
+{{else}}
+<div class="list-empty-state" style="text-align:center; padding:80px 20px" id="emptyState">
+  <p>No existen partidos en este rango de fechas</p>
+  <a href="/matches" class="btn-yellow" style="margin-top:24px; display:inline-flex; width:auto; padding:12px 32px">Ver todos los partidos</a>
+</div>
+{{/if}}
+</div>
+
+<script>
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.moments-toggle-btn');
+  if (!btn) return;
+  
+  var matchId = btn.getAttribute('data-match-id');
+  if (!matchId) return;
+  
+  var panel = document.getElementById('moments-' + matchId);
+  var card = document.getElementById('match-' + matchId);
+  if (!panel) return;
+  
+  panel.classList.toggle('open');
+  if (card) {
+    card.classList.toggle('match-card-expanded', panel.classList.contains('open'));
+  }
+});
+
+var seasonSelect = document.getElementById('seasonSelect');
+var monthSelect = document.getElementById('monthSelect');
+var orderBtn = document.getElementById('orderBtn');
+
+function updatePieChart(wr) {
+  var circumference = 2 * Math.PI * 25;
+  var teamA = parseInt(wr.teamA) || 0;
+  var teamB = parseInt(wr.teamB) || 0;
+  var draws = parseInt(wr.draws) || 0;
+
+  var teamAPct = teamA / 100;
+  var teamBPct = teamB / 100;
+  var drawsPct = draws / 100;
+
+  var teamALen = circumference * teamAPct;
+  var teamBLen = circumference * teamBPct;
+  var drawsLen = circumference * drawsPct;
+
+  var teamAOffset = 0;
+  var teamBOffset = teamALen;
+  var drawsOffset = teamALen + teamBLen;
+
+  var pieA = document.getElementById('pie-teamA');
+  var pieB = document.getElementById('pie-teamB');
+  var pieDraws = document.getElementById('pie-draws');
+
+  if (pieA) { pieA.style.strokeDasharray = teamALen + ' ' + circumference; pieA.style.strokeDashoffset = -teamAOffset; }
+  if (pieB) { pieB.style.strokeDasharray = teamBLen + ' ' + circumference; pieB.style.strokeDashoffset = -teamBOffset; }
+  if (pieDraws) { pieDraws.style.strokeDasharray = drawsLen + ' ' + circumference; pieDraws.style.strokeDashoffset = -drawsOffset; }
+
+  var wrA = document.getElementById('wr-teamA');
+  var wrB = document.getElementById('wr-teamB');
+  var wrDraws = document.getElementById('wr-draws');
+  if (wrA) wrA.textContent = teamA + '%';
+  if (wrB) wrB.textContent = teamB + '%';
+  if (wrDraws) wrDraws.textContent = draws + '%';
+}
+
+function fetchMatches() {
+  var season = seasonSelect ? seasonSelect.value : 'all';
+  var month = monthSelect ? monthSelect.value : 'all';
+  var order = orderBtn ? orderBtn.dataset.order : 'desc';
+  
+  var url = '/matches?season=' + season + '&month=' + month + '&order=' + order;
+  
+  fetch(url)
+    .then(function(response) { return response.text(); })
+    .then(function(html) {
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(html, 'text/html');
+      
+      var newContent = doc.getElementById('matchesContent');
+      var currentContent = document.getElementById('matchesContent');
+      if (newContent && currentContent) {
+        currentContent.innerHTML = newContent.innerHTML;
+      }
+      
+      var newCount = doc.querySelector('#matchCount');
+      var currentCount = document.querySelector('#matchCount');
+      if (newCount && currentCount) {
+        currentCount.innerHTML = newCount.innerHTML;
+      }
+
+      var newWrA = doc.querySelector('#wr-teamA');
+      var newWrB = doc.querySelector('#wr-teamB');
+      var newWrDraws = doc.querySelector('#wr-draws');
+      if (newWrA && newWrB && newWrDraws) {
+        updatePieChart({
+          teamA: newWrA.textContent.replace('%', ''),
+          teamB: newWrB.textContent.replace('%', ''),
+          draws: newWrDraws.textContent.replace('%', '')
+        });
+      }
+    })
+    .catch(function(err) {
+      console.error('Error loading matches:', err);
+    });
+}
+
+if (seasonSelect) {
+  seasonSelect.addEventListener('change', fetchMatches);
+}
+
+if (monthSelect) {
+  monthSelect.addEventListener('change', fetchMatches);
+}
+
+if (orderBtn) {
+  orderBtn.addEventListener('click', function() {
+    var currentOrder = orderBtn.dataset.order || 'desc';
+    orderBtn.dataset.order = currentOrder === 'desc' ? 'asc' : 'desc';
+    orderBtn.textContent = currentOrder === 'desc' ? '↑' : '↓';
+    fetchMatches();
+  });
+}
+
+(function initPieChart() {
+  var wrA = document.getElementById('wr-teamA');
+  var wrB = document.getElementById('wr-teamB');
+  var wrDraws = document.getElementById('wr-draws');
+  if (wrA && wrB && wrDraws) {
+    updatePieChart({
+      teamA: wrA.textContent.replace('%', ''),
+      teamB: wrB.textContent.replace('%', ''),
+      draws: wrDraws.textContent.replace('%', '')
+    });
+  }
+})();
+</script>

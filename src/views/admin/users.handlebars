@@ -1,0 +1,172 @@
+<div class="page-header">
+  <span class="eyebrow">Superadmin</span>
+  <h1>Gestión de usuarios</h1>
+  <p class="page-header-meta">{{users.length}} usuarios registrados</p>
+</div>
+
+<div class="admin-users-controls">
+  <div class="admin-search-wrap">
+    <svg class="admin-search-icon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+      <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </svg>
+    <input type="text" id="userSearchInput" class="admin-search-input" placeholder="Buscar por nombre o email..." autocomplete="off" />
+  </div>
+</div>
+
+<div class="product-list-section">
+  <div class="admin-users-header">
+    <span>Usuario</span>
+    <span>Email</span>
+    <span>Rol</span>
+    <span>Acciones</span>
+  </div>
+
+  <ul class="product-list admin-users-list" id="usersList">
+    {{#each users}}
+    <li class="admin-user-item" data-name="{{this.displayName}}" data-email="{{this.email}}">
+      <div class="admin-user-row">
+
+        <!-- Avatar + nombre -->
+        <div class="admin-user-info">
+          {{#if this.avatar}}
+            <img src="{{this.avatar}}" alt="" class="admin-user-avatar" />
+          {{else}}
+            <div class="admin-user-avatar-placeholder">
+              {{#if this.displayName}}{{this.displayName.[0]}}{{else}}{{this.username.[0]}}{{/if}}
+            </div>
+          {{/if}}
+          <a href="/profile?view={{this._id}}" class="admin-user-name">
+            {{#if this.displayName}}{{this.displayName}}{{else}}{{this.username}}{{/if}}
+          </a>
+        </div>
+
+        <!-- Email -->
+        <span class="admin-user-email">{{this.email}}</span>
+
+        <!-- Rol -->
+        <div class="admin-role-cell">
+          {{#if (eq this.role "superadmin")}}
+            <span class="role-badge role-superadmin">Superadmin</span>
+          {{else}}
+            <form action="/profile/admin/users/{{this._id}}/role" method="POST" class="admin-role-form">
+              <select name="role" class="admin-role-select" onchange="this.form.submit()">
+                <option value="user" {{#if (eq this.role "user")}}selected{{/if}}>Usuario</option>
+                <option value="admin" {{#if (eq this.role "admin")}}selected{{/if}}>Admin</option>
+              </select>
+            </form>
+          {{/if}}
+        </div>
+
+        <!-- Acciones -->
+        <div class="admin-actions-cell">
+          {{#if (eq this.role "superadmin")}}
+            <span class="admin-no-action">—</span>
+          {{else}}
+            <button type="button" class="admin-delete-btn btn-delete-user" data-user-id="{{this._id}}" data-user-name="{{this.displayName}}" title="Eliminar usuario">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+              </svg>
+            </button>
+          {{/if}}
+        </div>
+
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+</div>
+
+<!-- Delete User Modal -->
+<div class="modal-overlay" id="deleteUserModal">
+  <div class="modal">
+    <p class="modal-title">¿Eliminar usuario?</p>
+    <p class="modal-desc">¿Estás seguro que deseas eliminar a <strong id="deleteUserNameDisplay"></strong>? Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-match-action" id="deleteUserCancelBtn">Cancelar</button>
+      <button type="button" class="btn-match-action btn-delete" id="deleteUserConfirmBtn">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // User search/filter functionality
+  var searchInput = document.getElementById('userSearchInput');
+  var usersList = document.getElementById('usersList');
+  
+  if (searchInput && usersList) {
+    searchInput.addEventListener('input', function() {
+      var q = searchInput.value.trim().toLowerCase();
+      var items = usersList.querySelectorAll('.admin-user-item');
+      
+      items.forEach(function(item) {
+        var name = (item.getAttribute('data-name') || '').toLowerCase();
+        var email = (item.getAttribute('data-email') || '').toLowerCase();
+        var matches = !q || name.indexOf(q) !== -1 || email.indexOf(q) !== -1;
+        item.style.display = matches ? '' : 'none';
+      });
+    });
+  }
+
+  // Delete user modal functionality
+  var deleteUserModal = document.getElementById('deleteUserModal');
+  var deleteUserCancelBtn = document.getElementById('deleteUserCancelBtn');
+  var deleteUserConfirmBtn = document.getElementById('deleteUserConfirmBtn');
+  var deleteUserNameDisplay = document.getElementById('deleteUserNameDisplay');
+  var currentDeleteUserId = null;
+
+  // Close modal function
+  function closeDeleteModal() {
+    if (deleteUserModal) {
+      deleteUserModal.classList.remove('active');
+      currentDeleteUserId = null;
+    }
+  }
+
+  // Cancel button click
+  if (deleteUserCancelBtn) {
+    deleteUserCancelBtn.addEventListener('click', closeDeleteModal);
+  }
+
+  // Click outside modal to close
+  if (deleteUserModal) {
+    deleteUserModal.addEventListener('click', function(e) {
+      if (e.target === deleteUserModal) {
+        closeDeleteModal();
+      }
+    });
+  }
+
+  // Confirm delete button click
+  if (deleteUserConfirmBtn) {
+    deleteUserConfirmBtn.addEventListener('click', function() {
+      if (currentDeleteUserId) {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/profile/admin/users/' + currentDeleteUserId + '/delete';
+        document.body.appendChild(form);
+        form.submit();
+      }
+    });
+  }
+
+  // Attach click handlers to all delete buttons
+  var deleteButtons = document.querySelectorAll('.btn-delete-user');
+  deleteButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var userId = btn.getAttribute('data-user-id');
+      var userName = btn.getAttribute('data-user-name') || 'este usuario';
+      
+      currentDeleteUserId = userId;
+      
+      if (deleteUserNameDisplay) {
+        deleteUserNameDisplay.textContent = userName;
+      }
+      
+      if (deleteUserModal) {
+        deleteUserModal.classList.add('active');
+      }
+    });
+  });
+});
+</script>

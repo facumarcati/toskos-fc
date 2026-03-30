@@ -20,16 +20,22 @@ const playerStatsSchema = new mongoose.Schema({
   },
 });
 
-const matchSchema = new mongoose.Schema({
-  date: {
-    type: Date,
-    required: true,
-    default: Date.now,
+const momentSchema = new mongoose.Schema({
+  minute: { type: Number, min: 0, max: 999 },
+  type: {
+    type: String,
+    enum: ["goal", "assist", "yellow", "highlight", "robot"],
   },
+});
+
+const matchSchema = new mongoose.Schema({
+  date: { type: Date, required: true, default: Date.now },
   venue: { type: String, default: "" },
+  youtubeUrl: { type: String, default: "" },
   teamA: Number,
   teamB: Number,
   players: [playerStatsSchema],
+  moments: [momentSchema],
 });
 
 const Match = mongoose.model("Match", matchSchema);

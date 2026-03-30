@@ -6,60 +6,138 @@
   {{/if}}
 
   <form class="auth-form" method="POST" action="/auth/register">
+
     <div class="form-group">
-      <label for="username">Nombre de usuario</label>
-      <input
-        type="text"
-        id="username"
-        name="username"
-        required
-        minlength="3"
-        maxlength="30"
-        autocomplete="username"
-        placeholder="toskos99"
-      />
+      <label for="firstName">Nombre</label>
+      <input type="text" id="firstName" name="firstName" required maxlength="30"
+        autocomplete="given-name" placeholder="Juan"
+        value="{{formData.firstName}}" />
+    </div>
+
+    <div class="form-group">
+      <label for="lastName">Apellido</label>
+      <input type="text" id="lastName" name="lastName" required maxlength="30"
+        autocomplete="family-name" placeholder="García"
+        value="{{formData.lastName}}" />
+    </div>
+
+    <div class="form-group">
+      <label for="birthDate">Fecha de nacimiento</label>
+      <div class="birthdate-selectors">
+        <select id="birthYear" name="birthYear" required class="birthdate-select">
+          <option value="">Año</option>
+        </select>
+        <select id="birthMonth" name="birthMonth" required class="birthdate-select">
+          <option value="">Mes</option>
+          <option value="01">Enero</option>
+          <option value="02">Febrero</option>
+          <option value="03">Marzo</option>
+          <option value="04">Abril</option>
+          <option value="05">Mayo</option>
+          <option value="06">Junio</option>
+          <option value="07">Julio</option>
+          <option value="08">Agosto</option>
+          <option value="09">Septiembre</option>
+          <option value="10">Octubre</option>
+          <option value="11">Noviembre</option>
+          <option value="12">Diciembre</option>
+        </select>
+        <select id="birthDay" name="birthDay" required class="birthdate-select">
+          <option value="">Día</option>
+        </select>
+      </div>
+      <input type="hidden" id="birthDate" name="birthDate" value="{{formData.birthDate}}" />
     </div>
 
     <div class="form-group">
       <label for="email">Email</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        required
-        autocomplete="email"
-        placeholder="tu@email.com"
-      />
+      <input type="email" id="email" name="email" required
+        autocomplete="email" placeholder="tu@email.com"
+        value="{{formData.email}}" />
     </div>
 
     <div class="form-group">
       <label for="password">Contraseña</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        required
-        minlength="8"
-        autocomplete="new-password"
-        placeholder="Mínimo 8 caracteres"
-      />
+      <input type="password" id="password" name="password" required minlength="6"
+        autocomplete="new-password" placeholder="Mínimo 6 caracteres" />
     </div>
 
     <div class="form-group">
       <label for="confirmPassword">Confirmar contraseña</label>
-      <input
-        type="password"
-        id="confirmPassword"
-        name="confirmPassword"
-        required
-        minlength="8"
-        autocomplete="new-password"
-        placeholder="Repetí tu contraseña"
-      />
+      <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6"
+        autocomplete="new-password" placeholder="Repetí tu contraseña" />
     </div>
 
     <button type="submit" class="btn-auth">Registrarse</button>
   </form>
+
+  <script>
+    (function() {
+      var yearSelect = document.getElementById('birthYear');
+      var monthSelect = document.getElementById('birthMonth');
+      var daySelect = document.getElementById('birthDay');
+      var hiddenInput = document.getElementById('birthDate');
+
+      var currentYear = new Date().getFullYear();
+      var startYear = currentYear - 100;
+      var endYear = currentYear - 10;
+
+      for (var y = endYear; y >= startYear; y--) {
+        var opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        yearSelect.appendChild(opt);
+      }
+
+      function populateDays() {
+        var year = parseInt(yearSelect.value);
+        var month = parseInt(monthSelect.value);
+        daySelect.innerHTML = '<option value="">Día</option>';
+        if (!year || !month) return;
+
+        var daysInMonth = new Date(year, month, 0).getDate();
+        for (var d = 1; d <= daysInMonth; d++) {
+          var opt = document.createElement('option');
+          opt.value = d < 10 ? '0' + d : '' + d;
+          opt.textContent = d;
+          daySelect.appendChild(opt);
+        }
+      }
+
+      function updateHidden() {
+        var y = yearSelect.value;
+        var m = monthSelect.value;
+        var d = daySelect.value;
+        if (y && m && d) {
+          hiddenInput.value = y + '-' + m + '-' + d;
+        } else {
+          hiddenInput.value = '';
+        }
+      }
+
+      yearSelect.addEventListener('change', function() {
+        populateDays();
+        updateHidden();
+      });
+
+      monthSelect.addEventListener('change', function() {
+        populateDays();
+        updateHidden();
+      });
+
+      daySelect.addEventListener('change', updateHidden);
+
+      if (hiddenInput.value) {
+        var parts = hiddenInput.value.split('-');
+        if (parts.length === 3) {
+          yearSelect.value = parts[0];
+          monthSelect.value = parts[1];
+          populateDays();
+          daySelect.value = parts[2];
+        }
+      }
+    })();
+  </script>
 
   <div class="auth-divider"><span>o</span></div>
 

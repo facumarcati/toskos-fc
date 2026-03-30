@@ -1,17 +1,44 @@
 <div class="page-header">
+  {{#if isViewingOther}}
+  <span class="eyebrow">Perfil de usuario</span>
+  <h1>{{#if viewedUser.displayName}}{{viewedUser.displayName}}{{else}}{{viewedUser.username}}{{/if}}</h1>
+  <p class="page-header-meta">{{viewedUser.email}}</p>
+  {{else}}
   <span class="eyebrow">Mi Cuenta</span>
   <h1>{{#if currentUser.displayName}}{{currentUser.displayName}}{{else}}{{currentUser.username}}{{/if}}</h1>
   <p class="page-header-meta">{{currentUser.email}}</p>
+  {{/if}}
 </div>
 
 <div class="profile-grid">
 
   <!-- Avatar card -->
   <div class="form-panel profile-avatar-card">
+    {{#if isViewingOther}}
     <p class="section-label">Foto de perfil</p>
     <div class="profile-avatar-wrap">
-      {{#if currentUser.avatar}}
-        <img src="{{currentUser.avatar}}" alt="avatar" class="profile-avatar-img" />
+      {{#if viewedUser.effectiveAvatar}}
+        <img src="{{viewedUser.effectiveAvatar}}" alt="avatar" class="profile-avatar-img" />
+      {{else}}
+        <div class="profile-avatar-placeholder">
+          {{#if viewedUser.displayName}}{{viewedUser.displayName.[0]}}{{else}}{{viewedUser.username.[0]}}{{/if}}
+        </div>
+      {{/if}}
+    </div>
+    {{#if viewedUser.firstName}}
+    <div style="margin-top:20px;width:100%;text-align:left">
+      <p class="section-label">Datos personales</p>
+      <p style="font-size:13px;color:var(--text-secondary)">{{viewedUser.firstName}} {{viewedUser.lastName}}</p>
+      {{#if viewedUser.birthDate}}
+        <p style="font-size:12px;color:var(--text-muted);margin-top:4px">{{formatDate viewedUser.birthDate}}</p>
+      {{/if}}
+    </div>
+    {{/if}}
+    {{else}}
+    <p class="section-label">Foto de perfil</p>
+    <div class="profile-avatar-wrap">
+      {{#if currentUser.effectiveAvatar}}
+        <img src="{{currentUser.effectiveAvatar}}" alt="avatar" class="profile-avatar-img" />
       {{else}}
         <div class="profile-avatar-placeholder">
           {{#if currentUser.displayName}}{{currentUser.displayName.[0]}}{{else}}{{currentUser.username.[0]}}{{/if}}
@@ -19,27 +46,35 @@
       {{/if}}
     </div>
 
-    <form action="/profile/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
-      <label class="btn-upload-avatar">
-        Cambiar foto
-        <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp" onchange="this.form.submit()" />
-      </label>
+    <form action="/profile/avatar" method="POST" enctype="multipart/form-data" id="avatarForm">
+      <input type="file" id="avatarFileInput" name="avatar" accept="image/jpeg,image/png,image/webp" style="display:none" />
+      <button type="button" class="btn-upload-avatar" id="avatarPickerBtn">
+        {{#if currentUser.avatar}}Cambiar foto{{else}}Subir foto{{/if}}
+      </button>
+      <button type="submit" id="avatarSubmitBtn" style="display:none">Enviar</button>
     </form>
-
-    {{#unless player}}
-    <div class="profile-link-player" style="width:100%;margin-top:24px">
-      <p class="section-label">Vincular jugador</p>
-      <p class="profile-link-desc">Vinculá tu cuenta a tu nombre de jugador para ver tus estadísticas.</p>
-      <form action="/profile/link-player" method="POST" class="link-player-form">
-        <input type="text" name="playerName" placeholder="Tu nombre en los partidos" class="match-venue-input" required />
-        <button type="submit" class="btn-yellow btn-yellow-sm" style="margin-top:12px;width:100%">Vincular</button>
-      </form>
-    </div>
-    {{/unless}}
+    {{#if currentUser.googleAvatar}}
+      {{#unless currentUser.avatar}}
+        <p style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center">Usando foto de Google. Subí una propia para reemplazarla.</p>
+      {{/unless}}
+    {{/if}}
+    {{/if}}
 
     {{#if player}}
     <p class="section-label" style="margin-top:20px">Jugador vinculado</p>
     <p style="font-size:14px;font-weight:600;color:var(--accent)">{{player.name}}</p>
+    {{/if}}
+
+    {{#if currentUser.firstName}}
+    {{#unless isViewingOther}}
+    <div style="margin-top:20px;width:100%;text-align:left">
+      <p class="section-label">Datos personales</p>
+      <p style="font-size:13px;color:var(--text-secondary)">{{currentUser.firstName}} {{currentUser.lastName}}</p>
+      {{#if currentUser.birthDate}}
+        <p style="font-size:12px;color:var(--text-muted);margin-top:4px">{{formatDate currentUser.birthDate}}</p>
+      {{/if}}
+    </div>
+    {{/unless}}
     {{/if}}
   </div>
 
@@ -78,7 +113,7 @@
     </div>
     {{else}}
     <div class="form-panel">
-      <p class="empty-state">Vinculá tu cuenta a un jugador para ver tus estadísticas.</p>
+      <p class="empty-state">Completá el onboarding para ver tus estadísticas.</p>
     </div>
     {{/if}}
 
@@ -86,14 +121,46 @@
     <div class="form-panel profile-recent-matches">
       <p class="section-label">Últimos partidos</p>
       {{#each recentMatches}}
-      <div class="profile-match-row">
-        <span class="profile-match-date">{{formatDate this.date}}</span>
-        <span class="profile-match-score">{{this.teamA}} — {{this.teamB}}</span>
-        {{#if this.venue}}<span class="profile-match-venue">{{this.venue}}</span>{{/if}}
-      </div>
+      <a href="/matches/{{this._id}}" class="profile-match-row">
+        <div class="profile-match-info">
+          <div class="profile-match-datetime">
+            <span class="profile-match-date">{{formatDate this.date}}</span>
+            {{#if this.venue}}
+              <span class="profile-match-separator">·</span>
+              <span class="profile-match-venue">{{this.venue}}</span>
+            {{/if}}
+          </div>
+          <span class="profile-match-score">{{this.teamA}} — {{this.teamB}}</span>
+        </div>
+        <svg class="profile-match-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </a>
       {{/each}}
     </div>
     {{/if}}
 
   </div>
 </div>
+
+<script>
+(function() {
+  var pickerBtn = document.getElementById('avatarPickerBtn');
+  var fileInput = document.getElementById('avatarFileInput');
+  var form      = document.getElementById('avatarForm');
+
+  if (!pickerBtn || !fileInput || !form) return;
+
+  // Open file picker on button click
+  pickerBtn.addEventListener('click', function() {
+    fileInput.click();
+  });
+
+  // Submit form when a file is selected
+  fileInput.addEventListener('change', function() {
+    if (fileInput.files && fileInput.files.length > 0) {
+      form.submit();
+    }
+  });
+})();
+</script>

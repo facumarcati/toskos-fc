@@ -1,42 +1,49 @@
 import { Router } from "express";
 import multer from "multer";
 import path from "path";
-import fs from "fs";
+import { fileURLToPath } from "url";
 import User from "../models/user.model.js";
 import Match from "../models/match.model.js";
 import Player from "../models/player.model.js";
-import { requireAuth } from "../middleware/auth.middleware.js";
+import { requireAuth, requireSuperAdmin } from "../middleware/auth.middleware.js";
 
-const router = Router();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const UPLOADS_DIR = path.join(__dirname, "..", "public", "uploads");
 
-// Multer config — store in public/uploads
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "src/public/uploads"),
+  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
+    const ext = path.extname(file.originalname).toLowerCase();
     cb(null, `avatar_${req.user._id}${ext}`);
   },
 });
 
 const upload = multer({
   storage,
-  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
-  fileFilter: (req, file, cb) => {
+  limits: { fileSize: 2 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
     const allowed = ["image/jpeg", "image/png", "image/webp"];
-    if (allowed.includes(file.mimetype)) cb(null, true);
-    else cb(new Error("Solo se permiten imágenes JPG, PNG o WEBP."));
+    allowed.includes(file.mimetype)
+      ? cb(null, true)
+      : cb(new Error("Solo se permiten imágenes JPG, PNG o WEBP."));
   },
 });
 
-// GET /profile — own profile
-router.get("/", requireAuth, async (req, res) => {
-  const player = await Player.findOne({ userId: req.user._id });
+const router = Router();
 
+// GET /profile — own profile or another user's profile (admin/superadmin)
+router.get("/", requireAuth, async (req, res) => {
+  const isViewingOther = req.query.view && (req.user.role === "admin" || req.user.role === "superadmin");
+  const targetUserId = isViewingOther ? req.query.view : req.user._id;
+  
+  const targetUser = await User.findById(targetUserId).select("-password");
+  if (!targetUser) return res.redirect("/profile");
+
+  const player = await Player.findOne({ userId: targetUserId });
   let stats = null;
   let recentMatches = [];
 
   if (player) {
-    // Aggregate stats for this player
     const agg = await Match.aggregate([
       { $match: { "players.player": player._id } },
       { $unwind: "$players" },
@@ -83,44 +90,85 @@ router.get("/", requireAuth, async (req, res) => {
 
     stats = agg[0] || { matches: 0, goals: 0, assists: 0, wins: 0, draws: 0, losses: 0 };
 
-    // Recent matches (last 5)
     recentMatches = await Match.find({ "players.player": player._id })
       .populate("players.player")
       .sort({ date: -1 })
       .limit(5);
   }
 
-  res.render("profile", { stats, recentMatches, player });
+  res.render("profile", { 
+    stats, 
+    recentMatches, 
+    player,
+    isViewingOther: targetUserId !== String(req.user._id),
+    viewedUser: targetUser 
+  });
 });
 
-// POST /profile/avatar — upload profile picture
-router.post("/avatar", requireAuth, upload.single("avatar"), async (req, res) => {
-  if (!req.file) return res.redirect("/profile");
+// POST /profile/avatar
+router.post("/avatar", requireAuth, (req, res, next) => {
+  upload.single("avatar")(req, res, async (err) => {
+    if (err) {
+      return res.redirect("/profile");
+    }
 
-  const avatarUrl = `/uploads/${req.file.filename}`;
-  await User.findByIdAndUpdate(req.user._id, { avatar: avatarUrl });
-  res.redirect("/profile");
+    if (!req.file) {
+      return res.redirect("/profile");
+    }
+
+    try {
+      const avatarUrl = `/uploads/${req.file.filename}`;
+      await User.findByIdAndUpdate(req.user._id, { avatar: avatarUrl });
+
+      const updatedUser = await User.findById(req.user._id).select("-password");
+      req.logIn(updatedUser, (loginErr) => {
+        if (loginErr) return next(loginErr);
+        res.redirect("/profile");
+      });
+    } catch (e) {
+      next(e);
+    }
+  });
 });
 
-// POST /profile/link-player — link account to existing player by name
-router.post("/link-player", requireAuth, async (req, res) => {
-  const { playerName } = req.body;
-  if (!playerName) return res.redirect("/profile");
+// ── Admin: list all users (superadmin only) ──────────────────────────────────
+router.get("/admin/users", requireSuperAdmin, async (req, res) => {
+  const users = await User.find({}, "username displayName email role avatar createdAt onboardingDone")
+    .sort({ createdAt: -1 })
+    .lean();
+  res.render("admin/users", { users });
+});
 
-  // Check if user already has a linked player
-  const existing = await Player.findOne({ userId: req.user._id });
-  if (existing) return res.redirect("/profile");
+// POST /profile/admin/users/:id/role — superadmin sets role
+router.post("/admin/users/:id/role", requireSuperAdmin, async (req, res) => {
+  const { role } = req.body;
+  const allowed = ["user", "admin"];
+  if (!allowed.includes(role)) return res.redirect("/profile/admin/users");
 
-  // Find or create player with this name
-  let player = await Player.findOne({ name: new RegExp(`^${playerName.trim()}$`, "i") });
-  if (!player) {
-    player = await Player.create({ name: playerName.trim(), userId: req.user._id });
-  } else {
-    player.userId = req.user._id;
-    await player.save();
+  await User.findByIdAndUpdate(req.params.id, { role });
+
+  if (req.params.id === String(req.user._id)) {
+    req.user.role = role;
   }
 
-  res.redirect("/profile");
+  res.redirect("/profile/admin/users");
+});
+
+// POST /profile/admin/users/:id/delete — superadmin deletes user
+router.post("/admin/users/:id/delete", requireSuperAdmin, async (req, res) => {
+  const userId = req.params.id;
+
+  if (userId === String(req.user._id)) {
+    return res.redirect("/profile/admin/users");
+  }
+
+  const userToDelete = await User.findById(userId);
+  if (!userToDelete) return res.redirect("/profile/admin/users");
+
+  await Player.deleteOne({ userId: userToDelete._id });
+  await User.findByIdAndDelete(userId);
+
+  res.redirect("/profile/admin/users");
 });
 
 export default router;

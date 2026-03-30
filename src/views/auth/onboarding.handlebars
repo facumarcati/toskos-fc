@@ -1,0 +1,27 @@
+<div class="auth-card">
+  <h1 class="auth-title">¡Bienvenido!</h1>
+  <p class="auth-subtitle">¿Con qué nombre querés que te vean los demás jugadores?</p>
+
+  {{#if error}}
+    <p class="auth-error">{{error}}</p>
+  {{/if}}
+
+  <form class="auth-form" method="POST" action="/auth/onboarding">
+    <div class="form-group">
+      <label for="displayName">Nombre visible</label>
+      <input
+        type="text"
+        id="displayName"
+        name="displayName"
+        required
+        minlength="2"
+        maxlength="30"
+        autocomplete="off"
+        placeholder="Ej: El pichichi, JuanRomalphite10, Messi..."
+        autofocus
+      />
+      <span class="form-hint">Este nombre aparecerá en los partidos y estadísticas.</span>
+    </div>
+    <button type="submit" class="btn-auth">Continuar</button>
+  </form>
+</div>

@@ -1,0 +1,74 @@
+<div class="page-header">
+  <span class="eyebrow">Jugador</span>
+  <h1>{{player.name}}</h1>
+  {{#if user}}
+  <p class="page-header-meta">{{user.displayName}}</p>
+  {{/if}}
+</div>
+
+<div class="profile-grid">
+
+  <!-- Avatar card -->
+  <div class="form-panel profile-avatar-card">
+    <p class="section-label">Foto de perfil</p>
+    <div class="profile-avatar-wrap">
+      {{#if user.avatar}}
+        <img src="{{user.avatar}}" alt="avatar" class="profile-avatar-img" />
+      {{else}}
+        <div class="profile-avatar-placeholder">
+          {{#if player.name}}{{player.name.[0]}}{{else}}?{{/if}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Stats & matches -->
+  <div class="profile-stats-col">
+
+    {{#if stats}}
+    <div class="form-panel profile-stats-card">
+      <p class="section-label">Estadísticas</p>
+      <div class="profile-stats-grid">
+        <div class="profile-stat-item">
+          <span class="profile-stat-value">{{stats.matches}}</span>
+          <span class="profile-stat-label">Partidos</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-goals">{{stats.goals}}</span>
+          <span class="profile-stat-label">Goles</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-assists">{{stats.assists}}</span>
+          <span class="profile-stat-label">Asistencias</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-win">{{stats.wins}}</span>
+          <span class="profile-stat-label">Victorias</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-draw">{{stats.draws}}</span>
+          <span class="profile-stat-label">Empates</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-loss">{{stats.losses}}</span>
+          <span class="profile-stat-label">Derrotas</span>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if recentMatches.length}}
+    <div class="form-panel profile-recent-matches">
+      <p class="section-label">Historial de partidos</p>
+      {{#each recentMatches}}
+      <a href="/matches#match-{{this._id}}" class="profile-match-row">
+        <span class="profile-match-date">{{formatDate this.date}}</span>
+        <span class="profile-match-score">{{this.teamA}} — {{this.teamB}}</span>
+        {{#if this.venue}}<span class="profile-match-venue">{{this.venue}}</span>{{/if}}
+      </a>
+      {{/each}}
+    </div>
+    {{/if}}
+
+  </div>
+</div>

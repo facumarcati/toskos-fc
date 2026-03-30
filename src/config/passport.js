@@ -3,10 +3,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/user.model.js";
 
-// 🔥 DEBUG (dejalo mientras probás)
-console.log("🔥 Passport cargado");
-console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
-console.log("GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET);
+
 
 // Serialize / Deserialize
 passport.serializeUser((user, done) => {
@@ -80,8 +77,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log("🔥 Google profile:", profile.id);
-
         let user = await User.findOne({ googleId: profile.id });
 
         if (user) return done(null, user);
@@ -92,7 +87,7 @@ passport.use(
           user = await User.findOne({ email });
           if (user) {
             user.googleId = profile.id;
-            user.avatar = profile.photos?.[0]?.value;
+            if (!user.avatar) user.googleAvatar = profile.photos?.[0]?.value;
             await user.save();
             return done(null, user);
           }
@@ -102,7 +97,7 @@ passport.use(
           googleId: profile.id,
           email: email || `${profile.id}@google.com`,
           displayName: profile.displayName,
-          avatar: profile.photos?.[0]?.value,
+          googleAvatar: profile.photos?.[0]?.value,
         });
 
         return done(null, user);
