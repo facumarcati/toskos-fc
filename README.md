@@ -46,11 +46,15 @@ src/
 │   ├── css/
 │   │   └── styles.css
 │   └── js/
+│       ├── auth.js
+│       ├── login.js
 │       ├── newMatch.js
-│       ├── deleteModal.js
+│       ├── protectedRoute.js
 │       ├── realTime.js
-│       └── stats.js
+│       ├── stats.js
+│       └── ui.js
 ├── routes/
+│   ├── auth.route.js
 │   ├── matches.route.js
 │   ├── records.route.js
 │   └── stats.route.js
@@ -59,6 +63,7 @@ src/
 │   │   └── main.handlebars
 │   ├── editMatch.handlebars
 │   ├── home.handlebars
+│   ├── login.handlebars
 │   ├── matches.handlebars
 │   ├── newMatch.handlebars
 │   ├── records.handlebars

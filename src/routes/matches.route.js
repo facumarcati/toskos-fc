@@ -26,11 +26,18 @@ router.get("/", async (req, res) => {
     .populate("players.player")
     .sort({ date: order === "asc" ? 1 : -1 });
 
+  const winsA = matches.filter((m) => m.teamA > m.teamB).length;
+  const winsB = matches.filter((m) => m.teamB > m.teamA).length;
+  const draws = matches.filter((m) => m.teamA === m.teamB).length;
+
   res.render("matches", {
     matches,
     selectedSeason: season || "all",
     matchCount: matches.length,
     selectedOrder: order,
+    winsA,
+    winsB,
+    draws,
   });
 });
 

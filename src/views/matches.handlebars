@@ -1,9 +1,23 @@
 <div class="page-header">
-  <span class="eyebrow">Historial</span>
-  <h1>Partidos</h1>
-  <p class="page-header-meta">
-    {{matchCount}} {{#if (eq matchCount 1)}}partido{{else}}partidos{{/if}}
-  </p>
+  <div class="page-header-top">
+    <div>
+      <span class="eyebrow">Historial</span>
+      <h1>Partidos</h1>
+      <p class="page-header-meta">
+        {{matchCount}} {{#if (eq matchCount 1)}}partido{{else}}partidos{{/if}}
+      </p>
+    </div>
+    {{#if matchCount}}
+    <div class="match-donut-wrapper">
+      <canvas id="matchDonut" width="110" height="110"></canvas>
+      <div class="donut-legend">
+        <span class="donut-legend-item"><span class="dot dot-white"></span>Blanco {{winsA}}</span>
+        <span class="donut-legend-item"><span class="dot dot-draw"></span>Empate {{draws}}</span>
+        <span class="donut-legend-item"><span class="dot dot-black"></span>Negro {{winsB}}</span>
+      </div>
+    </div>
+    {{/if}}
+  </div>
 </div>
 
 <div class="matches-header">
@@ -135,3 +149,8 @@
   <a href="/matches/new" class="btn-yellow" style="margin-top:24px; display:inline-flex; width:auto; padding:12px 32px">+ Nuevo Partido</a>
 </div>
 {{/each}}
+
+<script src="/js/auth.js"></script>
+<script>
+  const donutData = { winsA: {{winsA}}, winsB: {{winsB}}, draws: {{draws}} };
+</script>

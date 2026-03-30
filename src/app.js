@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import matchesRouter from "./routes/matches.route.js";
 import statsRouter from "./routes/stats.route.js";
 import recordsRouter from "./routes/records.route.js";
+import authRouter from "./routes/auth.route.js";
 
 dotenv.config();
 
@@ -64,9 +65,14 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
 app.use("/matches", matchesRouter);
 app.use("/stats", statsRouter);
 app.use("/records", recordsRouter);
+app.use("/api/auth", authRouter);
 
 http.listen(PORT, () => {
   console.log("Servidor iniciado en http://localhost:" + PORT);

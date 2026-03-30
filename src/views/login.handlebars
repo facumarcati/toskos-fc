@@ -1,0 +1,48 @@
+<div class="login-page">
+  <div class="login-card">
+
+    <div class="login-header">
+      <h1 class="login-title">Toskos FC</h1>
+      <p class="login-subtitle">Acceso administrador</p>
+    </div>
+
+    <form id="loginForm">
+      <div class="login-field">
+        <label class="login-label">Usuario</label>
+        <input
+          type="text"
+          class="login-input"
+          id="username"
+          placeholder="Ingresá tu usuario"
+          autocomplete="username"
+          required
+        />
+      </div>
+
+      <div class="login-field">
+        <label class="login-label">Contraseña</label>
+        <input
+          type="password"
+          class="login-input"
+          id="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+
+      <p id="loginError" class="login-error"></p>
+
+      <button
+        type="submit"
+        class="btn-yellow"
+        style="width:100%; margin-top:8px;"
+      >
+        Ingresar
+      </button>
+    </form>
+
+  </div>
+</div>
+
+<script src="/js/login.js"></script>
