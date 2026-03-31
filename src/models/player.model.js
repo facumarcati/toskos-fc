@@ -6,6 +6,10 @@ const playerSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  guest: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Player = mongoose.model("Player", playerSchema);

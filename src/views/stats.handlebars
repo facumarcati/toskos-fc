@@ -70,10 +70,17 @@
 
     <ul class="product-list">
       {{#each stats}}
-        <li class="product-row stat-row {{#if this.isGuest}}player-guest{{/if}}">
+        <li class="product-row stat-row {{#if this.isGuest}}player-guest{{/if}}"
+          {{#unless (isEC this.name)}}
+            style="cursor: pointer;"
+            onclick="window.location='/players/{{this._id}}?season={{../selectedSeason}}'"
+          {{/unless}}
+        >
           <span class="col-num">{{add @index 1}}</span>
           <div class="col-title">
-            <span class="product-row-title">{{this.name}}</span>
+            <a class="product-row-title">
+              {{this.name}}
+            </a>
           </div>
 
           <span class="stat-cell">

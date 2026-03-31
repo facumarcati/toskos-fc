@@ -1,0 +1,229 @@
+<div class="page-header">
+  <span class="eyebrow">
+    Perfil de jugador
+  </span>
+  <h1>
+    {{player.name}}
+  </h1>
+  <label class="filter-checkbox" style="margin-top:8px; display:inline-flex;">
+    <input
+      type="checkbox"
+      id="toggleGuest"
+      {{#if player.guest}}checked{{/if}}
+      onchange="updateGuestStatus('{{player._id}}', this.checked)"
+    />
+    Jugador invitado
+  </label>
+</div>
+
+<div class="matches-header">
+  <form method="GET" class="season-filter">
+    <select name="season" onchange="this.form.submit()">
+        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
+        <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
+        <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
+        <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>2024</option>
+    </select>
+  </form>
+</div>
+
+<div class="profile-layout">
+  <div class="form-panel">
+    <p class="section-label">
+      Estadísticas
+    </p>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <strong>{{stats.played}}</strong>
+        <span>Partidos</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.winrate}}%</strong>
+        <span>Winrate</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.goals}}</strong>
+        <span>Goles</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.assists}}</strong>
+        <span>Asistencias</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.wins}}</strong>
+        <span>Victorias</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.draws}}</strong>
+        <span>Empates</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.losses}}</strong>
+        <span>Derrotas</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="profile-teams">
+  <div class="form-panel">
+    <p class="section-label">
+      Equipo blanco
+    </p>
+    <div class="team-grid">
+      <div class="stat-box">
+        <strong>{{stats.white.played}}</strong>
+        <span>PJ</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.white.wins}}</strong>
+        <span>PG</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.white.draws}}</strong>
+        <span>PE</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.white.losses}}</strong>
+        <span>PP</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.white.winrate}}%</strong>
+        <span>WR</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.white.goals}}</strong>
+        <span>G</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.white.assists}}</strong>
+        <span>A</span>
+      </div>
+    </div>
+  </div>
+  <div class="form-panel">
+    <p class="section-label">
+      Equipo negro
+    </p>
+    <div class="team-grid">
+      <div class="stat-box">
+        <strong>{{stats.black.played}}</strong>
+        <span>PJ</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.black.wins}}</strong>
+        <span>PG</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.black.draws}}</strong>
+        <span>PE</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.black.losses}}</strong>
+        <span>PP</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.black.winrate}}%</strong>
+        <span>WR</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.black.goals}}</strong>
+        <span>G</span>
+      </div>
+      <div class="stat-box">
+        <strong>{{stats.black.assists}}</strong>
+        <span>A</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="player-matches">
+  <div class="section-header">
+    <h2>Partidos recientes</h2>
+  </div>
+  <div id="matchesContainer">
+    {{#each matches}}
+    <div class="match-card match-card-compact">
+        <div class="match-scoreboard">
+        <div class="match-team">
+            <span class="match-team-label">Equipo</span>
+            <span class="match-team-name">Blanco</span>
+            {{#if (gt this.teamA this.teamB)}}
+            <span class="match-badge badge-win">Ganador</span>
+            {{else if (eq this.teamA this.teamB)}}
+            <span class="match-badge badge-draw">Empate</span>
+            {{/if}}
+        </div>
+        <div class="match-score">
+            <div class="match-date">
+            {{formatDate this.date}}
+            </div>
+            <span class="match-score-number">
+            {{this.teamA}} — {{this.teamB}}
+            </span>
+        </div>
+        <div class="match-team match-team-right">
+            <span class="match-team-label">Equipo</span>
+            <span class="match-team-name">Negro</span>
+            {{#if (gt this.teamB this.teamA)}}
+            <span class="match-badge badge-win">Ganador</span>
+            {{else if (eq this.teamA this.teamB)}}
+            <span class="match-badge badge-draw">Empate</span>
+            {{/if}}
+        </div>
+        </div>
+        <div class="match-card-footer match-card-footer-compact">
+        <div class="footer-left">
+            {{#if (gt this.teamA this.teamB)}}
+            {{#if (eq this.playerStats.team "A")}}
+                <span class="match-badge badge-win">Victoria</span>
+            {{else}}
+                <span class="match-badge badge-loss">Derrota</span>
+            {{/if}}
+            {{else if (gt this.teamB this.teamA)}}
+            {{#if (eq this.playerStats.team "B")}}
+                <span class="match-badge badge-win">Victoria</span>
+            {{else}}
+                <span class="match-badge badge-loss">Derrota</span>
+            {{/if}}
+            {{else}}
+            <span class="match-badge badge-draw">Empate</span>
+            {{/if}}
+            <span class="player-stat {{#if this.playerStats.goals}}stat-active{{/if}}">
+                ⚽ {{this.playerStats.goals}}
+            </span>
+            <span class="player-stat {{#if this.playerStats.assists}}stat-active{{/if}}">
+                🎯 {{this.playerStats.assists}}
+            </span>
+        </div>
+        <div class="footer-right">
+            <a
+            href="/matches?season=all#match-{{this._id}}"
+            class="btn-match-action btn-edit"
+            >
+            Ver
+            </a>
+        </div>
+        </div>
+    </div>
+    {{else}}
+        <div class="list-empty-state">
+        Sin partidos todavía
+        </div>
+    {{/each}}
+  </div>
+  {{#if (gt totalMatches 3)}}
+  <button
+    id="loadMoreMatches"
+    class="btn-yellow"
+    data-page="1"
+    data-player="{{player._id}}"
+    data-season="{{selectedSeason}}"
+  >
+    Ver más
+  </button>
+  {{/if}}
+</div>
+
+<script src="/js/playerProfile.js"></script>
