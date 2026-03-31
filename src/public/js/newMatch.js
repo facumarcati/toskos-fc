@@ -40,11 +40,6 @@ function addPlayer(team) {
 
       <input type="hidden" name="players[${index}][team]" value="${team}" />
 
-      <label class="btn-guest-player">
-        <input type="checkbox" name="players[${index}][guest]" />
-        👤
-      </label>
-
       <button
         type="button"
         class="btn-remove-player"

@@ -44,7 +44,6 @@ router.get("/", async (req, res) => {
   const stats = await Match.aggregate([
     { $match: matchFilter },
     { $unwind: "$players" },
-    ...(!includeGuests ? [{ $match: { "players.guest": { $ne: true } } }] : []),
     {
       $lookup: {
         from: "players",
@@ -54,6 +53,9 @@ router.get("/", async (req, res) => {
       },
     },
     { $unwind: "$playerInfo" },
+    ...(!includeGuests
+      ? [{ $match: { "playerInfo.guest": { $ne: true } } }]
+      : []),
     {
       $addFields: {
         win: {
@@ -117,7 +119,7 @@ router.get("/", async (req, res) => {
       $group: {
         _id: "$players.player",
         name: { $first: "$playerInfo.name" },
-        isGuest: { $first: "$players.guest" },
+        isGuest: { $first: "$playerInfo.guest" },
         matches: {
           $sum: { $cond: [{ $eq: ["$playerInfo.name", "E/C"] }, 0, 1] },
         },

@@ -131,7 +131,6 @@ router.post("/:id/edit", async (req, res) => {
       team: p.team,
       goals: Number(p.goals) || 0,
       assists: Number(p.assists) || 0,
-      guest: p.guest === "on",
     });
   }
 

@@ -87,7 +87,7 @@
       <ul class="player-list">
         {{#each this.players}}
           {{#if (eq this.team "A")}}
-          <li class="player-item {{#if this.guest}}player-guest{{/if}}">
+          <li class="player-item {{#if this.player.guest}}player-guest{{/if}}">
             <span class="player-item-name">{{this.player.name}}</span>
             <div class="player-item-stats">
               <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
@@ -108,7 +108,7 @@
       <ul class="player-list">
         {{#each this.players}}
           {{#if (eq this.team "B")}}
-          <li class="player-item {{#if this.guest}}player-guest{{/if}}">
+          <li class="player-item {{#if this.player.guest}}player-guest{{/if}}">
             <span class="player-item-name">{{this.player.name}}</span>
             <div class="player-item-stats">
               <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">

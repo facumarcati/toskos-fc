@@ -14,10 +14,6 @@ const playerStatsSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  guest: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const matchSchema = new mongoose.Schema({

@@ -4,7 +4,6 @@
 </div>
 
 <form action="/matches" method="POST">
-
   <div class="form-panel">
     <div class="form-row">
       <div>
@@ -43,34 +42,26 @@
 
     <fieldset>
       <div class="score-inputs">
-
         <div class="score-team">
           <label>Blanco</label>
           <div class="match-score">
             <span id="scoreA">0</span>
           </div>
-
           <input type="hidden" name="teamA" id="teamA_score" value="0" />
         </div>
-
         <span class="score-vs">—</span>
-
         <div class="score-team">
           <label>Negro</label>
           <div class="match-score">
             <span id="scoreB">0</span>
           </div>
-
           <input type="hidden" name="teamB" id="teamB_score" value="0" />
         </div>
-
       </div>
     </fieldset>
   </div>
 
-  <!-- Equipos -->
   <div class="teams-grid">
-
     <div class="form-panel">
       <p class="section-label">Equipo Blanco</p>
       <fieldset>
@@ -82,7 +73,6 @@
         + Agregar jugador
       </button>
     </div>
-
     <div class="form-panel">
       <p class="section-label">Equipo Negro</p>
       <fieldset>
@@ -94,13 +84,10 @@
         + Agregar jugador
       </button>
     </div>
-
   </div>
-
   <button type="submit" class="btn-yellow">
     Guardar Partido
   </button>
-
 </form>
 
 <script src="/js/newMatch.js"></script>
