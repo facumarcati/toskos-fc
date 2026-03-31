@@ -28,6 +28,7 @@ const matchSchema = new mongoose.Schema({
   },
   venue: { type: String, default: "" },
   youtubeUrl: { type: String, default: "" },
+  youtubeHlUrl: { type: String, default: "" },
   teamA: Number,
   teamB: Number,
   players: [playerStatsSchema],
