@@ -455,7 +455,7 @@ h2 {
 
 /* ── HOME HERO ─────────────────────────────── */
 .home-hero {
-  min-height: calc(100vh - 56px - 73px);
+  min-height: calc(100vh - 180px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1941,6 +1941,7 @@ a {
 
 .match-card-footer-compact {
   padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .player-matches {

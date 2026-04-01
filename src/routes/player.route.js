@@ -171,10 +171,10 @@ router.patch("/:id/guest", async (req, res) => {
 });
 
 router.get("/:id/matches", async (req, res) => {
-  const { page = 1, season = "all" } = req.query;
+  const { page = 1, season = "all", limit = 3 } = req.query;
+  const limitNum = Math.min(parseInt(limit), 999);
 
-  const limit = 3;
-  const skip = (page - 1) * limit;
+  const skip = (page - 1) * limitNum;
 
   let filter = {
     "players.player": req.params.id,
@@ -190,7 +190,7 @@ router.get("/:id/matches", async (req, res) => {
   const matches = await Match.find(filter)
     .sort({ date: -1 })
     .skip(skip)
-    .limit(limit)
+    .limit(limitNum)
     .lean();
 
   res.json(matches);

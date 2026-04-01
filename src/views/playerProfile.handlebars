@@ -162,6 +162,9 @@
             <span class="match-score-number">
             {{this.teamA}} — {{this.teamB}}
             </span>
+            {{#if this.venue}}
+              <span class="match-score-meta">{{this.venue}}</span>
+            {{/if}}
         </div>
         <div class="match-team match-team-right">
             <span class="match-team-label">Equipo</span>
