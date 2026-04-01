@@ -16,6 +16,11 @@ const container = document.getElementById("matchesContainer");
 let expanded = false;
 const originalHTML = container ? container.innerHTML : "";
 
+const title = document.getElementById("matchesTitle");
+const initialCount = container
+  ? container.querySelectorAll(".match-card").length
+  : 0;
+
 if (btn) {
   btn.addEventListener("click", async () => {
     const playerId = btn.dataset.player;
@@ -24,7 +29,9 @@ if (btn) {
     if (expanded) {
       container.innerHTML = originalHTML;
       btn.textContent = "Ver más";
+      title.textContent = `Partidos recientes`;
       expanded = false;
+
       return;
     }
 
@@ -42,10 +49,13 @@ if (btn) {
 
       const goals = playerStats?.goals ?? 0;
       const assists = playerStats?.assists ?? 0;
+
       const isWinA = match.teamA > match.teamB;
       const isWinB = match.teamB > match.teamA;
       const isDraw = match.teamA === match.teamB;
+
       const playerTeam = playerStats?.team;
+
       const playerWon =
         (playerTeam === "A" && isWinA) || (playerTeam === "B" && isWinB);
       const playerLost =
@@ -100,7 +110,74 @@ if (btn) {
       );
     });
 
+    title.textContent = `Partidos totales - ${matches.length}`;
     btn.textContent = "Ver menos";
     expanded = true;
+  });
+}
+
+const editBtn = document.getElementById("editNameBtn");
+const nameText = document.getElementById("playerNameText");
+
+if (editBtn) {
+  editBtn.addEventListener("click", () => {
+    const currentName = nameText.textContent.trim();
+
+    const input = document.createElement("input");
+
+    input.value = currentName;
+
+    input.className = "player-name-input";
+
+    nameText.replaceWith(input);
+
+    input.focus();
+    input.select();
+
+    const save = async () => {
+      const newName = input.value.trim();
+
+      if (!newName || newName === currentName) {
+        input.replaceWith(nameText);
+
+        return;
+      }
+
+      try {
+        const playerId = editBtn.dataset.player;
+
+        await fetch(`/players/${playerId}/name`, {
+          method: "PATCH",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            name: newName,
+          }),
+        });
+
+        nameText.textContent = newName;
+      } catch (error) {
+        console.error(error);
+        alert("Error actualizando nombre");
+      }
+
+      input.replaceWith(nameText);
+    };
+
+    input.addEventListener("blur", save);
+
+    input.addEventListener("keydown", async (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        await save();
+      }
+
+      if (e.key === "Escape") {
+        input.replaceWith(nameText);
+      }
+    });
   });
 }

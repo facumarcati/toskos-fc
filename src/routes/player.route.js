@@ -49,12 +49,118 @@ router.get("/:id", async (req, res) => {
 
     const totalMatches = allMatches.length;
 
+    const currentYear = new Date().getFullYear();
+
+    const completedSeasons = [2024, 2025].filter((y) => y < currentYear);
+
+    const trophies = [];
+
+    for (const season of completedSeasons) {
+      const start = new Date(`${season}-01-01`);
+      const end = new Date(`${season + 1}-01-01`);
+
+      const seasonFilter = { date: { $gte: start, $lt: end } };
+
+      const topScorers = await Match.aggregate([
+        { $match: seasonFilter },
+        { $unwind: "$players" },
+        {
+          $lookup: {
+            from: "players",
+            localField: "players.player",
+            foreignField: "_id",
+            as: "playerInfo",
+          },
+        },
+        { $unwind: "$playerInfo" },
+        { $match: { "playerInfo.guest": { $ne: true } } },
+        {
+          $group: {
+            _id: "$players.player",
+            name: { $first: "$playerInfo.name" },
+            goals: { $sum: "$players.goals" },
+            matches: { $sum: 1 },
+          },
+        },
+        { $sort: { goals: -1, matches: 1 } },
+      ]);
+
+      const topAssists = await Match.aggregate([
+        { $match: seasonFilter },
+        { $unwind: "$players" },
+        { $match: { "players.guest": { $ne: true } } },
+        {
+          $lookup: {
+            from: "players",
+            localField: "players.player",
+            foreignField: "_id",
+            as: "playerInfo",
+          },
+        },
+        { $unwind: "$playerInfo" },
+        {
+          $group: {
+            _id: "$players.player",
+            name: { $first: "$playerInfo.name" },
+            assists: { $sum: "$players.assists" },
+            matches: { $sum: 1 },
+          },
+        },
+        { $sort: { assists: -1, matches: 1 } },
+      ]);
+
+      const medals = ["🥇", "🥈", "🥉"];
+
+      let lastGoals = null;
+      let position = -1;
+
+      topScorers.forEach((p, index) => {
+        if (p.goals !== lastGoals) {
+          position++;
+          lastGoals = p.goals;
+        }
+
+        if (position < 3 && p._id.toString() === playerId) {
+          trophies.push({
+            season,
+            type: "Goleador",
+            medal: medals[position],
+            position: position + 1,
+            value: p.goals,
+            unit: "goles",
+          });
+        }
+      });
+
+      let lastAssists = null;
+      let positionA = -1;
+
+      topAssists.forEach((p, i) => {
+        if (p.assists !== lastAssists) {
+          positionA++;
+          lastAssists = p.assists;
+        }
+
+        if (positionA < 3 && p._id.toString() === playerId) {
+          trophies.push({
+            season,
+            type: "Asistidor",
+            medal: medals[positionA],
+            position: positionA + 1,
+            value: p.assists,
+            unit: "asistencias",
+          });
+        }
+      });
+    }
+
     res.render("playerProfile", {
       player,
       stats,
       matches,
       totalMatches,
       selectedSeason: season,
+      trophies,
     });
   } catch (error) {
     console.error(error);
@@ -167,6 +273,54 @@ router.patch("/:id/guest", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error actualizando invitado" });
+  }
+});
+
+router.patch("/:id/name", async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({
+        error: "Nombre invaludo",
+      });
+    }
+
+    if (name.trim().length < 2) {
+      return res.status(400).json({
+        error: "Nombre muy corto",
+      });
+    }
+
+    if (name.length > 30) {
+      return res.status(400).json({
+        error: "Nombre muy largo",
+      });
+    }
+
+    const player = await Player.findByIdAndUpdate(
+      req.params.id,
+      {
+        name: name.trim(),
+      },
+      {
+        new: true,
+      },
+    );
+
+    if (!player) {
+      return res.status(404).json({
+        error: "Jugador no encontrado",
+      });
+    }
+
+    res.json(player);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      error: "Error actualizando nombre",
+    });
   }
 });
 

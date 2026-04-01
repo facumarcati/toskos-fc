@@ -2,8 +2,17 @@
   <span class="eyebrow">
     Perfil de jugador
   </span>
-  <h1>
-    {{player.name}}
+  <h1 class="player-name" id="playerNameWrapper">
+    <span id="playerNameText">
+      {{player.name}}
+    </span>
+    <button
+      class="btn-edit-name"
+      id="editNameBtn"
+      data-player="{{player._id}}"
+    >
+      ✏️
+    </button>
   </h1>
   <label class="filter-checkbox" style="margin-top:8px; display:inline-flex;">
     <input
@@ -138,9 +147,28 @@
   </div>
 </div>
 
+{{#if trophies.length}}
+<div class="profile-trophies">
+  <div class="form-panel">
+    <p class="section-label">Títulos</p>
+    <div class="trophy-list">
+      {{#each trophies}}
+      <div class="trophy-card" data-position="{{this.position}}">
+        <span class="trophy-medal">{{this.medal}}</span>
+        <div class="trophy-info">
+          <span class="trophy-title">{{this.type}} {{this.season}}</span>
+          <span class="trophy-value">{{this.value}} {{this.unit}}</span>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
+{{/if}}
+
 <div class="player-matches">
   <div class="section-header">
-    <h2>Partidos recientes</h2>
+    <h2 id="matchesTitle">Partidos recientes</h2>
   </div>
   <div id="matchesContainer">
     {{#each matches}}
