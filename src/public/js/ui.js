@@ -92,3 +92,35 @@ if (donutCanvas && typeof donutData !== "undefined") {
     startAngle += slice + gap;
   });
 }
+
+function showToast(message, type = "success", duration = 3000) {
+  let toast = document.getElementById("appToast");
+
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "appToast";
+    toast.className = "toast";
+
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.className = `toast toast-${type} show`;
+
+  clearTimeout(toast._timeout);
+
+  toast._timeout = setTimeout(() => {
+    toast.classList.remove("show");
+  }, duration);
+}
+
+function initPendingToast() {
+  const pending = sessionStorage.getItem("pendingToast");
+  if (!pending) return;
+  sessionStorage.removeItem("pendingToast");
+  const { message, type } = JSON.parse(pending);
+  setTimeout(() => showToast(message, type), 300);
+}
+
+// En el init:
+initPendingToast();

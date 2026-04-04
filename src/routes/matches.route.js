@@ -6,7 +6,7 @@ import Player from "../models/player.model.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const { season = "2026", order = "desc" } = req.query;
+  const { season = "2026", order = "desc", venue = "", date = "" } = req.query;
 
   let filter = {};
 
@@ -22,6 +22,24 @@ router.get("/", async (req, res) => {
     };
   }
 
+  if (venue) {
+    filter.venue = new RegExp(venue, "i");
+  }
+
+  if (date) {
+    const start = new Date(date);
+    start.setUTCHours(0, 0, 0, 0);
+
+    const end = new Date(date);
+    end.setUTCHours(23, 59, 59, 999);
+
+    filter.date = { $gte: start, $lte: end };
+  }
+
+  const venues = await Match.distinct("venue").then((v) =>
+    v.filter(Boolean).sort(),
+  );
+
   const matches = await Match.find(filter)
     .populate("players.player")
     .sort({ date: order === "asc" ? 1 : -1 });
@@ -30,19 +48,29 @@ router.get("/", async (req, res) => {
   const winsB = matches.filter((m) => m.teamB > m.teamA).length;
   const draws = matches.filter((m) => m.teamA === m.teamB).length;
 
+  const goalsA = matches.reduce((acc, m) => acc + m.teamA, 0);
+  const goalsB = matches.reduce((acc, m) => acc + m.teamB, 0);
+
   res.render("matches", {
     matches,
     selectedSeason: season || "all",
     matchCount: matches.length,
     selectedOrder: order,
+    selectedVenue: venue,
+    selectedDate: date,
+    venues,
     winsA,
     winsB,
     draws,
+    goalsA,
+    goalsB,
   });
 });
 
-router.get("/new", (req, res) => {
-  res.render("newMatch");
+router.get("/new", async (req, res) => {
+  const players = await Player.find().sort({ name: 1 }).lean();
+
+  res.render("newMatch", { players });
 });
 
 router.post("/", async (req, res) => {
@@ -100,13 +128,15 @@ router.post("/", async (req, res) => {
 
 router.get("/:id/edit", async (req, res) => {
   const { season = "2026" } = req.query;
+
   const match = await Match.findById(req.params.id).populate("players.player");
+  const players = await Player.find().sort({ name: 1 }).lean();
 
   if (!match) return res.status(404).send("Partido no encontrado");
 
   match.dateFormatted = match.date.toISOString().split("T")[0];
 
-  res.render("editMatch", { match, season });
+  res.render("editMatch", { match, season, players });
 });
 
 router.post("/:id/edit", async (req, res) => {

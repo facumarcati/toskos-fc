@@ -138,6 +138,7 @@ nav a.nav-active {
 
 .nav-left {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
@@ -425,6 +426,27 @@ nav a.nav-active {
 .dot-black {
   background: #828b97;
 }
+
+.donut-goals {
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.donut-goals-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
 /* ── Headings ──────────────────────────────── */
 h1 {
   font-family: var(--font-display);
@@ -1010,6 +1032,53 @@ fieldset {
 .season-filter select option {
   background: var(--bg-raised);
   color: var(--text-primary);
+}
+
+.match-date-input-filter {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 9px 14px;
+  outline: none;
+  cursor: pointer;
+  color-scheme: dark;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.match-date-input-filter:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.btn-clear-filters {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-muted);
+  padding: 9px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.btn-clear-filters:hover {
+  color: var(--loss);
+  border-color: var(--loss);
 }
 
 .btn-order {
@@ -1728,6 +1797,74 @@ a {
   .form-row {
     grid-template-columns: 1fr;
   }
+
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .stats-grid .stat-box {
+    grid-column: auto !important;
+  }
+
+  .stats-grid .stat-box:nth-last-child(-n + 3) {
+    grid-column: auto !important;
+  }
+
+  .stat-box strong {
+    font-size: 22px;
+  }
+
+  .stat-box span {
+    font-size: 11px;
+  }
+
+  .profile-teams {
+    grid-template-columns: 1fr !important;
+  }
+
+  .team-grid .stat-box {
+    padding: 10px 4px;
+  }
+
+  .team-grid .stat-box strong {
+    font-size: 15px;
+  }
+
+  .trophy-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .trophy-card {
+    min-width: unset;
+    flex-direction: row;
+    text-align: left;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  .profile-teams {
+    grid-template-columns: 1fr !important;
+  }
+
+  .trophy-list {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .stat-box {
+    grid-column: span 3;
+  }
+
+  .stats-grid .stat-box:nth-last-child(-n + 3) {
+    grid-column: span 2;
+  }
 }
 
 .records-section {
@@ -2044,4 +2181,47 @@ a {
   border-radius: var(--radius-sm);
   padding: 4px 8px;
   color: var(--text-primary);
+}
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  left: auto;
+  background: var(--bg-surface);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-card);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(calc(100% + 24px));
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+  z-index: 300;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast.toast-success {
+  color: var(--win);
+  background: var(--win-bg);
+  border-color: var(--win);
+}
+
+.toast.toast-error {
+  color: var(--loss);
+  background: var(--loss-bg);
+  border-color: var(--loss);
 }

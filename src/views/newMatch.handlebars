@@ -3,6 +3,12 @@
   <h1>Cargar Resultado</h1>
 </div>
 
+<datalist id="playersList">
+  {{#each players}}
+    <option value="{{this.name}}">
+  {{/each}}
+</datalist>
+
 <form action="/matches" method="POST">
   <div class="form-panel">
     <div class="form-row">

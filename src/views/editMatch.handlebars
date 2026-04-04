@@ -3,6 +3,12 @@
   <h1>Modificar Resultado</h1>
 </div>
 
+<datalist id="playersList">
+  {{#each players}}
+    <option value="{{this.name}}">
+  {{/each}}
+</datalist>
+
 <form action="/matches/{{match._id}}/edit?season={{season}}" method="POST">
   <div class="form-panel">
     <div class="form-row">
@@ -94,7 +100,8 @@
                   type="text"
                   name="players[{{@index}}][name]"
                   value="{{this.player.name}}"
-                  autocomplete="on"
+                  list="playersList"
+                  autocomplete="off"
                 />
                 <span class="player-row-label">⚽</span>
                 <input
@@ -142,7 +149,8 @@
                   type="text"
                   name="players[{{@index}}][name]"
                   value="{{this.player.name}}"
-                  autocomplete="on"
+                  list="playersList"
+                  autocomplete="off"
                 />
                 <span class="player-row-label">⚽</span>
                 <input

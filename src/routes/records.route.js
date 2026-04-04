@@ -44,7 +44,6 @@ router.get("/", async (req, res) => {
   const topAssists = await Match.aggregate([
     { $match: matchFilter },
     { $unwind: "$players" },
-    { $match: { "players.guest": { $ne: true } } },
     {
       $lookup: {
         from: "players",
@@ -54,6 +53,7 @@ router.get("/", async (req, res) => {
       },
     },
     { $unwind: "$playerInfo" },
+    { $match: { "playerInfo.guest": { $ne: true } } },
     {
       $project: {
         name: "$playerInfo.name",
