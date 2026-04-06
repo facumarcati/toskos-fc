@@ -80,6 +80,11 @@
           <div class="col-title">
             <a class="product-row-title">
               {{this.name}}
+              {{#if this.titles}}
+                <span class="player-titles">
+                  🏆 {{this.titles}}
+                </span>
+              {{/if}}
             </a>
           </div>
 
@@ -126,3 +131,4 @@
 </div>
 
 <script src="/js/stats.js"></script>
+<script src="/js/titles.js"></script>

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { getTitlesByPlayer } from "../services/titles.service.js";
 import Match from "../models/match.model.js";
 
 const router = Router();
@@ -145,6 +146,12 @@ router.get("/", async (req, res) => {
       $sort: sortObj,
     },
   ]);
+
+  const titlesMap = await getTitlesByPlayer(season);
+
+  stats.forEach((player) => {
+    player.titles = titlesMap[player._id.toString()] || 0;
+  });
 
   res.render("stats", {
     stats,

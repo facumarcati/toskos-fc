@@ -25,8 +25,7 @@
 </div>
 
 <div class="matches-header">
-  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-
+  <div class="matches-filters">
     <form method="GET" action="/matches" class="season-filter">
       <input type="hidden" name="order" value="{{selectedOrder}}" />
       <input type="hidden" name="venue" value="{{selectedVenue}}" />
@@ -80,7 +79,6 @@
       ✕ Limpiar
     </a>
     {{/if}}
-
   </div>
 
   <div class="matches-toolbar">
@@ -90,7 +88,6 @@
 
 {{#each matches}}
 <div class="match-card" id="match-{{this._id}}">
-
   <div class="match-scoreboard">
     <div class="match-team">
       <span class="match-team-label">Equipo</span>
@@ -188,7 +185,6 @@
       <button type="button" class="btn-match-action btn-delete" onclick="openDeleteModal('/matches/{{this._id}}/delete')">Eliminar</button>
     </div>
   </div>
-
 </div>
 {{else}}
 <div class="list-empty-state" style="text-align:center; padding:80px 20px">

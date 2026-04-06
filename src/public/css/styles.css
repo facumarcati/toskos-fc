@@ -372,6 +372,7 @@ nav a.nav-active {
 
 .page-header-top {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
@@ -1983,10 +1984,31 @@ a {
   border-radius: var(--radius-md);
   padding: 20px;
   text-align: center;
+}
+
+/* fila 1 → 2 */
+.stat-box:nth-child(-n + 2) {
+  grid-column: span 6;
+}
+
+/* fila 2 → primeros 4 de 5 */
+.stat-box:nth-child(3) {
   grid-column: span 3;
 }
 
-.stats-grid .stat-box:nth-last-child(-n + 3) {
+.stat-box:nth-child(4) {
+  grid-column: span 3;
+}
+
+/* fila 2 → los otros 4 */
+.stat-box:nth-child(5),
+.stat-box:nth-child(6),
+.stat-box:nth-child(7) {
+  grid-column: span 2;
+}
+
+/* fila 3 → 3 */
+.stat-box:nth-child(n + 8):nth-child(-n + 10) {
   grid-column: span 4;
 }
 
@@ -2015,13 +2037,13 @@ a {
 .stats-grid .stat-box:nth-child(3) strong {
   color: var(--text-primary);
 } /* Goles */
-.stats-grid .stat-box:nth-child(5) strong {
+.stats-grid .stat-box:nth-child(8) strong {
   color: var(--win);
 } /* Victorias */
-.stats-grid .stat-box:nth-child(6) strong {
+.stats-grid .stat-box:nth-child(9) strong {
   color: var(--draw);
 } /* Empates */
-.stats-grid .stat-box:nth-child(7) strong {
+.stats-grid .stat-box:nth-child(10) strong {
   color: var(--loss);
 } /* Derrotas */
 
@@ -2224,4 +2246,56 @@ a {
   color: var(--loss);
   background: var(--loss-bg);
   border-color: var(--loss);
+}
+
+.matches-filters {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .matches-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .matches-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .matches-filters .season-filter {
+    margin-bottom: 0;
+  }
+
+  .matches-filters form:last-of-type {
+    grid-column: span 1;
+  }
+
+  .matches-filters .season-filter select,
+  .matches-filters .match-date-input-filter {
+    width: 100%;
+  }
+
+  .matches-toolbar {
+    order: -1;
+  }
+
+  .btn-yellow-sm {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.player-titles {
+  font-size: 12px;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: #f5c518;
+  font-weight: 600;
 }
