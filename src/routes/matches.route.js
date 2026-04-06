@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { io } from "../app.js";
+import { getMatchMVP } from "../services/mvp.service.js";
 import Match from "../models/match.model.js";
 import Player from "../models/player.model.js";
 
@@ -7,6 +8,8 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   const { season = "2026", order = "desc", venue = "", date = "" } = req.query;
+
+  const user = req.session.user || null;
 
   let filter = {};
 
@@ -40,9 +43,15 @@ router.get("/", async (req, res) => {
     v.filter(Boolean).sort(),
   );
 
-  const matches = await Match.find(filter)
+  const matchesRaw = await Match.find(filter)
     .populate("players.player")
-    .sort({ date: order === "asc" ? 1 : -1 });
+    .sort({ date: order === "asc" ? 1 : -1 })
+    .lean();
+
+  const matches = matchesRaw.map((match) => ({
+    ...match,
+    mvpPlayers: getMatchMVP(match),
+  }));
 
   const winsA = matches.filter((m) => m.teamA > m.teamB).length;
   const winsB = matches.filter((m) => m.teamB > m.teamA).length;
@@ -64,6 +73,7 @@ router.get("/", async (req, res) => {
     draws,
     goalsA,
     goalsB,
+    user,
   });
 });
 
@@ -187,6 +197,27 @@ router.post("/:id/delete", async (req, res) => {
 
   io.emit("match:deleted");
   res.redirect(`/matches?season=${season}`);
+});
+
+router.post("/:id/vote-mvp", async (req, res) => {
+  if (!req.session?.userId) {
+    return res.status(403).json({ error: "Debes estar logueado para votar" });
+  }
+
+  const { playerId } = req.body;
+  const match = await Match.findById(req.params.id);
+  if (!match) return res.status(404).send("Partido no encontrado");
+
+  const voterId = req.session.userId.toString();
+
+  match.mvpVotes = match.mvpVotes.filter(
+    (v) => v.voter && v.voter.toString() !== voterId,
+  );
+
+  match.mvpVotes.push({ voter: voterId, voted: playerId });
+
+  await match.save();
+  res.json({ ok: true });
 });
 
 export default router;

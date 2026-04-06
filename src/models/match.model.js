@@ -28,6 +28,15 @@ const matchSchema = new mongoose.Schema({
   teamA: Number,
   teamB: Number,
   players: [playerStatsSchema],
+  mvpVotes: [
+    {
+      voter: String,
+      voted: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Player",
+      },
+    },
+  ],
 });
 
 const Match = mongoose.model("Match", matchSchema);

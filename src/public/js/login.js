@@ -15,20 +15,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const response = await fetch("/api/auth/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        username,
-        password,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+      credentials: "include",
     });
 
     const data = await response.json();
 
     if (data.success) {
-      localStorage.setItem("token", data.token);
       window.location.href = "/";
     } else {
       const err = document.getElementById("loginError");

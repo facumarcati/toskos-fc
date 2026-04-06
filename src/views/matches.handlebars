@@ -124,8 +124,21 @@
       <ul class="player-list">
         {{#each this.players}}
           {{#if (eq this.team "A")}}
-          <li class="player-item {{#if this.player.guest}}player-guest{{/if}}">
-            <span class="player-item-name">{{this.player.name}}</span>
+          <li class="player-item 
+                {{#if this.player.guest}}player-guest{{/if}}
+                {{#if (includes ../mvpPlayers this.player._id)}}player-mvp{{/if}}"
+            {{#if @root.user}}
+              onclick="voteMVP('{{../_id}}','{{this.player._id}}')"
+            {{else}}
+              title="Debes estar logueado para votar"
+              style="cursor: not-allowed;"
+            {{/if}}>
+            <span class="player-item-name">
+              {{this.player.name}}
+              {{#if (includes ../mvpPlayers this.player._id)}}
+                <span class="mvp-badge">⭐ ({{../mvpVotes.length}})</span>
+              {{/if}}
+            </span>
             <div class="player-item-stats">
               <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
                 ⚽ {{this.goals}}
@@ -145,8 +158,21 @@
       <ul class="player-list">
         {{#each this.players}}
           {{#if (eq this.team "B")}}
-          <li class="player-item {{#if this.player.guest}}player-guest{{/if}}">
-            <span class="player-item-name">{{this.player.name}}</span>
+          <li class="player-item 
+                {{#if this.player.guest}}player-guest{{/if}}
+                {{#if (includes ../mvpPlayers this.player._id)}}player-mvp{{/if}}"
+          {{#if @root.user}}
+            onclick="voteMVP('{{../_id}}','{{this.player._id}}')"
+          {{else}}
+            title="Debes estar logueado para votar"
+            style="cursor: default;"
+          {{/if}}>
+          <span class="player-item-name">
+              {{this.player.name}}
+              {{#if (includes ../mvpPlayers this.player._id)}}
+                <span class="mvp-badge">⭐ ({{../mvpVotes.length}})</span>
+              {{/if}}
+            </span>
             <div class="player-item-stats">
               <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
                 ⚽ {{this.goals}}
@@ -181,8 +207,10 @@
     </div>
 
     <div class="footer-right">
-      <a href="/matches/{{this._id}}/edit?season={{../selectedSeason}}" class="btn-match-action btn-edit">Editar</a>
-      <button type="button" class="btn-match-action btn-delete" onclick="openDeleteModal('/matches/{{this._id}}/delete')">Eliminar</button>
+      {{#if (and user user.admin)}}
+        <a href="/matches/{{this._id}}/edit?season={{../selectedSeason}}" class="btn-match-action btn-edit">Editar</a>
+        <button type="button" class="btn-match-action btn-delete" onclick="openDeleteModal('/matches/{{this._id}}/delete')">Eliminar</button>
+      {{/if}}
     </div>
   </div>
 </div>
@@ -196,4 +224,20 @@
 <script src="/js/auth.js"></script>
 <script>
   const donutData = { winsA: {{winsA}}, winsB: {{winsB}}, draws: {{draws}} };
+</script>
+<script>
+async function voteMVP(matchId, playerId){
+  try{
+    await fetch(`/matches/${matchId}/vote-mvp`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({playerId})
+    });
+    location.reload();
+  }catch(err){
+    console.error(err);
+  }
+}
 </script>

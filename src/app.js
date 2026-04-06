@@ -4,12 +4,15 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 import connectMongoDB from "./config/db.js";
 import dotenv from "dotenv";
+import session from "express-session";
 
 import matchesRouter from "./routes/matches.route.js";
 import statsRouter from "./routes/stats.route.js";
 import recordsRouter from "./routes/records.route.js";
 import authRouter from "./routes/auth.route.js";
 import playerRouter from "./routes/player.route.js";
+
+import Player from "./models/player.model.js";
 
 dotenv.config();
 
@@ -26,8 +29,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("src/public"));
 
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "mvp-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+      sameSite: "lax",
+      secure: false,
+    },
+  }),
+);
+
 app.use((req, res, next) => {
   res.locals.activePage = req.originalUrl;
+
+  res.locals.userId = req.session.userId;
+  res.locals.role = req.session.role;
+
   next();
 });
 
@@ -52,6 +72,14 @@ app.engine(
           year: "numeric",
         });
       },
+      includes(array, value) {
+        if (!array) return false;
+        return array.some((id) => id.toString() === value.toString());
+      },
+      and: function (...args) {
+        args.pop();
+        return args.every(Boolean);
+      },
     },
     runtimeOptions: {
       allowProtoPropertiesByDefault: true,
@@ -69,6 +97,12 @@ app.get("/", (req, res) => {
 
 app.get("/login", (req, res) => {
   res.render("login");
+});
+
+app.get("/register", async (req, res) => {
+  const players = await Player.find().sort({ name: 1 }).lean();
+
+  res.render("register", { players });
 });
 
 app.use("/matches", matchesRouter);
