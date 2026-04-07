@@ -16,13 +16,17 @@ document
 
     const data = await response.json();
 
+    const msg = document.getElementById("registerError");
+
     if (data.success) {
-      window.location.href = "/matches";
+      msg.textContent = "Cuenta creada. Esperá que el admin la apruebe.";
+
+      msg.className = "form-message success";
     } else {
-      const err = document.getElementById("registerError");
+      msg.textContent = data.message || "Error";
 
-      err.textContent = data.message || "error";
-
-      err.style.display = "block";
+      msg.className = "form-message error";
     }
+
+    msg.style.display = "block";
   });

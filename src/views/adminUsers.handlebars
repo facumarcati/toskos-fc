@@ -1,0 +1,69 @@
+<div class="page-header">
+  <span class="eyebrow">Admin</span>
+  <h1>Usuarios</h1>
+</div>
+
+<div class="admin-section">
+  <h2 class="admin-section-title">Pendientes de aprobación</h2>
+  {{#if pendingUsers.length}}
+    <div class="admin-list">
+      {{#each pendingUsers}}
+        <div class="admin-user-card">
+          <div class="admin-user-info">
+            <span class="admin-username">{{this.username}}</span>
+            <span class="admin-player-name">{{this.player.name}}</span>
+          </div>
+          <div class="admin-actions">
+            <button
+              onclick="approveUser('{{this._id}}')"
+              class="btn-yellow btn-yellow-sm"
+            >Aprobar</button>
+            <button
+              onclick="deleteUser('{{this._id}}')"
+              class="btn-match-action btn-delete"
+            >Eliminar</button>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <p class="list-empty-state">No hay usuarios pendientes</p>
+  {{/if}}
+</div>
+
+<div class="admin-section">
+  <h2 class="admin-section-title">Usuarios activos</h2>
+  {{#if approvedUsers.length}}
+    <div class="admin-list">
+      {{#each approvedUsers}}
+        <div class="admin-user-card">
+          <div class="admin-user-info">
+            <span class="admin-username">{{this.username}}</span>
+            <span class="admin-player-name">{{this.player.name}}</span>
+          </div>
+          <div class="admin-actions">
+            <button
+              onclick="toggleUser('{{this._id}}')"
+              class="btn-match-action"
+            >Desactivar</button>
+            <button
+              onclick="deleteUser('{{this._id}}')"
+              class="btn-match-action btn-delete"
+            >Eliminar</button>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <p class="list-empty-state">No hay usuarios activos</p>
+  {{/if}}
+</div>
+
+<script>
+  async function approveUser(id) { await fetch(`/admin/users/${id}/approve`, {
+  method: "POST" }); location.reload(); } async function toggleUser(id) { await
+  fetch(`/admin/users/${id}/toggle`, { method: "POST" }); location.reload(); }
+  async function deleteUser(id) { if (!confirm("Eliminar usuario?")) return;
+  await fetch(`/admin/users/${id}/delete`, { method: "POST" });
+  location.reload(); }
+</script>

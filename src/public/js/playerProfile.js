@@ -1,8 +1,6 @@
 // ── Auth ─────────────────────────────────────
-const token = localStorage.getItem("token");
-
 function isAdmin() {
-  return !!token;
+  return window.currentUser?.role === "admin";
 }
 
 // ── Guest toggle ─────────────────────────────
@@ -178,7 +176,69 @@ function initLoadMore() {
   });
 }
 
+function initEditUsername() {
+  const btn = document.getElementById("editUsernameBtn");
+
+  if (!btn) return;
+
+  const container = btn.parentElement;
+  const textNode = container.childNodes[0];
+
+  btn.addEventListener("click", () => {
+    const current = textNode.textContent.replace("@", "").trim();
+
+    const input = document.createElement("input");
+    input.value = current;
+    input.className = "player-name-input";
+
+    textNode.replaceWith(input);
+
+    input.focus();
+    input.select();
+
+    const save = async () => {
+      const newUsername = input.value.trim();
+
+      if (!newUsername || newUsername === current) {
+        input.replaceWith(textNode);
+
+        return;
+      }
+
+      try {
+        const res = await fetch(`/players/${btn.dataset.player}/username`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: newUsername }),
+        });
+
+        if (!res.ok) {
+          alert("Username no disponible");
+          input.replaceWith(textNode);
+          return;
+        }
+
+        textNode.textContent = "@" + newUsername;
+      } catch (error) {
+        console.error(error);
+        alert("Error actualizando username");
+      }
+
+      input.replaceWith(textNode);
+    };
+
+    input.addEventListener("blur", save);
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") save();
+
+      if (e.key === "Escape") input.replaceWith(textNode);
+    });
+  });
+}
+
 // ── Init ─────────────────────────────────────
 initGuestToggle();
 initEditName();
 initLoadMore();
+initEditUsername();

@@ -6,6 +6,22 @@ import Player from "../models/player.model.js";
 
 const router = Router();
 
+function isAuthenticated(req, res, next) {
+  if (!req.session?.user) {
+    return res.redirect("/login");
+  }
+
+  next();
+}
+
+function isAdmin(req, res, next) {
+  if (req.session?.role !== "admin") {
+    return res.status(403).render("error");
+  }
+
+  next();
+}
+
 router.get("/", async (req, res) => {
   const { season = "2026", order = "desc", venue = "", date = "" } = req.query;
 
@@ -87,13 +103,13 @@ router.get("/", async (req, res) => {
   });
 });
 
-router.get("/new", async (req, res) => {
+router.get("/new", isAdmin, async (req, res) => {
   const players = await Player.find().sort({ name: 1 }).lean();
 
   res.render("newMatch", { players });
 });
 
-router.post("/", async (req, res) => {
+router.post("/", isAdmin, async (req, res) => {
   const { teamA, teamB, date, venue, youtubeUrl, youtubeHlUrl } = req.body;
   let players = req.body.players;
 
@@ -146,7 +162,7 @@ router.post("/", async (req, res) => {
   res.redirect("/matches");
 });
 
-router.get("/:id/edit", async (req, res) => {
+router.get("/:id/edit", isAdmin, async (req, res) => {
   const { season = "2026" } = req.query;
 
   const match = await Match.findById(req.params.id).populate("players.player");
@@ -159,7 +175,7 @@ router.get("/:id/edit", async (req, res) => {
   res.render("editMatch", { match, season, players });
 });
 
-router.post("/:id/edit", async (req, res) => {
+router.post("/:id/edit", isAdmin, async (req, res) => {
   const { season = "2026" } = req.query;
   const { teamA, teamB, date, venue, youtubeUrl, youtubeHlUrl } = req.body;
   let players = req.body.players;
@@ -201,7 +217,7 @@ router.post("/:id/edit", async (req, res) => {
   res.redirect(`/matches?season=${season}`);
 });
 
-router.post("/:id/delete", async (req, res) => {
+router.post("/:id/delete", isAdmin, async (req, res) => {
   const { season = "2026" } = req.query;
   await Match.findByIdAndDelete(req.params.id);
 

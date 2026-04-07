@@ -20,6 +20,11 @@
         <a href="/matches/new">Nuevo Partido</a>
         <a href="/stats">Estadísticas</a>
         <a href="/records">Récords</a>
+        {{#if (eq user.role "admin")}}
+          <a href="/admin/users">
+            Usuarios
+          </a>
+        {{/if}}
       </div>
 
       <div class="nav-right" id="navAuth">

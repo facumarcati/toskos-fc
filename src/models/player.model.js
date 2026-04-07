@@ -10,6 +10,11 @@ const playerSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
 });
 
 const Player = mongoose.model("Player", playerSchema);

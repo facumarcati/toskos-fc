@@ -1,8 +1,5 @@
 import { Router } from "express";
-import {
-  getTitlesByPlayer,
-  getPlayerTrophies,
-} from "../services/titles.service.js";
+import { getPlayerTrophies } from "../services/titles.service.js";
 import Player from "../models/player.model.js";
 import Match from "../models/match.model.js";
 
@@ -14,7 +11,9 @@ router.get("/:id", async (req, res) => {
 
     const { season = "2026" } = req.query;
 
-    const player = await Player.findById(playerId).lean();
+    const player = await Player.findById(playerId)
+      .populate("user", "username")
+      .lean();
 
     if (!player || player.name === "E/C") {
       return res.status(404).send("Jugador no encontrado");
@@ -62,6 +61,7 @@ router.get("/:id", async (req, res) => {
       totalMatches,
       selectedSeason: season,
       trophies,
+      currentUser: req.session.user,
     });
   } catch (error) {
     console.error(error);
@@ -258,6 +258,41 @@ router.get("/:id/matches", async (req, res) => {
     .lean();
 
   res.json(matches);
+});
+
+router.patch("/:id/username", async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: "No autenticado",
+      });
+    }
+
+    const player = await Player.findById(req.params.id);
+
+    if (!player.user || player.user.toString() !== req.session.user._id) {
+      return res.status(403).json({
+        error: "No autorizado",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      player.user,
+      {
+        username: username.trim(),
+      },
+      { new: true },
+    );
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Error actualizando username",
+    });
+  }
 });
 
 export default router;

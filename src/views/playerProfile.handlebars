@@ -14,6 +14,22 @@
       ✏️
     </button>
   </h1>
+  {{#if player.user}}
+  <div class="player-username">
+    <span id="usernameText">
+      @{{player.user.username}}
+    </span>
+    {{#if (eq player.user._id currentUser._id)}}
+    <button
+      class="btn-edit-username"
+      id="editUsernameBtn"
+      data-player="{{player._id}}"
+    >
+      ✏️
+    </button>
+    {{/if}}
+  </div>
+  {{/if}}
   <label class="filter-checkbox" style="margin-top:8px; display:inline-flex;">
     <input
       type="checkbox"
@@ -269,4 +285,7 @@
   {{/if}}
 </div>
 
+<script>
+  window.currentUser = {{{json currentUser}}};
+</script>
 <script src="/js/playerProfile.js"></script>

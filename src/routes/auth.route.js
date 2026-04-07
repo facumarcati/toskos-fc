@@ -13,6 +13,7 @@ router.post("/login", async (req, res) => {
   if (username === ADMIN_USER && password === ADMIN_PASS) {
     req.session.userId = "admin";
     req.session.role = "admin";
+
     req.session.user = {
       _id: "admin",
       username: "Admin",
@@ -23,14 +24,31 @@ router.post("/login", async (req, res) => {
   }
 
   const user = await User.findOne({ username });
-  if (!user || user.password !== password) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Credenciales incorrectas" });
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: "Usuario o contraseña incorrectos",
+    });
+  }
+
+  if (user.password !== password) {
+    return res.status(401).json({
+      success: false,
+      message: "Usuario o contraseña incorrectos",
+    });
+  }
+
+  if (!user.approved) {
+    return res.status(403).json({
+      success: false,
+      message: "Tu cuenta todavía no fue aprobada por el administrador",
+    });
   }
 
   req.session.userId = user._id;
   req.session.role = "user";
+
   req.session.user = {
     _id: user._id,
     username: user.username,
@@ -63,18 +81,18 @@ router.post("/register", async (req, res) => {
         .status(400)
         .json({ success: false, message: "Ese jugador ya tiene cuenta" });
 
-    const user = await User.create({ username, password, player: playerId });
+    await User.create({
+      username,
+      password,
+      player: playerId,
+      approved: false,
+    });
 
-    req.session.userId = user._id;
-    req.session.role = "user";
-    req.session.user = {
-      _id: user._id,
-      username: user.username,
-      player: user.player,
-      role: "user",
-    };
-
-    res.json({ success: true });
+    res.json({
+      success: true,
+      pending: true,
+      message: "Cuenta creada. Esperando aprobacion del admin",
+    });
   } catch (error) {
     console.error(error);
     res

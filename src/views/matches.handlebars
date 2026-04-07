@@ -135,11 +135,13 @@
             {{/if}}>
             <span class="player-item-name">
               {{this.player.name}}
-              {{#if (includes ../mvpPlayers this.player._id)}}
-                <span class="mvp-badge">
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
+              {{#if (gt (getVoteCount ../voteCountByPlayer this.player._id) 0)}}
+                <span class="mvp-badge {{#if (includes ../mvpPlayers this.player._id)}}mvp-badge-leader{{/if}}">
+                  {{#if (includes ../mvpPlayers this.player._id)}}
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  {{/if}}
                   {{getVoteCount ../voteCountByPlayer this.player._id}}
                 </span>
               {{/if}}
@@ -173,24 +175,26 @@
             style="cursor: default;"
           {{/if}}>
           <span class="player-item-name">
-              {{this.player.name}}
-              {{#if (includes ../mvpPlayers this.player._id)}}
-                <span class="mvp-badge">
+            {{this.player.name}}
+            {{#if (gt (getVoteCount ../voteCountByPlayer this.player._id) 0)}}
+              <span class="mvp-badge {{#if (includes ../mvpPlayers this.player._id)}}mvp-badge-leader{{/if}}">
+                {{#if (includes ../mvpPlayers this.player._id)}}
                   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
-                  {{getVoteCount ../voteCountByPlayer this.player._id}}
-                </span>
-              {{/if}}
+                {{/if}}
+                {{getVoteCount ../voteCountByPlayer this.player._id}}
+              </span>
+            {{/if}}
+          </span>
+          <div class="player-item-stats">
+            <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
+              ⚽ {{this.goals}}
             </span>
-            <div class="player-item-stats">
-              <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
-                ⚽ {{this.goals}}
-              </span>
-              <span class="player-stat {{#if (gt this.assists 0)}}stat-active{{/if}}">
-                🎯 {{this.assists}}
-              </span>
-            </div>
+            <span class="player-stat {{#if (gt this.assists 0)}}stat-active{{/if}}">
+              🎯 {{this.assists}}
+            </span>
+          </div>
           </li>
           {{/if}}
         {{/each}}
@@ -217,7 +221,7 @@
     </div>
 
     <div class="footer-right">
-      {{#if (and user user.admin)}}
+      {{#if (and @root.user (eq @root.user.role "admin"))}}
         <a href="/matches/{{this._id}}/edit?season={{../selectedSeason}}" class="btn-match-action btn-edit">Editar</a>
         <button type="button" class="btn-match-action btn-delete" onclick="openDeleteModal('/matches/{{this._id}}/delete')">Eliminar</button>
       {{/if}}

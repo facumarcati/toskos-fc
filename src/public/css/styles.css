@@ -140,7 +140,7 @@ nav a.nav-active {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .nav-right {
@@ -241,6 +241,25 @@ nav a.nav-active {
   background: var(--loss-bg);
   border-radius: var(--radius-sm);
   margin-bottom: 8px;
+}
+
+.form-message {
+  display: none;
+  font-size: 13px;
+  text-align: center;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+
+.form-message.error {
+  color: var(--loss);
+  background: var(--loss-bg);
+}
+
+.form-message.success {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
 }
 
 /* Profile circle */
@@ -1319,15 +1338,15 @@ fieldset {
   border-radius: 99px;
   padding: 2px 8px;
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--accent);
   vertical-align: middle;
 }
 
 .mvp-badge svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   fill: var(--accent);
   flex-shrink: 0;
 }
@@ -2335,4 +2354,181 @@ a {
   border-radius: 999px;
   color: #f5c518;
   font-weight: 600;
+}
+
+.admin-section {
+  margin-bottom: 40px;
+}
+
+.admin-section-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.admin-user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.admin-user-card:last-child {
+  border-bottom: none;
+}
+.admin-user-card:hover {
+  background: var(--bg-hover);
+}
+
+.admin-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-username {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.admin-player-name {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Unauthorized */
+.unauthorized-page {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unauthorized-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.unauthorized-icon {
+  font-size: 48px;
+}
+
+.unauthorized-card p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.btn-danger {
+  background: #222;
+  color: #ff4d4d;
+  border: 1px solid #ff4d4d;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-danger-sm:hover {
+  box-shadow: 0 4px 10px rgba(255, 77, 79, 0.25);
+}
+
+.btn-match-action:hover {
+  background-color: #1a1a1a;
+  border-color: #ffd84d;
+  color: #ffd84d;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.card-center {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.card-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-muted {
+  opacity: 0.7;
+  margin-top: 8px;
+}
+
+.error-text {
+  text-transform: uppercase;
+  font-size: 40px;
+}
+
+.player-username {
+  margin-top: 4px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.btn-edit-username {
+  margin-left: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  opacity: 0.6;
+}
+
+.btn-edit-username:hover {
+  opacity: 1;
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.alert-success {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #22c55e;
+  padding: 12px;
+  border-radius: 10px;
 }

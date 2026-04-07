@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         method: "POST",
         credentials: "include",
       });
-      location.reload();
+
+      window.location.href = "/";
     });
   } catch (err) {
     console.error(err);

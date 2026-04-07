@@ -11,6 +11,7 @@ import statsRouter from "./routes/stats.route.js";
 import recordsRouter from "./routes/records.route.js";
 import authRouter from "./routes/auth.route.js";
 import playerRouter from "./routes/player.route.js";
+import adminRouter from "./routes/admin.route.js";
 
 import Player from "./models/player.model.js";
 
@@ -48,6 +49,8 @@ app.use((req, res, next) => {
   res.locals.userId = req.session.userId;
   res.locals.role = req.session.role;
 
+  res.locals.user = req.session.user || null;
+
   next();
 });
 
@@ -61,6 +64,7 @@ app.engine(
       or: (a, b) => a || b,
       add: (a, b) => a + b,
       isEC: (name) => name === "E/C",
+      json: (context) => JSON.stringify(context),
       navActive: (current, page) => {
         return current === page ? "nav-active" : "";
       },
@@ -113,6 +117,7 @@ app.use("/stats", statsRouter);
 app.use("/records", recordsRouter);
 app.use("/api/auth", authRouter);
 app.use("/players", playerRouter);
+app.use("/admin", adminRouter);
 
 http.listen(PORT, () => {
   console.log("Servidor iniciado en http://localhost:" + PORT);
