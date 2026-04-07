@@ -48,10 +48,20 @@ router.get("/", async (req, res) => {
     .sort({ date: order === "asc" ? 1 : -1 })
     .lean();
 
-  const matches = matchesRaw.map((match) => ({
-    ...match,
-    mvpPlayers: getMatchMVP(match),
-  }));
+  const matches = matchesRaw.map((match) => {
+    const voteCountByPlayer = {};
+
+    (match.mvpVotes || []).forEach((v) => {
+      const pid = v.voted.toString();
+      voteCountByPlayer[pid] = (voteCountByPlayer[pid] || 0) + 1;
+    });
+
+    return {
+      ...match,
+      mvpPlayers: getMatchMVP(match),
+      voteCountByPlayer,
+    };
+  });
 
   const winsA = matches.filter((m) => m.teamA > m.teamB).length;
   const winsB = matches.filter((m) => m.teamB > m.teamA).length;
@@ -206,17 +216,20 @@ router.post("/:id/vote-mvp", async (req, res) => {
 
   const { playerId } = req.body;
   const match = await Match.findById(req.params.id);
+
   if (!match) return res.status(404).send("Partido no encontrado");
 
   const voterId = req.session.userId.toString();
 
   match.mvpVotes = match.mvpVotes.filter(
-    (v) => v.voter && v.voter.toString() !== voterId,
+    (v) => v.voter?.toString() !== voterId,
   );
 
   match.mvpVotes.push({ voter: voterId, voted: playerId });
 
   await match.save();
+
+  io.emit("mvp:voted", { matchId: req.params.id });
   res.json({ ok: true });
 });
 

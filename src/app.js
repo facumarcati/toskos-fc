@@ -76,6 +76,9 @@ app.engine(
         if (!array) return false;
         return array.some((id) => id.toString() === value.toString());
       },
+      getVoteCount(voteCountByPlayer, playerId) {
+        return voteCountByPlayer?.[playerId?.toString()] || 0;
+      },
       and: function (...args) {
         args.pop();
         return args.every(Boolean);

@@ -131,12 +131,17 @@
               onclick="voteMVP('{{../_id}}','{{this.player._id}}')"
             {{else}}
               title="Debes estar logueado para votar"
-              style="cursor: not-allowed;"
+              style="cursor: default;"
             {{/if}}>
             <span class="player-item-name">
               {{this.player.name}}
               {{#if (includes ../mvpPlayers this.player._id)}}
-                <span class="mvp-badge">⭐ ({{../mvpVotes.length}})</span>
+                <span class="mvp-badge">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  {{getVoteCount ../voteCountByPlayer this.player._id}}
+                </span>
               {{/if}}
             </span>
             <div class="player-item-stats">
@@ -170,7 +175,12 @@
           <span class="player-item-name">
               {{this.player.name}}
               {{#if (includes ../mvpPlayers this.player._id)}}
-                <span class="mvp-badge">⭐ ({{../mvpVotes.length}})</span>
+                <span class="mvp-badge">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  {{getVoteCount ../voteCountByPlayer this.player._id}}
+                </span>
               {{/if}}
             </span>
             <div class="player-item-stats">
@@ -226,17 +236,15 @@
   const donutData = { winsA: {{winsA}}, winsB: {{winsB}}, draws: {{draws}} };
 </script>
 <script>
-async function voteMVP(matchId, playerId){
-  try{
-    await fetch(`/matches/${matchId}/vote-mvp`,{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({playerId})
+async function voteMVP(matchId, playerId) {
+  try {
+    await fetch(`/matches/${matchId}/vote-mvp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ playerId })
     });
     location.reload();
-  }catch(err){
+  } catch(err) {
     console.error(err);
   }
 }
