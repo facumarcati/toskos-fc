@@ -32,14 +32,21 @@ function getRankingPosition(ranking) {
 }
 
 export async function getTitlesByPlayer(season = "all") {
-  const currentYear = new Date().getFullYear();
+  const today = new Date();
+
+  const completedSeasons = [2024, 2025];
+
+  if (today >= new Date("2027-01-01")) {
+    completedSeasons.push(2026);
+  }
 
   let seasonsToEvaluate;
 
   if (season === "all") {
-    seasonsToEvaluate = [2024, 2025, currentYear];
+    seasonsToEvaluate = completedSeasons;
   } else {
-    seasonsToEvaluate = [Number(season)];
+    const year = Number(season);
+    seasonsToEvaluate = completedSeasons.includes(year) ? [year] : [];
   }
 
   const titlesMap = {};
@@ -54,9 +61,7 @@ export async function getTitlesByPlayer(season = "all") {
 
     const basePipeline = [
       { $match: seasonFilter },
-
       { $unwind: "$players" },
-
       {
         $lookup: {
           from: "players",
@@ -65,15 +70,12 @@ export async function getTitlesByPlayer(season = "all") {
           as: "playerInfo",
         },
       },
-
       { $unwind: "$playerInfo" },
-
       { $match: { "playerInfo.guest": { $ne: true } } },
     ];
 
     const scorers = await Match.aggregate([
       ...basePipeline,
-
       {
         $group: {
           _id: "$players.player",
@@ -82,7 +84,6 @@ export async function getTitlesByPlayer(season = "all") {
           matches: { $sum: 1 },
         },
       },
-
       {
         $sort: {
           value: -1,
@@ -94,7 +95,6 @@ export async function getTitlesByPlayer(season = "all") {
 
     const assists = await Match.aggregate([
       ...basePipeline,
-
       {
         $group: {
           _id: "$players.player",
@@ -103,7 +103,6 @@ export async function getTitlesByPlayer(season = "all") {
           matches: { $sum: 1 },
         },
       },
-
       {
         $sort: {
           value: -1,
@@ -115,7 +114,6 @@ export async function getTitlesByPlayer(season = "all") {
 
     const matchesPlayed = await Match.aggregate([
       ...basePipeline,
-
       {
         $addFields: {
           win: {
@@ -128,7 +126,6 @@ export async function getTitlesByPlayer(season = "all") {
                       { $gt: ["$teamA", "$teamB"] },
                     ],
                   },
-
                   {
                     $and: [
                       { $eq: ["$players.team", "B"] },
@@ -137,14 +134,12 @@ export async function getTitlesByPlayer(season = "all") {
                   },
                 ],
               },
-
               1,
               0,
             ],
           },
         },
       },
-
       {
         $group: {
           _id: "$players.player",
@@ -154,7 +149,6 @@ export async function getTitlesByPlayer(season = "all") {
           assists: { $sum: "$players.assists" },
         },
       },
-
       {
         $sort: {
           value: -1,
@@ -167,7 +161,6 @@ export async function getTitlesByPlayer(season = "all") {
 
     const wins = await Match.aggregate([
       ...basePipeline,
-
       {
         $addFields: {
           win: {
@@ -180,7 +173,6 @@ export async function getTitlesByPlayer(season = "all") {
                       { $gt: ["$teamA", "$teamB"] },
                     ],
                   },
-
                   {
                     $and: [
                       { $eq: ["$players.team", "B"] },
@@ -189,14 +181,12 @@ export async function getTitlesByPlayer(season = "all") {
                   },
                 ],
               },
-
               1,
               0,
             ],
           },
         },
       },
-
       {
         $group: {
           _id: "$players.player",
@@ -206,7 +196,6 @@ export async function getTitlesByPlayer(season = "all") {
           assists: { $sum: "$players.assists" },
         },
       },
-
       {
         $sort: {
           value: -1,
@@ -254,9 +243,7 @@ export async function getPlayerTrophies(playerId) {
 
     const basePipeline = [
       { $match: seasonFilter },
-
       { $unwind: "$players" },
-
       {
         $lookup: {
           from: "players",
@@ -265,15 +252,12 @@ export async function getPlayerTrophies(playerId) {
           as: "playerInfo",
         },
       },
-
       { $unwind: "$playerInfo" },
-
       { $match: { "playerInfo.guest": { $ne: true } } },
     ];
 
     const scorers = await Match.aggregate([
       ...basePipeline,
-
       {
         $group: {
           _id: "$players.player",
@@ -282,7 +266,6 @@ export async function getPlayerTrophies(playerId) {
           matches: { $sum: 1 },
         },
       },
-
       {
         $sort: {
           value: -1,
@@ -294,7 +277,6 @@ export async function getPlayerTrophies(playerId) {
 
     const assists = await Match.aggregate([
       ...basePipeline,
-
       {
         $group: {
           _id: "$players.player",
@@ -303,7 +285,6 @@ export async function getPlayerTrophies(playerId) {
           matches: { $sum: 1 },
         },
       },
-
       {
         $sort: {
           value: -1,
@@ -315,7 +296,6 @@ export async function getPlayerTrophies(playerId) {
 
     const matchesPlayed = await Match.aggregate([
       ...basePipeline,
-
       {
         $addFields: {
           win: {
@@ -328,7 +308,6 @@ export async function getPlayerTrophies(playerId) {
                       { $gt: ["$teamA", "$teamB"] },
                     ],
                   },
-
                   {
                     $and: [
                       { $eq: ["$players.team", "B"] },
@@ -337,14 +316,12 @@ export async function getPlayerTrophies(playerId) {
                   },
                 ],
               },
-
               1,
               0,
             ],
           },
         },
       },
-
       {
         $group: {
           _id: "$players.player",
@@ -354,7 +331,6 @@ export async function getPlayerTrophies(playerId) {
           assists: { $sum: "$players.assists" },
         },
       },
-
       {
         $sort: {
           value: -1,
@@ -367,7 +343,6 @@ export async function getPlayerTrophies(playerId) {
 
     const wins = await Match.aggregate([
       ...basePipeline,
-
       {
         $addFields: {
           win: {
@@ -380,7 +355,6 @@ export async function getPlayerTrophies(playerId) {
                       { $gt: ["$teamA", "$teamB"] },
                     ],
                   },
-
                   {
                     $and: [
                       { $eq: ["$players.team", "B"] },
@@ -389,14 +363,12 @@ export async function getPlayerTrophies(playerId) {
                   },
                 ],
               },
-
               1,
               0,
             ],
           },
         },
       },
-
       {
         $group: {
           _id: "$players.player",
@@ -406,7 +378,6 @@ export async function getPlayerTrophies(playerId) {
           assists: { $sum: "$players.assists" },
         },
       },
-
       {
         $sort: {
           value: -1,
@@ -419,11 +390,8 @@ export async function getPlayerTrophies(playerId) {
 
     const rankings = [
       { data: scorers, label: "Goleador", unit: "goles" },
-
       { data: assists, label: "Asistidor", unit: "asistencias" },
-
       { data: matchesPlayed, label: "Más Partidos", unit: "PJ" },
-
       { data: wins, label: "Más Victorias", unit: "PG" },
     ];
 
@@ -435,15 +403,10 @@ export async function getPlayerTrophies(playerId) {
       if (player && player.position < 3) {
         trophies.push({
           season,
-
           type: r.label,
-
           medal: medals[player.position],
-
           position: player.position + 1,
-
           value: player.value,
-
           unit: r.unit,
         });
       }

@@ -147,10 +147,14 @@ router.get("/", async (req, res) => {
     },
   ]);
 
-  const titlesMap = await getTitlesByPlayer(season);
+  let titlesMap = {};
+
+  if (season !== "2026") {
+    titlesMap = await getTitlesByPlayer(season);
+  }
 
   stats.forEach((player) => {
-    player.titles = titlesMap[player._id.toString()] || 0;
+    player.titles = titlesMap[player._id?.toString()] || 0;
   });
 
   res.render("stats", {
