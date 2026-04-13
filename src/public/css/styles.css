@@ -2294,14 +2294,14 @@ a {
 
 .toast.toast-success {
   color: var(--win);
-  background: var(--win-bg);
-  border-color: var(--win);
+  background:
+    linear-gradient(var(--bg-surface), var(--bg-surface)), var(--win-bg);
 }
 
 .toast.toast-error {
   color: var(--loss);
-  background: var(--loss-bg);
-  border-color: var(--loss);
+  background:
+    linear-gradient(var(--bg-surface), var(--bg-surface)), var(--loss-bg);
 }
 
 .matches-filters {
