@@ -88,39 +88,36 @@
 
 {{#each matches}}
 <div class="match-card" id="match-{{this._id}}">
-  <div class="match-scoreboard">
+  <div class="match-scoreboard
+  {{#if (gt this.teamA this.teamB)}}scoreboard-win-a
+  {{else if (gt this.teamB this.teamA)}}scoreboard-win-b
+  {{else}}scoreboard-draw
+  {{/if}}">
     <div class="match-team">
       <span class="match-team-label">Equipo</span>
       <span class="match-team-name">Blanco</span>
-      {{#if (gt this.teamA this.teamB)}}
-        <span class="match-badge badge-win">Ganador</span>
-      {{else if (eq this.teamA this.teamB)}}
-        <span class="match-badge badge-draw">Empate</span>
-      {{/if}}
     </div>
 
     <div class="match-score">
-      <div class="match-date">{{formatDate this.date}}</div>
+      <div class="match-date">{{formatDate this.date}} · {{this.venue}}</div>
       <span class="match-score-number">{{this.teamA}} — {{this.teamB}}</span>
-      {{#if this.venue}}
-        <span class="match-score-meta">{{this.venue}}</span>
-      {{/if}}
     </div>
 
     <div class="match-team match-team-right">
       <span class="match-team-label">Equipo</span>
       <span class="match-team-name">Negro</span>
-      {{#if (gt this.teamB this.teamA)}}
-        <span class="match-badge badge-win">Ganador</span>
-      {{else if (eq this.teamA this.teamB)}}
-        <span class="match-badge badge-draw">Empate</span>
-      {{/if}}
     </div>
   </div>
 
   <div class="match-players">
     <div class="match-team-col">
-      <p class="section-label">Equipo Blanco</p>
+      <div class="player-list-header">
+        <span class="player-list-header-name">Jugador</span>
+        <div class="player-list-header-stats">
+          <span>G</span>
+          <span>A</span>
+        </div>
+      </div>
       <ul class="player-list">
         {{#each this.players}}
           {{#if (eq this.team "A")}}
@@ -130,7 +127,7 @@
             {{#if @root.user}}
               onclick="voteMVP('{{../_id}}','{{this.player._id}}')"
             {{else}}
-              title="Debes estar logueado para votar"
+              title="Logueate para votar"
               style="cursor: default;"
             {{/if}}>
             <span class="player-item-name">
@@ -148,10 +145,10 @@
             </span>
             <div class="player-item-stats">
               <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
-                ⚽ {{this.goals}}
+                {{this.goals}}
               </span>
               <span class="player-stat {{#if (gt this.assists 0)}}stat-active{{/if}}">
-                🎯 {{this.assists}}
+                {{this.assists}}
               </span>
             </div>
           </li>
@@ -161,7 +158,13 @@
     </div>
 
     <div class="match-team-col">
-      <p class="section-label">Equipo Negro</p>
+      <div class="player-list-header">
+        <span class="player-list-header-name">Jugador</span>
+        <div class="player-list-header-stats">
+          <span>G</span>
+          <span>A</span>
+        </div>
+      </div>
       <ul class="player-list">
         {{#each this.players}}
           {{#if (eq this.team "B")}}
@@ -171,7 +174,7 @@
           {{#if @root.user}}
             onclick="voteMVP('{{../_id}}','{{this.player._id}}')"
           {{else}}
-            title="Debes estar logueado para votar"
+            title="Logueate para votar"
             style="cursor: default;"
           {{/if}}>
           <span class="player-item-name">
@@ -189,10 +192,10 @@
           </span>
           <div class="player-item-stats">
             <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
-              ⚽ {{this.goals}}
+              {{this.goals}}
             </span>
             <span class="player-stat {{#if (gt this.assists 0)}}stat-active{{/if}}">
-              🎯 {{this.assists}}
+              {{this.assists}}
             </span>
           </div>
           </li>

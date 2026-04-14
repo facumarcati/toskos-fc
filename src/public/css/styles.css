@@ -394,6 +394,36 @@ nav a.nav-active {
   margin-bottom: 14px;
 }
 
+.player-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px 6px 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.player-list-header-name {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.player-list-header-stats {
+  display: flex;
+  gap: 8px;
+}
+
+.player-list-header-stats span {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  min-width: 32px;
+  text-align: right;
+}
+
 .page-header-meta {
   font-family: var(--font-body);
   font-size: 14px;
@@ -1212,6 +1242,62 @@ fieldset {
     var(--bg-surface) 100%
   );
   border-bottom: 1px solid var(--border);
+
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.match-scoreboard.scoreboard-win-a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(34, 197, 94, 0.18) 0%,
+    rgba(34, 197, 94, 0.1) 25%,
+    rgba(34, 197, 94, 0.05) 45%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+.match-scoreboard.scoreboard-win-b::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to left,
+    rgba(34, 197, 94, 0.18) 0%,
+    rgba(34, 197, 94, 0.1) 25%,
+    rgba(34, 197, 94, 0.05) 45%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+.match-scoreboard.scoreboard-draw::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(250, 204, 21, 0.12) 35%,
+    rgba(250, 204, 21, 0.18) 50%,
+    rgba(250, 204, 21, 0.12) 65%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+.scoreboard-win-a .match-team:first-child .match-team-name,
+.scoreboard-win-b .match-team:last-child .match-team-name {
+  color: #22c55e;
+  font-weight: 600;
 }
 
 .match-team {
@@ -1267,7 +1353,7 @@ fieldset {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
 .match-score-number {
@@ -1285,8 +1371,9 @@ fieldset {
 }
 
 .match-date {
-  font-weight: 600;
-  color: var(--text-muted);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
 }
 
 /* Players section */
@@ -1381,8 +1468,8 @@ fieldset {
 }
 
 .player-stat {
-  font-size: 12px;
-  color: var(--text-muted);
+  font-size: 13px;
+  color: var(--text-secondary);
   min-width: 32px;
   text-align: right;
   transition: color 0.15s;
@@ -1672,7 +1759,7 @@ fieldset {
 }
 
 .list-empty-state {
-  padding: 48px 24px;
+  padding: 28px 24px;
   text-align: center;
   color: var(--text-muted);
   font-size: 14px;

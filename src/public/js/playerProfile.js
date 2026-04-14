@@ -106,21 +106,24 @@ function buildMatchCard(match, playerId, season) {
 
   return `
     <div class="match-card match-card-compact">
-      <div class="match-scoreboard">
+      <div class="match-scoreboard ${
+        isWinA
+          ? "scoreboard-win-a"
+          : isWinB
+            ? "scoreboard-win-b"
+            : "scoreboard-draw"
+      }">
         <div class="match-team">
           <span class="match-team-label">Equipo</span>
           <span class="match-team-name">Blanco</span>
-          ${isWinA ? `<span class="match-badge badge-win">Ganador</span>` : isDraw ? `<span class="match-badge badge-draw">Empate</span>` : ""}
         </div>
         <div class="match-score">
-          <div class="match-date">${date}</div>
+          <div class="match-date">${date} · ${match.venue}</div>
           <span class="match-score-number">${match.teamA} — ${match.teamB}</span>
-          ${match.venue ? `<span class="match-score-meta">${match.venue}</span>` : ""}
         </div>
         <div class="match-team match-team-right">
           <span class="match-team-label">Equipo</span>
           <span class="match-team-name">Negro</span>
-          ${isWinB ? `<span class="match-badge badge-win">Ganador</span>` : isDraw ? `<span class="match-badge badge-draw">Empate</span>` : ""}
         </div>
       </div>
       <div class="match-card-footer match-card-footer-compact">
