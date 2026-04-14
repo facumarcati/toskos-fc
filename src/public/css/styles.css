@@ -2625,7 +2625,6 @@ a {
   background: var(--bg-base);
   color: var(--text-primary-soft);
   align-items: center;
-  padding: 6px 28px 6px 12px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   font-family: var(--font-display);
@@ -2636,6 +2635,12 @@ a {
   letter-spacing: 0.08em;
   cursor: pointer;
   transition: border-color 0.2s;
+  padding: 6px 36px 6px 12px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23e5e7eb' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
 }
 
 .role-select:hover {
