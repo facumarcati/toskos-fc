@@ -11,6 +11,7 @@
   --border-strong: rgba(255, 255, 255, 0.12);
 
   --text-primary: #ffffff;
+  --text-primary-soft: #e5e7eb;
   --text-secondary: #828b97;
   --text-muted: #4e5563;
 
@@ -2469,6 +2470,8 @@ a {
 
 .admin-user-card {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   align-items: center;
   justify-content: space-between;
   padding: 16px 24px;
@@ -2616,4 +2619,30 @@ a {
   color: #22c55e;
   padding: 12px;
   border-radius: 10px;
+}
+
+.role-select {
+  background: var(--bg-base);
+  color: var(--text-primary-soft);
+  align-items: center;
+  padding: 6px 28px 6px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: start;
+  height: 34px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.role-select:hover {
+  border-color: var(--accent);
+}
+
+.role-select:focus {
+  outline: none;
+  border-color: var(--accent);
 }

@@ -73,4 +73,16 @@ router.post("/users/:id/toggle", async (req, res) => {
   res.json({ success: true });
 });
 
+router.post("/users/:id/role", isAdmin, async (req, res) => {
+  const { role } = req.body;
+
+  if (!["user", "admin"].includes(role)) {
+    return res.status(400).send("Rol invalido");
+  }
+
+  await User.findByIdAndUpdate(req.params.id, { role });
+
+  res.json({ success: true });
+});
+
 export default router;

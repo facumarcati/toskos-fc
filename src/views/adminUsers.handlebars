@@ -32,7 +32,7 @@
 </div>
 
 <div class="admin-section">
-  <h2 class="admin-section-title">Usuarios activos</h2>
+  <h2 class="admin-section-title">Usuarios activos ({{approvedUsers.length}})</h2>
   {{#if approvedUsers.length}}
     <div class="admin-list">
       {{#each approvedUsers}}
@@ -42,6 +42,16 @@
             <span class="admin-player-name">{{this.player.name}}</span>
           </div>
           <div class="admin-actions">
+            <select 
+              class="role-select"
+              onchange="changeRole('{{this._id}}', this.value)">
+              <option value="user" {{#if (eq this.role "user")}}selected{{/if}}>
+                USUARIO
+              </option>
+              <option value="admin" {{#if (eq this.role "admin")}}selected{{/if}}>
+                ADMIN
+              </option>
+            </select>
             <button
               onclick="toggleUser('{{this._id}}')"
               class="btn-match-action"
@@ -66,4 +76,19 @@
   async function deleteUser(id) { if (!confirm("Eliminar usuario?")) return;
   await fetch(`/admin/users/${id}/delete`, { method: "POST" });
   location.reload(); }
+
+  async function changeRole(id, role) {
+  try {
+    await fetch(`/admin/users/${id}/role`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ role }),
+    });
+  } catch (err) {
+    console.error(err);
+    alert("Error cambiando rol");
+  }
+}
 </script>

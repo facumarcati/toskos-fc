@@ -47,16 +47,16 @@ router.post("/login", async (req, res) => {
   }
 
   req.session.userId = user._id;
-  req.session.role = "user";
+  req.session.role = user.role;
 
   req.session.user = {
     _id: user._id,
     username: user.username,
     player: user.player,
-    role: "user",
+    role: user.role,
   };
 
-  res.json({ success: true, role: "user" });
+  res.json({ success: true, role: user.role });
 });
 
 router.post("/register", async (req, res) => {
@@ -115,8 +115,12 @@ router.get("/me", async (req, res) => {
       return res.status(401).json({ success: false });
     }
 
-    if (req.session.role === "admin") {
-      return res.json({ success: true, username: "Admin", role: "admin" });
+    if (req.session.userId === "admin") {
+      return res.json({
+        success: true,
+        username: "Admin",
+        role: "admin",
+      });
     }
 
     const user = await User.findById(req.session.userId).populate("player");
