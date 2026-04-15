@@ -1375,6 +1375,7 @@ fieldset {
   font-size: 13px;
   letter-spacing: 0.02em;
   color: var(--text-secondary);
+  text-align: center;
 }
 
 /* Players section */
@@ -1854,6 +1855,24 @@ a {
 }
 
 /* ── Responsive ────────────────────────────── */
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .stat-box {
+    grid-column: span 3;
+  }
+
+  .stats-grid .stat-box:nth-last-child(-n + 3) {
+    grid-column: span 2;
+  }
+
+  .trophy-list {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
 @media (max-width: 640px) {
   nav {
     padding: 12px 16px;
@@ -1944,16 +1963,33 @@ a {
   }
 
   .stats-grid {
-    grid-template-columns: 1fr !important;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr) !important;
     gap: 12px;
   }
 
   .stats-grid .stat-box {
-    grid-column: auto !important;
+    grid-column: span 2; /* default = 3 por fila */
   }
 
-  .stats-grid .stat-box:nth-last-child(-n + 3) {
-    grid-column: auto !important;
+  /* Fila 1 y 2 → 2 elementos (ocupan 3 columnas cada uno) */
+  .stats-grid .stat-box:nth-child(1),
+  .stats-grid .stat-box:nth-child(2),
+  .stats-grid .stat-box:nth-child(3),
+  .stats-grid .stat-box:nth-child(4) {
+    grid-column: span 3;
+  }
+
+  .stats-grid .stat-box:nth-child(8) {
+    grid-column: span 3 !important;
+  }
+
+  .stats-grid .stat-box:nth-child(9) {
+    grid-column: span 3 !important;
+  }
+
+  .stats-grid .stat-box:nth-child(10) {
+    grid-column: span 6 !important;
   }
 
   .stat-box strong {
@@ -1991,24 +2027,6 @@ a {
 @media (max-width: 720px) {
   .profile-teams {
     grid-template-columns: 1fr !important;
-  }
-
-  .trophy-list {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-@media (max-width: 900px) {
-  .stats-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
-
-  .stat-box {
-    grid-column: span 3;
-  }
-
-  .stats-grid .stat-box:nth-last-child(-n + 3) {
-    grid-column: span 2;
   }
 }
 
