@@ -39,6 +39,8 @@ router.get("/", requireAuth, async (req, res) => {
   const targetUser = await User.findById(targetUserId).select("-password");
   if (!targetUser) return res.redirect("/profile");
 
+  targetUser.effectiveAvatar = targetUser.avatar || null;
+
   const player = await Player.findOne({ userId: targetUserId });
   let stats = null;
   let recentMatches = [];
@@ -89,6 +91,11 @@ router.get("/", requireAuth, async (req, res) => {
     ]);
 
     stats = agg[0] || { matches: 0, goals: 0, assists: 0, wins: 0, draws: 0, losses: 0 };
+    if (stats.matches > 0) {
+      stats.winrate = Math.round((stats.wins / stats.matches) * 100);
+    } else {
+      stats.winrate = 0;
+    }
 
     recentMatches = await Match.find({ "players.player": player._id })
       .populate("players.player")

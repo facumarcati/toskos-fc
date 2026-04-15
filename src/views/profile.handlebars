@@ -46,18 +46,19 @@
       {{/if}}
     </div>
 
-    <form action="/profile/avatar" method="POST" enctype="multipart/form-data" id="avatarForm">
-      <input type="file" id="avatarFileInput" name="avatar" accept="image/jpeg,image/png,image/webp" style="display:none" />
+    <div class="avatar-upload-wrap">
       <button type="button" class="btn-upload-avatar" id="avatarPickerBtn">
         {{#if currentUser.avatar}}Cambiar foto{{else}}Subir foto{{/if}}
       </button>
-      <button type="submit" id="avatarSubmitBtn" style="display:none">Enviar</button>
-    </form>
+      <input type="file" id="avatarFileInput" name="avatar" accept="image/jpeg,image/png,image/webp" class="avatar-file-input" />
+    </div>
+    <form action="/profile/avatar" method="POST" enctype="multipart/form-data" id="avatarForm" class="avatar-upload-form">
     {{#if currentUser.googleAvatar}}
       {{#unless currentUser.avatar}}
         <p style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center">Usando foto de Google. Subí una propia para reemplazarla.</p>
       {{/unless}}
     {{/if}}
+    </form>
     {{/if}}
 
     {{#if player}}
@@ -75,6 +76,21 @@
       {{/if}}
     </div>
     {{/unless}}
+    {{/if}}
+  </div>
+
+  <!-- Winrate card -->
+  <div class="form-panel profile-winrate-card">
+    <p class="section-label">Winrate Histórico</p>
+    <div class="profile-winrate-display">
+      {{#if stats}}
+        <span class="winrate-big">{{stats.winrate}}%</span>
+      {{else}}
+        <span class="winrate-big">—</span>
+      {{/if}}
+    </div>
+    {{#if stats}}
+    <p class="winrate-subtitle">{{stats.wins}} Victorias · {{stats.draws}} Empates · {{stats.losses}} Derrotas</p>
     {{/if}}
   </div>
 
@@ -108,6 +124,10 @@
         <div class="profile-stat-item">
           <span class="profile-stat-value cell-loss">{{stats.losses}}</span>
           <span class="profile-stat-label">Derrotas</span>
+        </div>
+        <div class="profile-stat-item">
+          <span class="profile-stat-value cell-win">{{stats.winrate}}%</span>
+          <span class="profile-stat-label">Winrate</span>
         </div>
       </div>
     </div>
@@ -151,12 +171,10 @@
 
   if (!pickerBtn || !fileInput || !form) return;
 
-  // Open file picker on button click
   pickerBtn.addEventListener('click', function() {
     fileInput.click();
   });
 
-  // Submit form when a file is selected
   fileInput.addEventListener('change', function() {
     if (fileInput.files && fileInput.files.length > 0) {
       form.submit();

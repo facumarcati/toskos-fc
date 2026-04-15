@@ -35,29 +35,31 @@
 <div class="matches-header">
   <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
     <div class="filter-group">
-      <select name="season" id="seasonSelect" class="filter-select">
-        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
-        <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
-        <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
-        <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>2024</option>
+      <select name="season" id="seasonSelect" class="filter-select filter-select-season" required>
+        <option value="" disabled selected>Temporada</option>
+        <option value="all">Todas las temporadas</option>
+        <option value="2026">2026</option>
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
       </select>
     </div>
 
     <div class="filter-group">
-      <select name="month" id="monthSelect" class="filter-select">
-        <option value="all" {{#if (eq selectedMonth "all")}}selected{{/if}}>Todos los meses</option>
-        <option value="01" {{#if (eq selectedMonth "01")}}selected{{/if}}>Enero</option>
-        <option value="02" {{#if (eq selectedMonth "02")}}selected{{/if}}>Febrero</option>
-        <option value="03" {{#if (eq selectedMonth "03")}}selected{{/if}}>Marzo</option>
-        <option value="04" {{#if (eq selectedMonth "04")}}selected{{/if}}>Abril</option>
-        <option value="05" {{#if (eq selectedMonth "05")}}selected{{/if}}>Mayo</option>
-        <option value="06" {{#if (eq selectedMonth "06")}}selected{{/if}}>Junio</option>
-        <option value="07" {{#if (eq selectedMonth "07")}}selected{{/if}}>Julio</option>
-        <option value="08" {{#if (eq selectedMonth "08")}}selected{{/if}}>Agosto</option>
-        <option value="09" {{#if (eq selectedMonth "09")}}selected{{/if}}>Septiembre</option>
-        <option value="10" {{#if (eq selectedMonth "10")}}selected{{/if}}>Octubre</option>
-        <option value="11" {{#if (eq selectedMonth "11")}}selected{{/if}}>Noviembre</option>
-        <option value="12" {{#if (eq selectedMonth "12")}}selected{{/if}}>Diciembre</option>
+      <select name="month" id="monthSelect" class="filter-select filter-select-month" required>
+        <option value="" disabled selected>Mes</option>
+        <option value="all">Todos los meses</option>
+        <option value="01">Enero</option>
+        <option value="02">Febrero</option>
+        <option value="03">Marzo</option>
+        <option value="04">Abril</option>
+        <option value="05">Mayo</option>
+        <option value="06">Junio</option>
+        <option value="07">Julio</option>
+        <option value="08">Agosto</option>
+        <option value="09">Septiembre</option>
+        <option value="10">Octubre</option>
+        <option value="11">Noviembre</option>
+        <option value="12">Diciembre</option>
       </select>
     </div>
 

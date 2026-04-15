@@ -16,7 +16,6 @@
 <div class="product-list-section">
   <div class="admin-users-header">
     <span>Usuario</span>
-    <span>Email</span>
     <span>Rol</span>
     <span>Acciones</span>
   </div>
@@ -26,7 +25,7 @@
     <li class="admin-user-item" data-name="{{this.displayName}}" data-email="{{this.email}}">
       <div class="admin-user-row">
 
-        <!-- Avatar + nombre -->
+        <!-- Avatar + nombre + Email -->
         <div class="admin-user-info">
           {{#if this.avatar}}
             <img src="{{this.avatar}}" alt="" class="admin-user-avatar" />
@@ -35,13 +34,13 @@
               {{#if this.displayName}}{{this.displayName.[0]}}{{else}}{{this.username.[0]}}{{/if}}
             </div>
           {{/if}}
-          <a href="/profile?view={{this._id}}" class="admin-user-name">
-            {{#if this.displayName}}{{this.displayName}}{{else}}{{this.username}}{{/if}}
-          </a>
+          <div class="admin-user-details">
+            <a href="/profile?view={{this._id}}" class="admin-user-name">
+              {{#if this.displayName}}{{this.displayName}}{{else}}{{this.username}}{{/if}}
+            </a>
+            <span class="admin-user-email">{{this.email}}</span>
+          </div>
         </div>
-
-        <!-- Email -->
-        <span class="admin-user-email">{{this.email}}</span>
 
         <!-- Rol -->
         <div class="admin-role-cell">
