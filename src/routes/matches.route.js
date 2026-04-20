@@ -109,6 +109,66 @@ router.get("/new", isAdmin, async (req, res) => {
   res.render("newMatch", { players });
 });
 
+router.get("/:id", async (req, res) => {
+  const match = await Match.findById(req.params.id)
+    .populate("players.player")
+    .lean();
+
+  if (!match) return res.status(404).send("Partido no encontrado");
+
+  const user = req.session.user || null;
+
+  const voteCountByPlayer = {};
+  (match.mvpVotes || []).forEach((v) => {
+    const pid = v.voted.toString();
+    voteCountByPlayer[pid] = (voteCountByPlayer[pid] || 0) + 1;
+  });
+
+  const playerTeamMap = {};
+  match.players.forEach((p) => {
+    if (p.player?.name) {
+      playerTeamMap[p.player.name.toLowerCase()] = p.team;
+    }
+  });
+
+  let scoreA = 0;
+  let scoreB = 0;
+
+  const goalTimelineProcessed = (match.goalTimeline || []).map((g) => {
+    let team = playerTeamMap[g.scorer?.toLowerCase()];
+    const isOwnGoal = g.ownGoal === true;
+
+    if (isOwnGoal && team) {
+      team = team === "A" ? "B" : "A";
+    } else if (!team) {
+      team = playerTeamMap[g.assist?.toLowerCase()];
+    }
+
+    if (team === "A") scoreA++;
+    else if (team === "B") scoreB++;
+
+    return {
+      scorer: g.scorer,
+      assist: g.assist || "",
+      team,
+      isOwnGoal,
+      scoreA,
+      scoreB,
+      side: team === "A" ? "left" : "right",
+    };
+  });
+
+  res.render("matchDetail", {
+    match: {
+      ...match,
+      mvpPlayers: getMatchMVP(match),
+      voteCountByPlayer,
+      goalTimelineProcessed,
+    },
+    user,
+  });
+});
+
 router.post("/", isAdmin, async (req, res) => {
   const { teamA, teamB, date, venue, youtubeUrl, youtubeHlUrl } = req.body;
   let players = req.body.players;
@@ -148,6 +208,14 @@ router.post("/", isAdmin, async (req, res) => {
   const matchDate = new Date(date);
   matchDate.setHours(matchDate.getHours() + 3);
 
+  const goalTimeline = Object.values(req.body.goalTimeline || {})
+    .filter((g) => g.scorer?.trim())
+    .map((g) => ({
+      scorer: g.scorer.trim(),
+      assist: g.assist?.trim() || "",
+      ownGoal: g.ownGoal === "true",
+    }));
+
   await Match.create({
     teamA,
     teamB,
@@ -156,6 +224,7 @@ router.post("/", isAdmin, async (req, res) => {
     youtubeUrl,
     youtubeHlUrl,
     players: playerStats,
+    goalTimeline,
   });
 
   io.emit("match:created");
@@ -203,6 +272,14 @@ router.post("/:id/edit", isAdmin, async (req, res) => {
   const matchDate = new Date(date);
   matchDate.setHours(matchDate.getHours() + 3);
 
+  const goalTimeline = Object.values(req.body.goalTimeline || {})
+    .filter((g) => g.scorer?.trim())
+    .map((g) => ({
+      scorer: g.scorer.trim(),
+      assist: g.assist?.trim() || "",
+      ownGoal: g.ownGoal === "true",
+    }));
+
   await Match.findByIdAndUpdate(req.params.id, {
     teamA,
     teamB,
@@ -211,6 +288,7 @@ router.post("/:id/edit", isAdmin, async (req, res) => {
     youtubeUrl,
     youtubeHlUrl,
     players: playerStats,
+    goalTimeline,
   });
 
   io.emit("match:updated");

@@ -224,6 +224,7 @@
     </div>
 
     <div class="footer-right">
+      <a href="/matches/{{this._id}}" class="btn-match-action">Ver detalle</a>
       {{#if (and @root.user (eq @root.user.role "admin"))}}
         <a href="/matches/{{this._id}}/edit?season={{../selectedSeason}}" class="btn-match-action btn-edit">Editar</a>
         <button type="button" class="btn-match-action btn-delete" onclick="openDeleteModal('/matches/{{this._id}}/delete')">Eliminar</button>

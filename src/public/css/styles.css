@@ -2669,3 +2669,139 @@ a {
   outline: none;
   border-color: var(--accent);
 }
+
+.goal-timeline-vertical {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 8px 0;
+}
+
+/* Línea central */
+.goal-timeline-vertical::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border-strong);
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+.gtv-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  align-items: center;
+  min-height: 52px;
+  position: relative;
+  z-index: 1;
+}
+
+.gtv-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 12px;
+}
+
+.gtv-left {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.gtv-right {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.gtv-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 1;
+}
+
+.gtv-dot {
+  width: 28px;
+  height: 28px;
+  background: var(--bg-raised);
+  border: 2px solid var(--border-strong);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.gtv-score {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.gtv-scorer {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.gtv-assist {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.gtv-og {
+  font-size: 11px;
+  color: var(--loss);
+  font-weight: 600;
+}
+
+.drag-handle {
+  cursor: grab;
+  color: var(--text-muted);
+  font-size: 16px;
+  padding: 0 4px;
+  user-select: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.player-row.dragging {
+  opacity: 0.4;
+  border: 1px dashed var(--border-strong);
+}
+
+.btn-og {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  height: 28px;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+  white-space: nowrap;
+}
+
+.btn-og:hover {
+  border-color: var(--loss);
+  color: var(--loss);
+}
+
+.btn-og-active {
+  background: var(--loss-bg);
+  border-color: var(--loss);
+  color: var(--loss);
+}

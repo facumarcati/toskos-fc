@@ -186,14 +186,39 @@
         Agregar jugador</button>
     </div>
   </div>
-
+  <div class="form-panel">
+    <p class="section-label">Goles del partido</p>
+    <div id="goal-timeline-list">
+      {{#if match.goalTimeline.length}}
+        {{#each match.goalTimeline}}
+          <div class="player-row" draggable="true">
+            <span class="drag-handle" title="Mover">⠿</span>
+            <span class="player-row-label">{{add @index 1}}</span>
+            <input type="text" name="goalTimeline[{{@index}}][scorer]"
+              value="{{this.scorer}}" placeholder="Gol"
+              list="playersList" autocomplete="off" />
+            <span class="player-row-label">🎯</span>
+            <input type="text" name="goalTimeline[{{@index}}][assist]"
+              value="{{this.assist}}" placeholder="Asistencia (opcional)"
+              list="playersList" autocomplete="off" />
+            <button type="button" class="btn-og {{#if this.ownGoal}}btn-og-active{{/if}}" onclick="toggleOwnGoal(this)">EC</button>
+            <input type="hidden" name="goalTimeline[{{@index}}][ownGoal]" value="{{#if this.ownGoal}}true{{else}}false{{/if}}" />
+            <button type="button" class="btn-remove-player" onclick="removeGoalRow(this)">✕</button>
+          </div>
+        {{/each}}
+      {{else}}
+        <p class="empty-state" id="goals-empty">Sin goles cargados</p>
+      {{/if}}
+    </div>
+    <button type="button" class="btn-add-player" onclick="addGoalRow()">
+      + Agregar gol
+    </button>
+  </div>
   <button type="submit" class="btn-yellow">Guardar Cambios</button>
-
 </form>
 
 <script>
-  window.index =
-  {{match.players.length}};
+  window.index = {{match.players.length}};
+  window.goalIndex = {{match.goalTimeline.length}};
 </script>
-
 <script src="/js/newMatch.js"></script>

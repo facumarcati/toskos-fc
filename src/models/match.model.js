@@ -37,6 +37,13 @@ const matchSchema = new mongoose.Schema({
       },
     },
   ],
+  goalTimeline: [
+    {
+      scorer: { type: String, default: "" },
+      assist: { type: String, default: "" },
+      ownGoal: { type: Boolean, default: false },
+    },
+  ],
 });
 
 const Match = mongoose.model("Match", matchSchema);
