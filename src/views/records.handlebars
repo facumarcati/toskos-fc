@@ -113,6 +113,26 @@
   </div>
 </div>
 
+{{#if topOwnGoals.length}}
+<div class="records-section">
+  <h2 class="record-title">Más goles en contra</h2>
+  <div class="record-list">
+    {{#each topOwnGoals}}
+      <div class="record-card">
+        <span class="record-pos record-pos-{{add @index 1}}">{{add @index 1}}°</span>
+        <div class="record-info">
+          <span class="record-name">{{this.name}}</span>
+        </div>
+        <div class="record-score">
+          <span class="record-main" style="color: var(--loss);">{{this.ownGoals}}</span>
+          <span class="record-meta">E/C</span>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+{{/if}}
+
 <div class="records-section">
   <h2 class="record-title">Mayores goleadas</h2>
   <div class="record-list">

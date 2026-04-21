@@ -230,6 +230,21 @@ router.get("/", async (req, res) => {
     .sort((a, b) => a.winrate - b.winrate)
     .slice(0, 3);
 
+  const topOwnGoals = await Match.aggregate([
+    { $match: matchFilter },
+    { $unwind: "$goalTimeline" },
+    { $match: { "goalTimeline.ownGoal": true } },
+    {
+      $group: {
+        _id: { $toLower: "$goalTimeline.scorer" },
+        name: { $first: "$goalTimeline.scorer" },
+        ownGoals: { $sum: 1 },
+      },
+    },
+    { $sort: { ownGoals: -1 } },
+    { $limit: 5 },
+  ]);
+
   res.render("records", {
     topScorers,
     topAssists,
@@ -239,6 +254,7 @@ router.get("/", async (req, res) => {
     bottomGoals,
     bestWinrate,
     worstWinrate,
+    topOwnGoals,
     selectedSeason: season,
   });
 });

@@ -12,6 +12,7 @@ import recordsRouter from "./routes/records.route.js";
 import authRouter from "./routes/auth.route.js";
 import playerRouter from "./routes/player.route.js";
 import adminRouter from "./routes/admin.route.js";
+import profileRouter from "./routes/profile.route.js";
 
 import Player from "./models/player.model.js";
 
@@ -118,6 +119,7 @@ app.use("/records", recordsRouter);
 app.use("/api/auth", authRouter);
 app.use("/players", playerRouter);
 app.use("/admin", adminRouter);
+app.use("/profile", profileRouter);
 
 http.listen(PORT, () => {
   console.log("Servidor iniciado en http://localhost:" + PORT);
