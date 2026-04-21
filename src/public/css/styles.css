@@ -1773,6 +1773,7 @@ fieldset {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .stats-criteria-title {
@@ -2885,4 +2886,10 @@ a {
 textarea.match-venue-input {
   resize: vertical;
   min-height: 80px;
+}
+
+.form-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }

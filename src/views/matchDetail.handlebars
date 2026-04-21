@@ -1,7 +1,9 @@
 <div class="page-header">
   <div class="page-header-top">
     <div>
-      <a href="/matches" class="eyebrow eyebrow-link" style="text-decoration: none;">← Partidos</a>
+      <a href="javascript:history.back()" class="eyebrow eyebrow-link" style="text-decoration: none;">
+        ← Partidos
+      </a>
       <h1>Detalle del Partido</h1>
     </div>
   </div>
@@ -144,7 +146,6 @@
   <div class="goal-timeline-vertical">
     {{#each match.goalTimelineProcessed}}
       <div class="gtv-row gtv-row-{{this.side}}">
-
         <div class="gtv-cell gtv-left">
           {{#if (eq this.side "left")}}
             <span class="gtv-scorer">
@@ -153,11 +154,9 @@
             {{#if this.assist}}<span class="gtv-assist">asist. {{this.assist}}</span>{{/if}}
           {{/if}}
         </div>
-
         <div class="gtv-center">
           <span class="gtv-score">{{this.scoreA}}–{{this.scoreB}}</span>
         </div>
-
         <div class="gtv-cell gtv-right">
           {{#if (eq this.side "right")}}
             <span class="gtv-scorer">
@@ -166,7 +165,6 @@
             {{#if this.assist}}<span class="gtv-assist">asist. {{this.assist}}</span>{{/if}}
           {{/if}}
         </div>
-
       </div>
     {{/each}}
   </div>

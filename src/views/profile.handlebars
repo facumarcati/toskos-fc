@@ -36,7 +36,6 @@
       </div>
     {{/if}}
   </div>
-
   <div class="profile-info">
     {{#if profileUser.bio}}
       <p class="profile-bio">{{profileUser.bio}}</p>
@@ -44,14 +43,12 @@
       {{#if isOwner}}<p class="profile-bio profile-bio-empty">Sin descripción
           todavía.</p>{{/if}}
     {{/if}}
-
     {{#if profileUser.player}}
       <p class="profile-meta">
         Jugador vinculado:
         <span class="profile-player-name">{{profileUser.player.name}}</span>
       </p>
     {{/if}}
-
     <p class="profile-meta">Rol: {{profileUser.role}}</p>
   </div>
 </div>
@@ -59,7 +56,11 @@
 {{#if isOwner}}
   <div class="form-panel" style="margin-top: 24px;">
     <p class="section-label">Editar perfil</p>
-    <form action="/profile/{{profileUser.username}}/edit" method="POST">
+    <form
+      action="/profile/{{profileUser.username}}/edit"
+      method="POST"
+      class="form-profile"
+    >
       <div class="form-row">
         <div>
           <p class="section-label">Apodo</p>
