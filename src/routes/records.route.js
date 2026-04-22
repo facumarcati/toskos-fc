@@ -1,5 +1,7 @@
 import { Router } from "express";
+import { getMatchMVP } from "../services/mvp.service.js";
 import Match from "../models/match.model.js";
+import Player from "../models/player.model.js";
 
 const router = Router();
 
@@ -254,6 +256,29 @@ router.get("/", async (req, res) => {
     { $limit: 5 },
   ]);
 
+  const matchesForMVP = await Match.find(matchFilter)
+    .populate("players.player")
+    .lean();
+
+  const mvpCount = [];
+
+  for (const match of matchesForMVP) {
+    const mvpIds = getMatchMVP(match);
+
+    for (const playerId of mvpIds) {
+      mvpCount[playerId] = (mvpCount[playerId] || 0) + 1;
+    }
+  }
+
+  const topMVPs = await Promise.all(
+    Object.entries(mvpCount)
+      .sort((a, b) => b[1] - a[1])
+      .map(async ([playerId, count]) => {
+        const player = await Player.findById(playerId).lean();
+        return { name: player?.name || "Desconocido", mvps: count };
+      }),
+  );
+
   res.render("records", {
     topScorers,
     topAssists,
@@ -264,6 +289,7 @@ router.get("/", async (req, res) => {
     bestWinrate,
     worstWinrate,
     topOwnGoals,
+    topMVPs,
     selectedSeason: season,
   });
 });
