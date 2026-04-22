@@ -1,7 +1,14 @@
 <div class="page-header">
   <div class="page-header-top">
     <div>
-      <span class="eyebrow">Historial</span>
+      <span class="eyebrow">
+        Historial
+        {{#if (eq selectedSeason "all")}}
+          - Todas las temporadas
+        {{else}}
+          {{selectedSeason}}
+        {{/if}}
+      </span>
       <h1>Partidos</h1>
       <p class="page-header-meta">
         {{matchCount}} {{#if (eq matchCount 1)}}partido{{else}}partidos{{/if}}

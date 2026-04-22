@@ -160,7 +160,16 @@ router.get("/", async (req, res) => {
   const winrateStats = await Match.aggregate([
     { $match: matchFilter },
     { $unwind: "$players" },
-    { $match: { "players.guest": { $ne: true } } },
+    {
+      $lookup: {
+        from: "players",
+        localField: "players.player",
+        foreignField: "_id",
+        as: "playerInfo",
+      },
+    },
+    { $unwind: "$playerInfo" },
+    { $match: { "playerInfo.guest": { $ne: true } } },
     {
       $addFields: {
         playerTeamGoals: {
