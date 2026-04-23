@@ -132,6 +132,15 @@
       {{/if}}
     </div>
     <div class="footer-right">
+      <button 
+        type="button" 
+        class="btn-match-action btn-copy"
+        onclick="copyMatch('{{this._id}}', event)"
+        title="Copiar imagen">
+        <svg viewBox="0 0 24 24" width="16" height="16">
+          <path d="M16 1H4C2.9 1 2 1.9 2 3v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+        </svg>
+      </button>
       {{#if (and user (eq user.role "admin"))}}
         <a href="/matches/{{match._id}}/edit" class="btn-match-action btn-edit">Editar</a>
       {{/if}}
@@ -184,5 +193,36 @@ async function voteMVP(matchId, playerId) {
   } catch(err) {
     console.error(err);
   }
+}
+</script>
+<script>
+async function copyMatch(matchId) {
+  const element = document.getElementById(`match-${matchId}`);
+
+  const footer = element.querySelector(".match-card-footer");
+  footer.style.display = "none";
+
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true
+  });
+
+  footer.style.display = "flex";
+
+  canvas.toBlob(async (blob) => {
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "image/png": blob
+        })
+      ]);
+
+      showToast("✓ Imagen copiada", "success");
+    } catch (err) {
+      console.error(err);
+
+      showToast("No se pudo copiar la imagen", "error");
+    }
+  });
 }
 </script>
