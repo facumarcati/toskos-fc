@@ -1524,6 +1524,27 @@ fieldset {
     background 0.2s;
 }
 
+.btn-match-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+
+.btn-match-action svg {
+  fill: currentColor;
+  opacity: 0.85;
+  transition: 0.2s;
+  pointer-events: none;
+}
+
+.btn-match-action:hover svg {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
 .btn-match-action.btn-edit:hover {
   border-color: var(--accent);
   color: var(--accent);
@@ -2022,6 +2043,15 @@ a {
     flex-direction: row;
     text-align: left;
     gap: 12px;
+  }
+
+  .match-card-footer {
+    gap: 8px;
+  }
+
+  .footer-right {
+    flex-wrap: wrap;
+    justify-content: end;
   }
 }
 

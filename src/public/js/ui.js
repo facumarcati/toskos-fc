@@ -122,5 +122,4 @@ function initPendingToast() {
   setTimeout(() => showToast(message, type), 300);
 }
 
-// En el init:
 initPendingToast();
