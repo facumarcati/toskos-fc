@@ -5,6 +5,7 @@ import { createServer } from "http";
 import connectMongoDB from "./config/db.js";
 import dotenv from "dotenv";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 
 import matchesRouter from "./routes/matches.route.js";
 import statsRouter from "./routes/stats.route.js";
@@ -36,8 +37,13 @@ app.use(
     secret: process.env.SESSION_SECRET || "mvp-secret",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.URI_MONGODB,
+      ttl: 60 * 60 * 24 * 365,
+      autoRemove: "native",
+    }),
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 30,
+      maxAge: 1000 * 60 * 60 * 24 * 365,
       sameSite: "lax",
       secure: false,
     },
