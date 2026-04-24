@@ -93,6 +93,18 @@ if (donutCanvas && typeof donutData !== "undefined") {
   });
 }
 
+function toggleMenu() {
+  document.getElementById("navMenu").classList.toggle("open");
+  document.getElementById("navHamburger").classList.toggle("open");
+}
+
+document.querySelectorAll(".nav-menu a").forEach((link) => {
+  link.addEventListener("click", () => {
+    document.getElementById("navMenu").classList.remove("open");
+    document.getElementById("navHamburger").classList.remove("open");
+  });
+});
+
 function showToast(message, type = "success", duration = 3000) {
   let toast = document.getElementById("appToast");
 

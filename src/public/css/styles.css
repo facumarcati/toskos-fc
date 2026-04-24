@@ -132,9 +132,82 @@ nav a.nav-active {
 
 .navbar {
   display: flex;
+  flex-direction: column;
+  color-scheme: dark;
+  position: relative;
+}
+
+.nav-brand {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  color-scheme: dark;
+  width: 100%;
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-decoration: none;
+  text-transform: uppercase;
+  display: none;
+}
+
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: 0.2s;
+}
+
+.nav-hamburger span:nth-child(1) {
+  transform-origin: center;
+  transition:
+    transform 0.25s,
+    opacity 0.25s;
+}
+.nav-hamburger span:nth-child(2) {
+  transition:
+    transform 0.25s,
+    opacity 0.25s;
+}
+.nav-hamburger span:nth-child(3) {
+  transform-origin: center;
+  transition:
+    transform 0.25s,
+    opacity 0.25s;
+}
+
+.nav-hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.nav-hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.nav-hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .nav-left {
@@ -2052,6 +2125,67 @@ a {
   .footer-right {
     flex-wrap: wrap;
     justify-content: end;
+  }
+}
+
+@media (max-width: 900px) {
+  .nav-logo {
+    display: block;
+  }
+
+  nav a.nav-active {
+    background: none;
+  }
+
+  .nav-hamburger {
+    display: flex;
+  }
+
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+    border-top: 1px solid transparent;
+    margin-top: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.35s ease,
+      margin-top 0.35s ease,
+      border-color 0.35s ease;
+  }
+
+  .nav-menu.open {
+    max-height: 600px;
+    margin-top: 12px;
+    border-top-color: var(--border);
+    padding: 12px 0 8px;
+  }
+
+  .nav-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    width: 100%;
+  }
+
+  .nav-left a,
+  .nav-right a {
+    width: 100%;
+    padding: 10px 4px;
+    font-size: 14px;
+  }
+
+  .nav-right {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .profile-circle {
+    width: 50px;
+    height: 40px;
   }
 }
 
