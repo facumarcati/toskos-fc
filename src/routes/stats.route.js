@@ -5,11 +5,20 @@ import Match from "../models/match.model.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const { season = "2026", guests, sortBy = "goals" } = req.query;
+  const {
+    season = "2026",
+    guests,
+    sortBy = "goals",
+    orderDir = "desc",
+  } = req.query;
+
   const includeGuests = guests === "1";
 
-  const validSorts = ["goals", "assists", "wins", "matches"];
+  const validSorts = ["goals", "assists", "wins", "matches", "draws", "losses"];
+
   const sort = validSorts.includes(sortBy) ? sortBy : "goals";
+
+  const sortDirection = orderDir === "asc" ? 1 : -1;
 
   let matchFilter = {};
 
@@ -17,14 +26,19 @@ router.get("/", async (req, res) => {
     const start = new Date(`${season}-01-01`);
     const end = new Date(`${Number(season) + 1}-01-01`);
 
-    matchFilter.date = { $gte: start, $lt: end };
+    matchFilter.date = {
+      $gte: start,
+      $lt: end,
+    };
   }
 
   const sortObj = {};
 
-  if (sort !== "goals") sortObj.isEC = 1;
+  if (sort !== "goals") {
+    sortObj.isEC = 1;
+  }
 
-  sortObj[sort] = -1;
+  sortObj[sort] = sortDirection;
 
   if (sort === "goals") {
     sortObj.assists = -1;
@@ -40,6 +54,14 @@ router.get("/", async (req, res) => {
     sortObj.wins = -1;
     sortObj.goals = -1;
     sortObj.assists = -1;
+  } else if (sort === "draws") {
+    sortObj.matches = 1;
+    sortObj.wins = -1;
+    sortObj.goals = -1;
+  } else if (sort === "losses") {
+    sortObj.matches = 1;
+    sortObj.wins = -1;
+    sortObj.goals = -1;
   }
 
   const stats = await Match.aggregate([
@@ -162,6 +184,7 @@ router.get("/", async (req, res) => {
     selectedSeason: season,
     includeGuests,
     selectedSort: sort,
+    selectedOrderDir: orderDir,
   });
 });
 
