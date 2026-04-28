@@ -6,7 +6,7 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Montserrat:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" href="/img/favicon.png" />
+    <link rel="icon" href="/img/escudo-tsk.png" />
 
     <link rel="stylesheet" href="/css/styles.css" />
     <title>Toskos FC</title>
@@ -14,21 +14,29 @@
   <body>
 
     <nav class="navbar">
-      <div class="nav-left">
-        <a href="/">Inicio</a>
-        <a href="/matches">Partidos</a>
-        <a href="/matches/new">Nuevo Partido</a>
-        <a href="/stats">Estadísticas</a>
-        <a href="/records">Récords</a>
-        {{#if (eq user.role "admin")}}
-          <a href="/admin/users">
-            Usuarios
-          </a>
-        {{/if}}
+      <div class="nav-brand">
+        <a href="/" class="nav-logo">Toskos FC</a>
+        <button class="nav-hamburger" id="navHamburger" onclick="toggleMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
 
-      <div class="nav-right" id="navAuth">
-        <a href="/register">Registrar</a>
+      <div class="nav-menu" id="navMenu">
+        <div class="nav-left">
+          <a href="/">Inicio</a>
+          <a href="/matches">Partidos</a>
+          <a href="/matches/new">Nuevo Partido</a>
+          <a href="/stats">Estadísticas</a>
+          <a href="/records">Récords</a>
+          {{#if (eq user.role "admin")}}
+            <a href="/admin/users">Usuarios</a>
+          {{/if}}
+        </div>
+        <div class="nav-right" id="navAuth">
+          <a href="/register">Registrar</a>
+        </div>
       </div>
     </nav>
 
