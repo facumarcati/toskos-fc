@@ -2306,6 +2306,80 @@ a {
   background: var(--bg-hover);
 }
 
+.records-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin: 2rem 0;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.records-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    box-shadow 0.2s,
+    transform 0.15s;
+}
+
+.records-tab:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.records-tab.active {
+  background: var(--accent);
+  color: #111;
+  box-shadow: 0 4px 24px rgba(245, 197, 24, 0.35);
+}
+
+.records-tab.active:hover {
+  background: var(--accent-hover);
+}
+
+.records-tab:hover:not(.active) {
+  background: rgba(245, 197, 24, 0.12);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(245, 197, 24, 0.18);
+  transition: all 0.3s ease;
+}
+
+.records-category {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.records-category.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .profile-layout {
   max-width: 900px;
 }

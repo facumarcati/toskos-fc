@@ -194,6 +194,11 @@ router.get("/", async (req, res) => {
         _id: "$players.player",
         matches: { $sum: 1 },
         wins: { $sum: "$win" },
+        losses: {
+          $sum: {
+            $cond: [{ $lt: ["$playerTeamGoals", "$opponentGoals"] }, 1, 0],
+          },
+        },
       },
     },
     { $match: { matches: { $gte: 3 } } },
@@ -203,6 +208,14 @@ router.get("/", async (req, res) => {
           $round: [
             {
               $multiply: [{ $divide: ["$wins", "$matches"] }, 100],
+            },
+            1,
+          ],
+        },
+        lossrate: {
+          $round: [
+            {
+              $multiply: [{ $divide: ["$losses", "$matches"] }, 100],
             },
             1,
           ],
@@ -228,7 +241,9 @@ router.get("/", async (req, res) => {
         name: "$playerInfo.name",
         matches: 1,
         wins: 1,
+        losses: 1,
         winrate: 1,
+        lossrate: 1,
       },
     },
   ]);
@@ -239,6 +254,14 @@ router.get("/", async (req, res) => {
 
   const worstWinrate = [...winrateStats]
     .sort((a, b) => a.winrate - b.winrate)
+    .slice(0, 3);
+
+  const bestLossrate = [...winrateStats]
+    .sort((a, b) => a.lossrate - b.lossrate)
+    .slice(0, 3);
+
+  const worstLossrate = [...winrateStats]
+    .sort((a, b) => b.lossrate - a.lossrate)
     .slice(0, 3);
 
   const topOwnGoals = await Match.aggregate([
@@ -288,6 +311,8 @@ router.get("/", async (req, res) => {
     bottomGoals,
     bestWinrate,
     worstWinrate,
+    bestLossrate,
+    worstLossrate,
     topOwnGoals,
     topMVPs,
     selectedSeason: season,
