@@ -2319,7 +2319,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: 14px 24px;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--muted);
@@ -2331,10 +2331,11 @@ a {
   white-space: nowrap;
   cursor: pointer;
   transition:
-    background 0.2s,
-    color 0.2s,
-    box-shadow 0.2s,
-    transform 0.15s;
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
 }
 
 .records-tab:hover {
@@ -2345,6 +2346,7 @@ a {
 .records-tab.active {
   background: var(--accent);
   color: #111;
+  border-color: transparent;
   box-shadow: 0 4px 24px rgba(245, 197, 24, 0.35);
 }
 
@@ -2353,10 +2355,9 @@ a {
 }
 
 .records-tab:hover:not(.active) {
-  background: rgba(245, 197, 24, 0.12);
+  background: rgba(245, 197, 24, 0.08);
   color: var(--accent);
-  box-shadow: 0 0 0 1px rgba(245, 197, 24, 0.18);
-  transition: all 0.3s ease;
+  box-shadow: 0 0 0 1px rgba(245, 197, 24, 0.12);
 }
 
 .records-category {

@@ -302,6 +302,100 @@ router.get("/", async (req, res) => {
       }),
   );
 
+  const offensiveEfficiency = await Match.aggregate([
+    { $match: matchFilter },
+    { $unwind: "$players" },
+    {
+      $lookup: {
+        from: "players",
+        localField: "players.player",
+        foreignField: "_id",
+        as: "playerInfo",
+      },
+    },
+    { $unwind: "$playerInfo" },
+    {
+      $match: {
+        "playerInfo.guest": { $ne: true },
+        "playerInfo.name": { $ne: "E/C" },
+      },
+    },
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        matches: { $sum: 1 },
+        goals: { $sum: "$players.goals" },
+        assists: { $sum: "$players.assists" },
+      },
+    },
+    {
+      $match: {
+        matches: { $gte: 3 },
+      },
+    },
+    {
+      $addFields: {
+        goalContributions: {
+          $add: ["$goals", "$assists"],
+        },
+        goalsPerMatch: {
+          $round: [{ $divide: ["$goals", "$matches"] }, 2],
+        },
+        assistsPerMatch: {
+          $round: [{ $divide: ["$assists", "$matches"] }, 2],
+        },
+        gaPerMatch: {
+          $round: [
+            {
+              $divide: [{ $add: ["$goals", "$assists"] }, "$matches"],
+            },
+            2,
+          ],
+        },
+      },
+    },
+    {
+      $project: {
+        name: 1,
+        matches: 1,
+        goals: 1,
+        assists: 1,
+        goalContributions: 1,
+        goalsPerMatch: 1,
+        assistsPerMatch: 1,
+        gaPerMatch: 1,
+      },
+    },
+  ]);
+
+  const bestGoalsPerMatch = [...offensiveEfficiency]
+    .sort((a, b) => b.goalsPerMatch - a.goalsPerMatch)
+    .slice(0, 3);
+
+  const bestAssistsPerMatch = [...offensiveEfficiency]
+    .sort((a, b) => b.assistsPerMatch - a.assistsPerMatch)
+    .slice(0, 3);
+
+  const bestGAPerMatch = [...offensiveEfficiency]
+    .sort((a, b) => b.gaPerMatch - a.gaPerMatch)
+    .slice(0, 3);
+
+  const worstGoalsPerMatch = [...offensiveEfficiency]
+    .filter((player) => player.goals > 0)
+    .sort((a, b) => a.goalsPerMatch - b.goalsPerMatch)
+    .slice(0, 3);
+
+  const worstAssistsPerMatch = [...offensiveEfficiency]
+    .filter((player) => player.assists > 0)
+    .sort((a, b) => a.assistsPerMatch - b.assistsPerMatch)
+    .slice(0, 3);
+
+  const worstGAPerMatch = [...offensiveEfficiency]
+    .filter((player) => player.goalContributions > 0)
+    .sort((a, b) => a.gaPerMatch - b.gaPerMatch)
+    .slice(0, 3);
+
   res.render("records", {
     topScorers,
     topAssists,
@@ -315,6 +409,12 @@ router.get("/", async (req, res) => {
     worstLossrate,
     topOwnGoals,
     topMVPs,
+    bestGoalsPerMatch,
+    bestAssistsPerMatch,
+    bestGAPerMatch,
+    worstGoalsPerMatch,
+    worstAssistsPerMatch,
+    worstGAPerMatch,
     selectedSeason: season,
   });
 });
