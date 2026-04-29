@@ -29,6 +29,9 @@
   <button class="records-tab" data-category="players">
     Jugadores
   </button>
+  <button class="records-tab" data-category="percentages">
+    Porcentajes
+  </button>
   <button class="records-tab" data-category="averages">
     Promedios
   </button>
@@ -116,6 +119,112 @@
   </div>
 
   <div class="records-category" data-category="players">
+    {{#if topOwnGoals.length}}
+      <div class="records-section">
+        <h2 class="record-title">Goles en contra</h2>
+        <div class="record-list">
+          {{#each topOwnGoals}}
+            <div class="record-card">
+              <span class="record-pos record-pos-{{add @index 1}}">
+                {{add @index 1}}°
+              </span>
+              <div class="record-info">
+                <span class="record-name">{{this.name}}</span>
+              </div>
+              <div class="record-score">
+                <span class="record-main">{{this.ownGoals}}</span>
+                <span class="record-meta">E/C</span>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    <div class="records-section">
+      <h2 class="record-title">Partidos con 5+ goles</h2>
+      <div class="record-list">
+        {{#each fiveGoalMatches}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                Mejor partido: {{this.bestMatch}} goles
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.fiveGoalMatches}}</span>
+              <span class="record-meta">
+                {{#if (eq this.fiveGoalMatches 1)}}
+                  vez
+                {{else}}
+                  veces
+                {{/if}}
+              </span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="records-section">
+      <h2 class="record-title">Partidos con 5+ asistencias</h2>
+      <div class="record-list">
+        {{#each fiveAssistMatches}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                Mejor partido: {{this.bestMatch}} asistencias
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.fiveAssistMatches}}</span>
+              <span class="record-meta">
+                {{#if (eq this.fiveAssistMatches 1)}}
+                  vez
+                {{else}}
+                  veces
+                {{/if}}
+              </span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    
+    {{#if topMVPs.length}}
+      <div class="records-section">
+        <h2 class="record-title">MVPs</h2>
+        <div class="record-list">
+          {{#each topMVPs}}
+            <div class="record-card">
+              <span class="record-pos record-pos-{{add @index 1}}">
+                {{add @index 1}}°
+              </span>
+              <div class="record-info">
+                <span class="record-name">{{this.name}}</span>
+              </div>
+              <div class="record-score">
+                <span class="record-main">⭐ {{this.mvps}}</span>
+                <span class="record-meta">
+                  {{#if (eq this.mvps 1)}}vez{{else}}veces{{/if}}
+                </span>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+  </div>
+
+  <div class="records-category" data-category="percentages">
     <div class="records-section">
       <h2 class="record-title">Mayor % de victorias</h2>
       <div class="record-list">
@@ -203,52 +312,6 @@
         {{/each}}
       </div>
     </div>
-    
-    {{#if topOwnGoals.length}}
-      <div class="records-section">
-        <h2 class="record-title">Más goles en contra</h2>
-        <div class="record-list">
-          {{#each topOwnGoals}}
-            <div class="record-card">
-              <span class="record-pos record-pos-{{add @index 1}}">
-                {{add @index 1}}°
-              </span>
-              <div class="record-info">
-                <span class="record-name">{{this.name}}</span>
-              </div>
-              <div class="record-score">
-                <span class="record-main">{{this.ownGoals}}</span>
-                <span class="record-meta">E/C</span>
-              </div>
-            </div>
-          {{/each}}
-        </div>
-      </div>
-    {{/if}}
-    
-    {{#if topMVPs.length}}
-      <div class="records-section">
-        <h2 class="record-title">Más veces MVP</h2>
-        <div class="record-list">
-          {{#each topMVPs}}
-            <div class="record-card">
-              <span class="record-pos record-pos-{{add @index 1}}">
-                {{add @index 1}}°
-              </span>
-              <div class="record-info">
-                <span class="record-name">{{this.name}}</span>
-              </div>
-              <div class="record-score">
-                <span class="record-main">⭐ {{this.mvps}}</span>
-                <span class="record-meta">
-                  {{#if (eq this.mvps 1)}}vez{{else}}veces{{/if}}
-                </span>
-              </div>
-            </div>
-          {{/each}}
-        </div>
-      </div>
-    {{/if}}
   </div>
 
   <div class="records-category" data-category="averages">

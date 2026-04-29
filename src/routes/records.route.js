@@ -396,6 +396,72 @@ router.get("/", async (req, res) => {
     .sort((a, b) => a.gaPerMatch - b.gaPerMatch)
     .slice(0, 3);
 
+  const fiveGoalMatches = await Match.aggregate([
+    { $match: matchFilter },
+    { $unwind: "$players" },
+    {
+      $lookup: {
+        from: "players",
+        localField: "players.player",
+        foreignField: "_id",
+        as: "playerInfo",
+      },
+    },
+    { $unwind: "$playerInfo" },
+    {
+      $match: {
+        "playerInfo.guest": { $ne: true },
+        "playerInfo.name": { $ne: "E/C" },
+        "players.goals": { $gte: 5 },
+      },
+    },
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        fiveGoalMatches: { $sum: 1 },
+        bestMatch: { $max: "$players.goals" },
+      },
+    },
+    { $sort: { fiveGoalMatches: -1, bestMatch: -1, name: 1 } },
+  ]);
+
+  const fiveAssistMatches = await Match.aggregate([
+    { $match: matchFilter },
+    { $unwind: "$players" },
+    {
+      $lookup: {
+        from: "players",
+        localField: "players.player",
+        foreignField: "_id",
+        as: "playerInfo",
+      },
+    },
+    { $unwind: "$playerInfo" },
+    {
+      $match: {
+        "playerInfo.guest": { $ne: true },
+        "playerInfo.name": { $ne: "E/C" },
+        "players.assists": { $gte: 5 },
+      },
+    },
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        fiveAssistMatches: { $sum: 1 },
+        bestMatch: { $max: "$players.assists" },
+      },
+    },
+    {
+      $sort: {
+        fiveAssistMatches: -1,
+        bestMatch: -1,
+        name: 1,
+      },
+    },
+  ]);
+
   res.render("records", {
     topScorers,
     topAssists,
@@ -415,6 +481,8 @@ router.get("/", async (req, res) => {
     worstGoalsPerMatch,
     worstAssistsPerMatch,
     worstGAPerMatch,
+    fiveGoalMatches,
+    fiveAssistMatches,
     selectedSeason: season,
   });
 });

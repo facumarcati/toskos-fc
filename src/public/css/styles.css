@@ -2319,10 +2319,10 @@ a {
   align-items: center;
   justify-content: center;
   padding: 14px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--muted);
+  background: var(--bg-raised);
+  color: var(--text-secondary);
   font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
@@ -2355,9 +2355,9 @@ a {
 }
 
 .records-tab:hover:not(.active) {
-  background: rgba(245, 197, 24, 0.08);
+  background: var(--accent-dim);
   color: var(--accent);
-  box-shadow: 0 0 0 1px rgba(245, 197, 24, 0.12);
+  border-color: rgba(245, 197, 24, 0.25);
 }
 
 .records-category {
