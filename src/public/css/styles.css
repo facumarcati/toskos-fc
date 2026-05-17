@@ -1757,6 +1757,17 @@ fieldset {
   text-align: center;
 }
 
+.sortable-header {
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.sortable-header:hover {
+  color: var(--accent);
+}
+
 .product-list {
   list-style: none;
 }
@@ -2294,6 +2305,81 @@ a {
 
 .record-card-link:hover {
   background: var(--bg-hover);
+}
+
+.records-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin: 2rem 0;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.records-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+
+.records-tab:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.records-tab.active {
+  background: var(--accent);
+  color: #111;
+  border-color: transparent;
+  box-shadow: 0 4px 24px rgba(245, 197, 24, 0.35);
+}
+
+.records-tab.active:hover {
+  background: var(--accent-hover);
+}
+
+.records-tab:hover:not(.active) {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: rgba(245, 197, 24, 0.25);
+}
+
+.records-category {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.records-category.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .profile-layout {

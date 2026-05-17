@@ -194,6 +194,11 @@ router.get("/", async (req, res) => {
         _id: "$players.player",
         matches: { $sum: 1 },
         wins: { $sum: "$win" },
+        losses: {
+          $sum: {
+            $cond: [{ $lt: ["$playerTeamGoals", "$opponentGoals"] }, 1, 0],
+          },
+        },
       },
     },
     { $match: { matches: { $gte: 3 } } },
@@ -203,6 +208,14 @@ router.get("/", async (req, res) => {
           $round: [
             {
               $multiply: [{ $divide: ["$wins", "$matches"] }, 100],
+            },
+            1,
+          ],
+        },
+        lossrate: {
+          $round: [
+            {
+              $multiply: [{ $divide: ["$losses", "$matches"] }, 100],
             },
             1,
           ],
@@ -228,7 +241,9 @@ router.get("/", async (req, res) => {
         name: "$playerInfo.name",
         matches: 1,
         wins: 1,
+        losses: 1,
         winrate: 1,
+        lossrate: 1,
       },
     },
   ]);
@@ -239,6 +254,14 @@ router.get("/", async (req, res) => {
 
   const worstWinrate = [...winrateStats]
     .sort((a, b) => a.winrate - b.winrate)
+    .slice(0, 3);
+
+  const bestLossrate = [...winrateStats]
+    .sort((a, b) => a.lossrate - b.lossrate)
+    .slice(0, 3);
+
+  const worstLossrate = [...winrateStats]
+    .sort((a, b) => b.lossrate - a.lossrate)
     .slice(0, 3);
 
   const topOwnGoals = await Match.aggregate([
@@ -279,6 +302,166 @@ router.get("/", async (req, res) => {
       }),
   );
 
+  const offensiveEfficiency = await Match.aggregate([
+    { $match: matchFilter },
+    { $unwind: "$players" },
+    {
+      $lookup: {
+        from: "players",
+        localField: "players.player",
+        foreignField: "_id",
+        as: "playerInfo",
+      },
+    },
+    { $unwind: "$playerInfo" },
+    {
+      $match: {
+        "playerInfo.guest": { $ne: true },
+        "playerInfo.name": { $ne: "E/C" },
+      },
+    },
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        matches: { $sum: 1 },
+        goals: { $sum: "$players.goals" },
+        assists: { $sum: "$players.assists" },
+      },
+    },
+    {
+      $match: {
+        matches: { $gte: 3 },
+      },
+    },
+    {
+      $addFields: {
+        goalContributions: {
+          $add: ["$goals", "$assists"],
+        },
+        goalsPerMatch: {
+          $round: [{ $divide: ["$goals", "$matches"] }, 2],
+        },
+        assistsPerMatch: {
+          $round: [{ $divide: ["$assists", "$matches"] }, 2],
+        },
+        gaPerMatch: {
+          $round: [
+            {
+              $divide: [{ $add: ["$goals", "$assists"] }, "$matches"],
+            },
+            2,
+          ],
+        },
+      },
+    },
+    {
+      $project: {
+        name: 1,
+        matches: 1,
+        goals: 1,
+        assists: 1,
+        goalContributions: 1,
+        goalsPerMatch: 1,
+        assistsPerMatch: 1,
+        gaPerMatch: 1,
+      },
+    },
+  ]);
+
+  const bestGoalsPerMatch = [...offensiveEfficiency]
+    .sort((a, b) => b.goalsPerMatch - a.goalsPerMatch)
+    .slice(0, 3);
+
+  const bestAssistsPerMatch = [...offensiveEfficiency]
+    .sort((a, b) => b.assistsPerMatch - a.assistsPerMatch)
+    .slice(0, 3);
+
+  const bestGAPerMatch = [...offensiveEfficiency]
+    .sort((a, b) => b.gaPerMatch - a.gaPerMatch)
+    .slice(0, 3);
+
+  const worstGoalsPerMatch = [...offensiveEfficiency]
+    .filter((player) => player.goals > 0)
+    .sort((a, b) => a.goalsPerMatch - b.goalsPerMatch)
+    .slice(0, 3);
+
+  const worstAssistsPerMatch = [...offensiveEfficiency]
+    .filter((player) => player.assists > 0)
+    .sort((a, b) => a.assistsPerMatch - b.assistsPerMatch)
+    .slice(0, 3);
+
+  const worstGAPerMatch = [...offensiveEfficiency]
+    .filter((player) => player.goalContributions > 0)
+    .sort((a, b) => a.gaPerMatch - b.gaPerMatch)
+    .slice(0, 3);
+
+  const fiveGoalMatches = await Match.aggregate([
+    { $match: matchFilter },
+    { $unwind: "$players" },
+    {
+      $lookup: {
+        from: "players",
+        localField: "players.player",
+        foreignField: "_id",
+        as: "playerInfo",
+      },
+    },
+    { $unwind: "$playerInfo" },
+    {
+      $match: {
+        "playerInfo.guest": { $ne: true },
+        "playerInfo.name": { $ne: "E/C" },
+        "players.goals": { $gte: 5 },
+      },
+    },
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        fiveGoalMatches: { $sum: 1 },
+        bestMatch: { $max: "$players.goals" },
+      },
+    },
+    { $sort: { fiveGoalMatches: -1, bestMatch: -1, name: 1 } },
+  ]);
+
+  const fiveAssistMatches = await Match.aggregate([
+    { $match: matchFilter },
+    { $unwind: "$players" },
+    {
+      $lookup: {
+        from: "players",
+        localField: "players.player",
+        foreignField: "_id",
+        as: "playerInfo",
+      },
+    },
+    { $unwind: "$playerInfo" },
+    {
+      $match: {
+        "playerInfo.guest": { $ne: true },
+        "playerInfo.name": { $ne: "E/C" },
+        "players.assists": { $gte: 5 },
+      },
+    },
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        fiveAssistMatches: { $sum: 1 },
+        bestMatch: { $max: "$players.assists" },
+      },
+    },
+    {
+      $sort: {
+        fiveAssistMatches: -1,
+        bestMatch: -1,
+        name: 1,
+      },
+    },
+  ]);
+
   res.render("records", {
     topScorers,
     topAssists,
@@ -288,8 +471,18 @@ router.get("/", async (req, res) => {
     bottomGoals,
     bestWinrate,
     worstWinrate,
+    bestLossrate,
+    worstLossrate,
     topOwnGoals,
     topMVPs,
+    bestGoalsPerMatch,
+    bestAssistsPerMatch,
+    bestGAPerMatch,
+    worstGoalsPerMatch,
+    worstAssistsPerMatch,
+    worstGAPerMatch,
+    fiveGoalMatches,
+    fiveAssistMatches,
     selectedSeason: season,
   });
 });

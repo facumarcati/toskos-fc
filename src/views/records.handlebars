@@ -1,288 +1,556 @@
 <div class="page-header">
   <span class="eyebrow">Toskos FC</span>
-  <h1>Records</h1>
+  <h1>Récords</h1>
 </div>
 
 <div class="matches-header">
   <form method="GET" action="/records" class="season-filter">
     <select name="season" onchange="this.form.submit()">
-      <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
-      <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
-      <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
-      <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>2024</option>
+      <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>
+        Todas las temporadas
+      </option>
+      <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>
+        2026
+      </option>
+      <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>
+        2025
+      </option>
+      <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>
+        2024
+      </option>
     </select>
   </form>
 </div>
 
-<div class="records-section">
-  <h2 class="record-title">Top goleadores en un partido</h2>
-
-  <div class="record-list">
-    {{#each topScorers}}
-      <a
-        href="/matches?season=all#match-{{this._id}}"
-        class="record-card record-card-link"
-      >
-        <span class="record-pos record-pos-{{add @index 1}}">{{add
-            @index
-            1
-          }}°</span>
-
-        <div class="record-info">
-          <span class="record-name">{{this.name}}</span>
-          <span class="record-meta">
-            {{formatDate this.date}}
-            {{#if this.venue}} · {{this.venue}}{{/if}}
-          </span>
-        </div>
-
-        <div class="record-score">
-          <span class="record-main">{{this.goals}}</span>
-          <span class="record-meta">{{this.teamA}} — {{this.teamB}}</span>
-        </div>
-      </a>
-    {{/each}}
-  </div>
+<div class="records-tabs">
+  <button class="records-tab active" data-category="individual">
+    Individuales
+  </button>
+  <button class="records-tab" data-category="players">
+    Jugadores
+  </button>
+  <button class="records-tab" data-category="percentages">
+    Porcentajes
+  </button>
+  <button class="records-tab" data-category="averages">
+    Promedios
+  </button>
+  <button class="records-tab" data-category="matches">
+    Partidos
+  </button>
 </div>
 
-<div class="records-section">
-  <h2 class="record-title">Top asistidores en un partido</h2>
+<div class="records-content">
+  <div class="records-category active" data-category="individual">
+    <div class="records-section">
+      <h2 class="record-title">Top goleadores en un partido</h2>
+      <div class="record-list">
+        {{#each topScorers}}
+          <a href="/matches?season=all#match-{{this._id}}" class="record-card record-card-link">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{formatDate this.date}}
+                {{#if this.venue}} · {{this.venue}}{{/if}}
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.goals}}</span>
+              <span class="record-meta">{{this.teamA}} — {{this.teamB}}</span>
+            </div>
+          </a>
+        {{/each}}
+      </div>
+    </div>
 
-  <div class="record-list">
-    {{#each topAssists}}
-      <a
-        href="/matches?season=all#match-{{this._id}}"
-        class="record-card record-card-link"
-      >
-        <span class="record-pos record-pos-{{add @index 1}}">{{add
-            @index
-            1
-          }}°</span>
+    <div class="records-section">
+      <h2 class="record-title">Top asistidores en un partido</h2>
+      <div class="record-list">
+        {{#each topAssists}}
+          <a href="/matches?season=all#match-{{this._id}}" class="record-card record-card-link">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{formatDate this.date}}
+                {{#if this.venue}} · {{this.venue}}{{/if}}
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.assists}}</span>
+              <span class="record-meta">{{this.teamA}} — {{this.teamB}}</span>
+            </div>
+          </a>
+        {{/each}}
+      </div>
+    </div>
 
-        <div class="record-info">
-          <span class="record-name">{{this.name}}</span>
-          <span class="record-meta">
-            {{formatDate this.date}}
-            {{#if this.venue}} · {{this.venue}}{{/if}}
-          </span>
-        </div>
-
-        <div class="record-score">
-          <span class="record-main">{{this.assists}}</span>
-          <span class="record-meta">{{this.teamA}} — {{this.teamB}}</span>
-        </div>
-      </a>
-    {{/each}}
+    <div class="records-section">
+      <h2 class="record-title">Top G+A en un partido</h2>
+      <div class="record-list">
+        {{#each topGAndA}}
+          <a href="/matches?season=all#match-{{this._id}}" class="record-card record-card-link">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{formatDate this.date}}
+                {{#if this.venue}} · {{this.venue}}{{/if}}
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.ga}}</span>
+              <span class="record-meta">
+                {{this.goals}} · {{this.assists}} /
+                {{this.teamA}} — {{this.teamB}}
+              </span>
+            </div>
+          </a>
+        {{/each}}
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="records-section">
-  <h2 class="record-title">Top G+A en un partido</h2>
-
-  <div class="record-list">
-    {{#each topGAndA}}
-      <a
-        href="/matches?season=all#match-{{this._id}}"
-        class="record-card record-card-link"
-      >
-        <span class="record-pos record-pos-{{add @index 1}}">{{add
-            @index
-            1
-          }}°</span>
-
-        <div class="record-info">
-          <span class="record-name">{{this.name}}</span>
-          <span class="record-meta">
-            {{formatDate this.date}}
-            {{#if this.venue}} · {{this.venue}}{{/if}}
-          </span>
-        </div>
-
-        <div class="record-score">
-          <span class="record-main">{{this.ga}}</span>
-          <span class="record-meta">{{this.goals}}
-            ·
-            {{this.assists}}
-            /
-            {{this.teamA}}
-            —
-            {{this.teamB}}</span>
-        </div>
-      </a>
-    {{/each}}
-  </div>
-</div>
-
-{{#if topOwnGoals.length}}
-<div class="records-section">
-  <h2 class="record-title">Más goles en contra</h2>
-  <div class="record-list">
-    {{#each topOwnGoals}}
-      <div class="record-card">
-        <span class="record-pos record-pos-{{add @index 1}}">{{add @index 1}}°</span>
-        <div class="record-info">
-          <span class="record-name">{{this.name}}</span>
-        </div>
-        <div class="record-score">
-          <span class="record-main">{{this.ownGoals}}</span>
-          <span class="record-meta">E/C</span>
+  <div class="records-category" data-category="players">
+    {{#if topOwnGoals.length}}
+      <div class="records-section">
+        <h2 class="record-title">Goles en contra</h2>
+        <div class="record-list">
+          {{#each topOwnGoals}}
+            <div class="record-card">
+              <span class="record-pos record-pos-{{add @index 1}}">
+                {{add @index 1}}°
+              </span>
+              <div class="record-info">
+                <span class="record-name">{{this.name}}</span>
+              </div>
+              <div class="record-score">
+                <span class="record-main">{{this.ownGoals}}</span>
+                <span class="record-meta">E/C</span>
+              </div>
+            </div>
+          {{/each}}
         </div>
       </div>
-    {{/each}}
-  </div>
-</div>
-{{/if}}
+    {{/if}}
 
-<div class="records-section">
-  <h2 class="record-title">Mayores goleadas</h2>
-  <div class="record-list">
-    {{#each topGoleadas}}
-      <a
-        href="/matches?season=all#match-{{this._id}}"
-        class="record-card record-card-link"
-      >
-        <span class="record-pos record-pos-{{add @index 1}}">{{add
-            @index
-            1
-          }}°</span>
-        <div class="record-info">
-          <span class="record-name">{{this.teamA}} — {{this.teamB}}</span>
-          <span class="record-meta">
-            {{formatDate this.date}}
-            {{#if this.venue}} · {{this.venue}}{{/if}}
-          </span>
-        </div>
-        <div class="record-score">
-          <span class="record-main">+{{this.diff}}</span>
-        </div>
-      </a>
-    {{/each}}
-  </div>
-</div>
+    <div class="records-section">
+      <h2 class="record-title">Partidos con 5+ goles</h2>
+      <div class="record-list">
+        {{#each fiveGoalMatches}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                Mejor partido: {{this.bestMatch}} goles
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.fiveGoalMatches}}</span>
+              <span class="record-meta">
+                {{#if (eq this.fiveGoalMatches 1)}}
+                  vez
+                {{else}}
+                  veces
+                {{/if}}
+              </span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
 
-<div class="records-section">
-  <h2 class="record-title">Partidos con más goles</h2>
-  <div class="record-list">
-    {{#each topGoals}}
-      <a
-        href="/matches?season=all#match-{{this._id}}"
-        class="record-card record-card-link"
-      >
-        <span class="record-pos record-pos-{{add @index 1}}">{{add
-            @index
-            1
-          }}°</span>
-        <div class="record-info">
-          <span class="record-name">{{this.teamA}} — {{this.teamB}}</span>
-          <span class="record-meta">
-            {{formatDate this.date}}
-            {{#if this.venue}} · {{this.venue}}{{/if}}
-          </span>
-        </div>
-        <div class="record-score">
-          <span class="record-main">{{this.totalGoals}}</span>
-        </div>
-      </a>
-    {{/each}}
-  </div>
-</div>
-
-<div class="records-section">
-  <h2 class="record-title">Partidos con menos goles</h2>
-  <div class="record-list">
-    {{#each bottomGoals}}
-      <a
-        href="/matches?season=all#match-{{this._id}}"
-        class="record-card record-card-link"
-      >
-        <span class="record-pos record-pos-{{add @index 1}}">{{add @index 1}}°</span>
-        <div class="record-info">
-          <span class="record-name">{{this.teamA}} — {{this.teamB}}</span>
-          <span class="record-meta">
-            {{formatDate this.date}}
-            {{#if this.venue}} · {{this.venue}}{{/if}}
-          </span>
-        </div>
-        <div class="record-score">
-          <span class="record-main">{{this.totalGoals}}</span>
-        </div>
-      </a>
-    {{/each}}
-  </div>
-</div>
-
-<div class="records-section">
-  <h2 class="record-title">Mayor % de victorias</h2>
-
-  <div class="record-list">
-    {{#each bestWinrate}}
-      <div class="record-card">
-        <span class="record-pos record-pos-{{add @index 1}}">
-          {{add @index 1}}°
-        </span>
-
-        <div class="record-info">
-          <span class="record-name">{{this.name}}</span>
-          <span class="record-meta">
-            {{this.wins}} ganados · {{this.matches}} jugados
-          </span>
-        </div>
-
-        <div class="record-score">
-          <span class="record-main">{{this.winrate}}%</span>
+    <div class="records-section">
+      <h2 class="record-title">Partidos con 5+ asistencias</h2>
+      <div class="record-list">
+        {{#each fiveAssistMatches}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                Mejor partido: {{this.bestMatch}} asistencias
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.fiveAssistMatches}}</span>
+              <span class="record-meta">
+                {{#if (eq this.fiveAssistMatches 1)}}
+                  vez
+                {{else}}
+                  veces
+                {{/if}}
+              </span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    
+    {{#if topMVPs.length}}
+      <div class="records-section">
+        <h2 class="record-title">MVPs</h2>
+        <div class="record-list">
+          {{#each topMVPs}}
+            <div class="record-card">
+              <span class="record-pos record-pos-{{add @index 1}}">
+                {{add @index 1}}°
+              </span>
+              <div class="record-info">
+                <span class="record-name">{{this.name}}</span>
+              </div>
+              <div class="record-score">
+                <span class="record-main">⭐ {{this.mvps}}</span>
+                <span class="record-meta">
+                  {{#if (eq this.mvps 1)}}vez{{else}}veces{{/if}}
+                </span>
+              </div>
+            </div>
+          {{/each}}
         </div>
       </div>
-    {{/each}}
+    {{/if}}
   </div>
-</div>
 
-<div class="records-section">
-  <h2 class="record-title">Menor % de victorias</h2>
-
-  <div class="record-list">
-    {{#each worstWinrate}}
-      <div class="record-card">
-        <span class="record-pos record-pos-{{add @index 1}}">
-          {{add @index 1}}°
-        </span>
-
-        <div class="record-info">
-          <span class="record-name">{{this.name}}</span>
-          <span class="record-meta">
-            {{this.wins}} ganados · {{this.matches}} jugados
-          </span>
-        </div>
-
-        <div class="record-score">
-          <span class="record-main">{{this.winrate}}%</span>
-        </div>
+  <div class="records-category" data-category="percentages">
+    <div class="records-section">
+      <h2 class="record-title">Mayor % de victorias</h2>
+      <div class="record-list">
+        {{#each bestWinrate}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.wins}} ganados · {{this.matches}} jugados
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.winrate}}%</span>
+            </div>
+          </div>
+        {{/each}}
       </div>
-    {{/each}}
-  </div>
-</div>
+    </div>
 
-
-{{#if topMVPs.length}}
-<div class="records-section">
-  <h2 class="record-title">Más veces MVP</h2>
-  <div class="record-list">
-    {{#each topMVPs}}
-      <div class="record-card">
-        <span class="record-pos record-pos-{{add @index 1}}">{{add @index 1}}°</span>
-        <div class="record-info">
-          <span class="record-name">{{this.name}}</span>
-        </div>
-        <div class="record-score">
-          <span class="record-main">
-            <svg viewBox="0 0 24 24" width="14" height="14" style="fill:var(--accent); vertical-align:middle; margin-right:4px;">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-            {{this.mvps}}
-          </span>
-          <span class="record-meta">{{#if (eq this.mvps 1)}}vez{{else}}veces{{/if}}</span>
-        </div>
+    <div class="records-section">
+      <h2 class="record-title">Menor % de victorias</h2>
+      <div class="record-list">
+        {{#each worstWinrate}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.wins}} ganados · {{this.matches}} jugados
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.winrate}}%</span>
+            </div>
+          </div>
+        {{/each}}
       </div>
-    {{/each}}
+    </div>
+
+    <div class="records-section">
+      <h2 class="record-title">Mayor % de derrotas</h2>
+      <div class="record-list">
+        {{#each worstLossrate}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.losses}} perdidos · {{this.matches}} jugados
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.lossrate}}%</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="records-section">
+      <h2 class="record-title">Menor % de derrotas</h2>
+      <div class="record-list">
+        {{#each bestLossrate}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.losses}} perdidos · {{this.matches}} jugados
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.lossrate}}%</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  <div class="records-category" data-category="averages">
+    <div class="records-section">
+      <h2 class="record-title">Mejor promedio de goles</h2>
+      <div class="record-list">
+        {{#each bestGoalsPerMatch}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.goals}} goles · {{this.matches}} partidos
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.goalsPerMatch}}</span>
+              <span class="record-meta">G/P</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="records-section">
+      <h2 class="record-title">Peor promedio de goles</h2>
+      <div class="record-list">
+        {{#each worstGoalsPerMatch}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.goals}} goles · {{this.matches}} partidos
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.goalsPerMatch}}</span>
+              <span class="record-meta">G/P</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="records-section">
+      <h2 class="record-title">Mejor promedio de asistencias</h2>
+      <div class="record-list">
+        {{#each bestAssistsPerMatch}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.assists}} asistencias · {{this.matches}} partidos
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.assistsPerMatch}}</span>
+              <span class="record-meta">A/P</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    
+    <div class="records-section">
+      <h2 class="record-title">Peor promedio de asistencias</h2>
+      <div class="record-list">
+        {{#each worstAssistsPerMatch}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.assists}} asistencias · {{this.matches}} partidos
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.assistsPerMatch}}</span>
+              <span class="record-meta">A/P</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="records-section">
+      <h2 class="record-title">Mejor promedio de G+A</h2>
+      <div class="record-list">
+        {{#each bestGAPerMatch}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.goalContributions}} participaciones · {{this.matches}} partidos
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.gaPerMatch}}</span>
+              <span class="record-meta">G+A/P</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="records-section">
+      <h2 class="record-title">Peor promedio de G+A</h2>
+      <div class="record-list">
+        {{#each worstGAPerMatch}}
+          <div class="record-card">
+            <span class="record-pos record-pos-{{add @index 1}}">
+              {{add @index 1}}°
+            </span>
+            <div class="record-info">
+              <span class="record-name">{{this.name}}</span>
+              <span class="record-meta">
+                {{this.goalContributions}} participaciones · {{this.matches}} partidos
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.gaPerMatch}}</span>
+              <span class="record-meta">G+A/P</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
+  <div class="records-category" data-category="matches">
+    <div class="records-section">
+      <h2 class="record-title">Mayores goleadas</h2>
+      <div class="record-list">
+        {{#each topGoleadas}}
+          <a
+            href="/matches?season=all#match-{{this._id}}"
+            class="record-card record-card-link"
+          >
+            <span class="record-pos record-pos-{{add @index 1}}">{{add
+                @index
+                1
+              }}°</span>
+            <div class="record-info">
+              <span class="record-name">{{this.teamA}} — {{this.teamB}}</span>
+              <span class="record-meta">
+                {{formatDate this.date}}
+                {{#if this.venue}} · {{this.venue}}{{/if}}
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">+{{this.diff}}</span>
+            </div>
+          </a>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="records-section">
+      <h2 class="record-title">Partidos con más goles</h2>
+      <div class="record-list">
+        {{#each topGoals}}
+          <a
+            href="/matches?season=all#match-{{this._id}}"
+            class="record-card record-card-link"
+          >
+            <span class="record-pos record-pos-{{add @index 1}}">{{add
+                @index
+                1
+              }}°</span>
+            <div class="record-info">
+              <span class="record-name">{{this.teamA}} — {{this.teamB}}</span>
+              <span class="record-meta">
+                {{formatDate this.date}}
+                {{#if this.venue}} · {{this.venue}}{{/if}}
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.totalGoals}}</span>
+            </div>
+          </a>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="records-section">
+      <h2 class="record-title">Partidos con menos goles</h2>
+      <div class="record-list">
+        {{#each bottomGoals}}
+          <a
+            href="/matches?season=all#match-{{this._id}}"
+            class="record-card record-card-link"
+          >
+            <span class="record-pos record-pos-{{add @index 1}}">{{add @index 1}}°</span>
+            <div class="record-info">
+              <span class="record-name">{{this.teamA}} — {{this.teamB}}</span>
+              <span class="record-meta">
+                {{formatDate this.date}}
+                {{#if this.venue}} · {{this.venue}}{{/if}}
+              </span>
+            </div>
+            <div class="record-score">
+              <span class="record-main">{{this.totalGoals}}</span>
+            </div>
+          </a>
+        {{/each}}
+      </div>
+    </div>
   </div>
 </div>
-{{/if}}
+
+<script>
+  document.querySelectorAll(".records-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const category = tab.dataset.category;
+
+      document.querySelectorAll(".records-tab")
+        .forEach((t) => t.classList.remove("active"));
+
+      document.querySelectorAll(".records-category")
+        .forEach((section) => section.classList.remove("active"));
+
+      tab.classList.add("active");
+
+      document
+        .querySelector(`.records-category[data-category="${category}"]`)
+        .classList.add("active");
+    });
+  });
+</script>
