@@ -65,7 +65,13 @@ router.get("/", async (req, res) => {
       else draws++;
     });
 
-    stats = { played: vsMatches.length, winsA, winsB, draws };
+    stats = {
+      played: vsMatches.length,
+      winsA,
+      winsB,
+      draws,
+      matches: vsMatches,
+    };
   } else {
     const duoMatches = allMatches.filter((m) => {
       const pA = m.players.find((p) => p.player.toString() === playerA);
@@ -90,7 +96,15 @@ router.get("/", async (req, res) => {
 
     const winrate =
       duoMatches.length > 0 ? ((wins / duoMatches.length) * 100).toFixed(1) : 0;
-    stats = { played: duoMatches.length, wins, draws, losses, winrate };
+
+    stats = {
+      played: duoMatches.length,
+      wins,
+      draws,
+      losses,
+      winrate,
+      matches: duoMatches,
+    };
   }
 
   res.render("h2h", {

@@ -60,19 +60,41 @@
 <div class="h2h-result">
   {{#if (eq mode "vs")}}
   <div class="h2h-scoreboard">
-    <div class="h2h-player">
+    <div class="h2h-player {{#if (gt stats.winsA stats.winsB)}}h2h-player-winner{{/if}}">
       <span class="h2h-player-name">{{playerA.name}}</span>
-      <span class="h2h-player-wins" style="color:var(--win)">{{stats.winsA}}</span>
-      <span class="h2h-player-label">victorias</span>
+      <span class="h2h-player-wins {{#if (gt stats.winsA stats.winsB)}}h2h-wins-highlight{{/if}}">
+        {{stats.winsA}}
+      </span>
+      <span class="h2h-player-label">
+        victorias
+      </span>
     </div>
     <div class="h2h-center">
-      <span class="h2h-played">{{stats.played}} partidos</span>
-      <span class="h2h-draws">{{stats.draws}} empates</span>
+      <div class="h2h-center-stat">
+        <span class="h2h-center-num">
+          {{stats.played}}
+        </span>
+        <span class="h2h-center-label">
+          partidos
+        </span>
+      </div>
+      <div class="h2h-center-stat">
+        <span class="h2h-center-num" style="color:var(--draw)">
+          {{stats.draws}}
+        </span>
+        <span class="h2h-center-label">
+          empates
+        </span>
+      </div>
     </div>
-    <div class="h2h-player h2h-player-right">
+    <div class="h2h-player h2h-player-right {{#if (gt stats.winsB stats.winsA)}}h2h-player-winner{{/if}}">
       <span class="h2h-player-name">{{playerB.name}}</span>
-      <span class="h2h-player-wins" style="color:var(--win)">{{stats.winsB}}</span>
-      <span class="h2h-player-label">victorias</span>
+      <span class="h2h-player-wins {{#if (gt stats.winsB stats.winsA)}}h2h-wins-highlight{{/if}}">
+        {{stats.winsB}}
+      </span>
+      <span class="h2h-player-label">
+        victorias
+      </span>
     </div>
   </div>
   {{/if}}
@@ -82,24 +104,88 @@
     <span class="h2h-vs-label">&</span>
     <span class="h2h-player-name">{{playerB.name}}</span>
   </div>
-  <div class="h2h-duo-stats">
+  <div class="h2h-duo-grid">
     <div class="stat-box">
       <strong>{{stats.played}}</strong>
       <span>Partidos</span>
     </div>
-    <div class="stat-box">
-      <strong style="color:var(--win)">{{stats.wins}}</strong>
-      <span>Victorias</span>
-    </div>
-    <div class="stat-box">
-      <strong style="color:var(--draw)">{{stats.draws}}</strong>
-      <span>Empates</span>
-    </div>
-    <div class="stat-box">
-      <strong style="color:var(--loss)">{{stats.losses}}</strong>
-      <span>Derrotas</span>
+    <div class="h2h-duo-row2">
+      <div class="stat-box">
+        <strong style="color:var(--win)">
+          {{stats.wins}}
+        </strong>
+        <span>Victorias</span>
+      </div>
+      <div class="stat-box">
+        <strong style="color:var(--draw)">
+          {{stats.draws}}
+        </strong>
+        <span>Empates</span>
+      </div>
+      <div class="stat-box">
+        <strong style="color:var(--loss)">
+          {{stats.losses}}
+        </strong>
+        <span>Derrotas</span>
+      </div>
+      <div class="stat-box">
+        <strong style="color:var(--accent)">
+          {{stats.winrate}}%
+        </strong>
+        <span>Winrate</span>
+      </div>
     </div>
   </div>
   {{/if}}
+</div>
+<div class="h2h-matches-panel">
+  <div class="h2h-matches">
+    <p class="section-label h2h-matches-title">
+      {{#if (eq mode "vs")}}
+        Partidos enfrentados
+      {{else}}
+        Partidos juntos
+      {{/if}}
+    </p>
+    {{#if stats.matches.length}}
+      <div class="h2h-matches-list">
+        {{#each stats.matches}}
+        <div class="match-card match-card-compact">
+          <div class="match-scoreboard
+          {{#if (gt this.teamA this.teamB)}}scoreboard-win-a
+          {{else if (gt this.teamB this.teamA)}}scoreboard-win-b
+          {{else}}scoreboard-draw
+          {{/if}}">
+            <div class="match-team">
+              <span class="match-team-label">Equipo</span>
+              <span class="match-team-name">Blanco</span>
+            </div>
+            <div class="match-score">
+              <div class="match-date">
+                {{formatDate this.date}}
+              </div>
+              <span class="match-score-number">
+                {{this.teamA}} — {{this.teamB}}
+              </span>
+              {{#if this.venue}}
+                <span class="match-score-meta">
+                  {{this.venue}}
+                </span>
+              {{/if}}
+            </div>
+            <div class="match-team match-team-right">
+              <span class="match-team-label">Equipo</span>
+              <span class="match-team-name">Negro</span>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="list-empty-state">
+        Sin partidos para mostrar
+      </div>
+    {{/if}}
+  </div>
 </div>
 {{/if}}

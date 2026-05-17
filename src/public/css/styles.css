@@ -3267,11 +3267,11 @@ textarea.match-venue-input {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .h2h-player-right {
-  align-items: flex-end;
+  align-items: center;
   text-align: right;
 }
 
@@ -3339,6 +3339,58 @@ textarea.match-venue-input {
   gap: 16px;
 }
 
+.h2h-player-winner .h2h-player-name {
+  color: var(--win);
+}
+
+.h2h-wins-highlight {
+  color: var(--win) !important;
+  text-shadow: 0 0 20px rgba(62, 207, 110, 0.3);
+}
+
+.h2h-player:not(.h2h-player-winner) .h2h-player-wins {
+  color: var(--text-secondary) !important;
+}
+
+.h2h-center-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.h2h-center-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.h2h-center-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.h2h-duo-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.h2h-duo-row2 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.h2h-matches-panel {
+  margin-top: 24px;
+}
+
 @media (max-width: 640px) {
   .h2h-selects {
     flex-direction: column;
@@ -3361,5 +3413,9 @@ textarea.match-venue-input {
 
   .h2h-duo-stats {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .h2h-duo-row2 {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
