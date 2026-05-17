@@ -1,0 +1,105 @@
+<div class="page-header">
+  <span class="eyebrow">Estadísticas</span>
+  <h1>Enfrentamientos</h1>
+</div>
+
+<div class="h2h-filters">
+  <form method="GET" action="/h2h" class="h2h-form">
+    <div class="h2h-selects">
+      <div class="h2h-select-wrapper">
+        <p class="section-label-h2h">Jugador A</p>
+        <select name="playerA" class="season-filter-select">
+          <option value="">Seleccionar jugador</option>
+          {{#each players}}
+          <option value="{{this._id}}" {{#if (eq (toString this._id) ../selectedPlayerA)}}selected{{/if}}>
+            {{this.name}}
+          </option>
+          {{/each}}
+        </select>
+      </div>
+      <span class="h2h-vs">VS</span>
+      <div class="h2h-select-wrapper">
+        <p class="section-label-h2h">Jugador B</p>
+        <select name="playerB" class="season-filter-select">
+          <option value="">Seleccionar jugador</option>
+          {{#each players}}
+          <option value="{{this._id}}" {{#if (eq (toString this._id) ../selectedPlayerB)}}selected{{/if}}>
+            {{this.name}}
+          </option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="h2h-options">
+      <div class="h2h-mode-toggle">
+        <a href="?playerA={{selectedPlayerA}}&playerB={{selectedPlayerB}}&mode=vs&season={{selectedSeason}}"
+           class="h2h-mode-btn {{#if (eq mode 'vs')}}active{{/if}}">
+          Enfrentamiento
+        </a>
+        <a href="?playerA={{selectedPlayerA}}&playerB={{selectedPlayerB}}&mode=duo&season={{selectedSeason}}"
+           class="h2h-mode-btn {{#if (eq mode 'duo')}}active{{/if}}">
+          Dupla
+        </a>
+      </div>
+      <select name="season" class="season-filter-select">
+        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
+        <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
+        <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
+        <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>2024</option>
+      </select>
+      <input type="hidden" name="mode" value="{{mode}}" />
+    </div>
+    <div class="h2h-btns">
+      <a href="/h2h" class="btn btn-secondary h2h-clear-btn">Limpiar</a>
+      <button type="submit" class="btn btn-primary">Ver estadísticas</button>
+    </div>
+  </form>
+</div>
+
+{{#if stats}}
+<div class="h2h-result">
+  {{#if (eq mode "vs")}}
+  <div class="h2h-scoreboard">
+    <div class="h2h-player">
+      <span class="h2h-player-name">{{playerA.name}}</span>
+      <span class="h2h-player-wins" style="color:var(--win)">{{stats.winsA}}</span>
+      <span class="h2h-player-label">victorias</span>
+    </div>
+    <div class="h2h-center">
+      <span class="h2h-played">{{stats.played}} partidos</span>
+      <span class="h2h-draws">{{stats.draws}} empates</span>
+    </div>
+    <div class="h2h-player h2h-player-right">
+      <span class="h2h-player-name">{{playerB.name}}</span>
+      <span class="h2h-player-wins" style="color:var(--win)">{{stats.winsB}}</span>
+      <span class="h2h-player-label">victorias</span>
+    </div>
+  </div>
+  {{/if}}
+  {{#if (eq mode "duo")}}
+  <div class="h2h-duo-header">
+    <span class="h2h-player-name">{{playerA.name}}</span>
+    <span class="h2h-vs-label">&</span>
+    <span class="h2h-player-name">{{playerB.name}}</span>
+  </div>
+  <div class="h2h-duo-stats">
+    <div class="stat-box">
+      <strong>{{stats.played}}</strong>
+      <span>Partidos</span>
+    </div>
+    <div class="stat-box">
+      <strong style="color:var(--win)">{{stats.wins}}</strong>
+      <span>Victorias</span>
+    </div>
+    <div class="stat-box">
+      <strong style="color:var(--draw)">{{stats.draws}}</strong>
+      <span>Empates</span>
+    </div>
+    <div class="stat-box">
+      <strong style="color:var(--loss)">{{stats.losses}}</strong>
+      <span>Derrotas</span>
+    </div>
+  </div>
+  {{/if}}
+</div>
+{{/if}}

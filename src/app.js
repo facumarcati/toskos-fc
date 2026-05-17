@@ -14,6 +14,7 @@ import authRouter from "./routes/auth.route.js";
 import playerRouter from "./routes/player.route.js";
 import adminRouter from "./routes/admin.route.js";
 import profileRouter from "./routes/profile.route.js";
+import h2hRouter from "./routes/h2h.route.js";
 
 import Player from "./models/player.model.js";
 
@@ -70,6 +71,7 @@ app.engine(
       lt: (a, b) => a < b,
       or: (a, b) => a || b,
       add: (a, b) => a + b,
+      toString: (value) => value?.toString(),
       isEC: (name) => name === "E/C",
       json: (context) => JSON.stringify(context),
       navActive: (current, page) => {
@@ -126,6 +128,7 @@ app.use("/api/auth", authRouter);
 app.use("/players", playerRouter);
 app.use("/admin", adminRouter);
 app.use("/profile", profileRouter);
+app.use("/h2h", h2hRouter);
 
 http.listen(PORT, () => {
   console.log("Servidor iniciado en http://localhost:" + PORT);
