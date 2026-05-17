@@ -6,7 +6,12 @@ import Player from "../models/player.model.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const players = await Player.find({ name: { $ne: "E/C" } })
+  const activePlayerIds = await Match.distinct("players.player");
+
+  const players = await Player.find({
+    _id: { $in: activePlayerIds },
+    name: { $ne: "E/C" },
+  })
     .sort({ name: 1 })
     .lean();
 
