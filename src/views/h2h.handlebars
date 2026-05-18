@@ -3,189 +3,397 @@
   <h1>Enfrentamientos</h1>
 </div>
 
-<div class="h2h-filters">
-  <form method="GET" action="/h2h" class="h2h-form">
-    <div class="h2h-selects">
-      <div class="h2h-select-wrapper">
-        <p class="section-label-h2h">Jugador A</p>
-        <select name="playerA" class="season-filter-select">
-          <option value="">Seleccionar jugador</option>
-          {{#each players}}
-          <option value="{{this._id}}" {{#if (eq (toString this._id) ../selectedPlayerA)}}selected{{/if}}>
-            {{this.name}}
-          </option>
-          {{/each}}
-        </select>
-      </div>
-      <span class="h2h-vs">VS</span>
-      <div class="h2h-select-wrapper">
-        <p class="section-label-h2h">Jugador B</p>
-        <select name="playerB" class="season-filter-select">
-          <option value="">Seleccionar jugador</option>
-          {{#each players}}
-          <option value="{{this._id}}" {{#if (eq (toString this._id) ../selectedPlayerB)}}selected{{/if}}>
-            {{this.name}}
-          </option>
-          {{/each}}
-        </select>
-      </div>
-    </div>
-    <div class="h2h-options">
-      <div class="h2h-mode-toggle">
-        <a href="?playerA={{selectedPlayerA}}&playerB={{selectedPlayerB}}&mode=vs&season={{selectedSeason}}"
-           class="h2h-mode-btn {{#if (eq mode 'vs')}}active{{/if}}">
-          Enfrentamiento
-        </a>
-        <a href="?playerA={{selectedPlayerA}}&playerB={{selectedPlayerB}}&mode=duo&season={{selectedSeason}}"
-           class="h2h-mode-btn {{#if (eq mode 'duo')}}active{{/if}}">
-          Dupla
-        </a>
-      </div>
-      <select name="season" class="season-filter-select">
-        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
-        <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
-        <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
-        <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>2024</option>
-      </select>
-      <input type="hidden" name="mode" value="{{mode}}" />
-    </div>
-    <div class="h2h-btns">
-      <a href="/h2h" class="btn btn-secondary h2h-clear-btn">Limpiar</a>
-      <button type="submit" class="btn btn-primary">Ver estadísticas</button>
-    </div>
-  </form>
+<div class="records-tabs">
+  <button
+    type="button"
+    class="records-tab {{#if (eq view 'compare')}}active{{/if}}"
+    data-tab="compare"
+  >
+    Comparar jugadores
+  </button>
+  <button
+    type="button"
+    class="records-tab {{#if (eq view 'history')}}active{{/if}}"
+    data-tab="history"
+  >
+    Historial de jugador
+  </button>
 </div>
 
-{{#if stats}}
-<div class="h2h-result">
-  {{#if (eq mode "vs")}}
-  <div class="h2h-scoreboard">
-    <div class="h2h-player {{#if (gt stats.winsA stats.winsB)}}h2h-player-winner{{/if}}">
-      <span class="h2h-player-name">{{playerA.name}}</span>
-      <span class="h2h-player-wins {{#if (gt stats.winsA stats.winsB)}}h2h-wins-highlight{{/if}}">
-        {{stats.winsA}}
-      </span>
-      <span class="h2h-player-label">
-        victorias
-      </span>
-    </div>
-    <div class="h2h-center">
-      <div class="h2h-center-stat">
-        <span class="h2h-center-num">
-          {{stats.played}}
+<div
+  id="compare-section"
+  {{#if (eq view "history")}}
+    style="display:none;"
+  {{/if}}
+>
+  <div class="h2h-filters">
+    <form method="GET" action="/h2h" class="h2h-form">
+      <input type="hidden" name="view" value="compare" />
+      <div class="h2h-selects">
+        <div class="h2h-select-wrapper">
+          <p class="section-label-h2h">Jugador A</p>
+          <select name="playerA" class="season-filter-select">
+            <option value="">Seleccionar jugador</option>
+            {{#each players}}
+            <option
+              value="{{this._id}}"
+              {{#if (eq (toString this._id) ../selectedPlayerA)}}selected{{/if}}
+            >
+              {{this.name}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+        <span class="h2h-vs">VS</span>
+        <div class="h2h-select-wrapper">
+          <p class="section-label-h2h">Jugador B</p>
+          <select name="playerB" class="season-filter-select">
+            <option value="">Seleccionar jugador</option>
+            {{#each players}}
+            <option
+              value="{{this._id}}"
+              {{#if (eq (toString this._id) ../selectedPlayerB)}}selected{{/if}}
+            >
+              {{this.name}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+      <div class="h2h-options">
+        <div class="h2h-mode-toggle">
+          <a
+            href="?view=compare&playerA={{selectedPlayerA}}&playerB={{selectedPlayerB}}&mode=vs&season={{selectedSeason}}"
+            class="h2h-mode-btn {{#if (eq mode 'vs')}}active{{/if}}"
+          >
+            Enfrentamiento
+          </a>
+          <a
+            href="?view=compare&playerA={{selectedPlayerA}}&playerB={{selectedPlayerB}}&mode=duo&season={{selectedSeason}}"
+            class="h2h-mode-btn {{#if (eq mode 'duo')}}active{{/if}}"
+          >
+            Dupla
+          </a>
+        </div>
+        <select name="season" class="season-filter-select">
+          <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>
+            Todas las temporadas
+          </option>
+          <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>
+            2026
+          </option>
+          <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>
+            2025
+          </option>
+          <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>
+            2024
+          </option>
+        </select>
+        <input type="hidden" name="mode" value="{{mode}}" />
+        <div class="h2h-btns">
+          <a href="/h2h" class="btn btn-secondary h2h-clear-btn">
+            Limpiar
+          </a>
+          <button type="submit" class="btn btn-primary">
+            Ver
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  {{#if stats}}
+  <div class="h2h-result">
+    {{#if (eq mode "vs")}}
+    <div class="h2h-scoreboard">
+      <div class="h2h-player {{#if (gt stats.winsA stats.winsB)}}h2h-player-winner{{/if}}">
+        <span class="h2h-player-name">
+          {{playerA.name}}
         </span>
-        <span class="h2h-center-label">
-          partidos
+        <span class="h2h-player-wins {{#if (gt stats.winsA stats.winsB)}}h2h-wins-highlight{{/if}}">
+          {{stats.winsA}}
+        </span>
+        <span class="h2h-player-label">
+          victorias
         </span>
       </div>
-      <div class="h2h-center-stat">
-        <span class="h2h-center-num" style="color:var(--draw)">
-          {{stats.draws}}
+      <div class="h2h-center">
+        <div class="h2h-center-stat">
+          <span class="h2h-center-num">
+            {{stats.played}}
+          </span>
+          <span class="h2h-center-label">
+            partidos
+          </span>
+        </div>
+        <div class="h2h-center-stat">
+          <span class="h2h-center-num" style="color:var(--draw)">
+            {{stats.draws}}
+          </span>
+          <span class="h2h-center-label">
+            empates
+          </span>
+        </div>
+      </div>
+      <div class="h2h-player h2h-player-right {{#if (gt stats.winsB stats.winsA)}}h2h-player-winner{{/if}}">
+        <span class="h2h-player-name">
+          {{playerB.name}}
         </span>
-        <span class="h2h-center-label">
-          empates
+        <span class="h2h-player-wins {{#if (gt stats.winsB stats.winsA)}}h2h-wins-highlight{{/if}}">
+          {{stats.winsB}}
+        </span>
+        <span class="h2h-player-label">
+          victorias
         </span>
       </div>
     </div>
-    <div class="h2h-player h2h-player-right {{#if (gt stats.winsB stats.winsA)}}h2h-player-winner{{/if}}">
-      <span class="h2h-player-name">{{playerB.name}}</span>
-      <span class="h2h-player-wins {{#if (gt stats.winsB stats.winsA)}}h2h-wins-highlight{{/if}}">
-        {{stats.winsB}}
+    {{/if}}
+    {{#if (eq mode "duo")}}
+    <div class="h2h-duo-header">
+      <span class="h2h-player-name">
+        {{playerA.name}}
       </span>
-      <span class="h2h-player-label">
-        victorias
+      <span class="h2h-vs-label">
+        &
+      </span>
+      <span class="h2h-player-name">
+        {{playerB.name}}
       </span>
     </div>
+    <div class="h2h-duo-grid">
+      <div class="stat-box">
+        <strong>{{stats.played}}</strong>
+        <span>Partidos</span>
+      </div>
+      <div class="h2h-duo-row2">
+        <div class="stat-box">
+          <strong style="color:var(--win)">
+            {{stats.wins}}
+          </strong>
+          <span>Victorias</span>
+        </div>
+        <div class="stat-box">
+          <strong style="color:var(--draw)">
+            {{stats.draws}}
+          </strong>
+          <span>Empates</span>
+        </div>
+        <div class="stat-box">
+          <strong style="color:var(--loss)">
+            {{stats.losses}}
+          </strong>
+          <span>Derrotas</span>
+        </div>
+        <div class="stat-box">
+          <strong style="color:var(--accent)">
+            {{stats.winrate}}%
+          </strong>
+          <span>Winrate</span>
+        </div>
+      </div>
+    </div>
+    {{/if}}
   </div>
   {{/if}}
-  {{#if (eq mode "duo")}}
-  <div class="h2h-duo-header">
-    <span class="h2h-player-name">{{playerA.name}}</span>
-    <span class="h2h-vs-label">&</span>
-    <span class="h2h-player-name">{{playerB.name}}</span>
-  </div>
-  <div class="h2h-duo-grid">
-    <div class="stat-box">
-      <strong>{{stats.played}}</strong>
-      <span>Partidos</span>
-    </div>
-    <div class="h2h-duo-row2">
-      <div class="stat-box">
-        <strong style="color:var(--win)">
-          {{stats.wins}}
-        </strong>
-        <span>Victorias</span>
-      </div>
-      <div class="stat-box">
-        <strong style="color:var(--draw)">
-          {{stats.draws}}
-        </strong>
-        <span>Empates</span>
-      </div>
-      <div class="stat-box">
-        <strong style="color:var(--loss)">
-          {{stats.losses}}
-        </strong>
-        <span>Derrotas</span>
-      </div>
-      <div class="stat-box">
-        <strong style="color:var(--accent)">
-          {{stats.winrate}}%
-        </strong>
-        <span>Winrate</span>
-      </div>
-    </div>
-  </div>
-  {{/if}}
-</div>
-<div class="h2h-matches-panel">
-  <div class="h2h-matches">
-    <p class="section-label h2h-matches-title">
-      {{#if (eq mode "vs")}}
-        Partidos enfrentados
-      {{else}}
-        Partidos juntos
-      {{/if}}
-    </p>
-    {{#if stats.matches.length}}
+  <div class="h2h-matches-panel">
+    <div class="h2h-matches">
+      <p class="section-label h2h-matches-title">
+        {{#if (eq mode "vs")}}
+          Partidos enfrentados
+        {{else}}
+          Partidos juntos
+        {{/if}}
+      </p>
+      {{#if stats.matches.length}}
       <div class="h2h-matches-list">
         {{#each stats.matches}}
-        <div class="match-card match-card-compact">
-          <div class="match-scoreboard
-          {{#if (gt this.teamA this.teamB)}}scoreboard-win-a
-          {{else if (gt this.teamB this.teamA)}}scoreboard-win-b
-          {{else}}scoreboard-draw
-          {{/if}}">
-            <div class="match-team">
-              <span class="match-team-label">Equipo</span>
-              <span class="match-team-name">Blanco</span>
-            </div>
-            <div class="match-score">
-              <div class="match-date">
-                {{formatDate this.date}}
+        <a href="/matches?season=all#match-{{this._id}}" class="h2h-match-link">
+          <div class="match-card match-card-compact">
+            <div class="match-scoreboard
+              {{#if (gt this.teamA this.teamB)}}scoreboard-win-a
+              {{else if (gt this.teamB this.teamA)}}scoreboard-win-b
+              {{else}}scoreboard-draw
+              {{/if}}
+            ">
+              <div class="match-team">
+                <span class="match-team-label">Equipo</span>
+                <span class="match-team-name">Blanco</span>
+
+                {{#if (or (eq this.teamOfA "A") (eq this.teamOfB "A"))}}
+                  <span class="h2h-team-badge">
+                    {{#if (eq this.teamOfA "A")}}
+                      {{../playerA.name}}
+                    {{/if}}
+
+                    {{#if (and (eq this.teamOfA "A") (eq this.teamOfB "A"))}}
+                      •
+                    {{/if}}
+
+                    {{#if (eq this.teamOfB "A")}}
+                      {{../playerB.name}}
+                    {{/if}}
+                  </span>
+                {{/if}}
               </div>
-              <span class="match-score-number">
-                {{this.teamA}} — {{this.teamB}}
-              </span>
-              {{#if this.venue}}
+              <div class="match-score">
+                <div class="match-date">
+                  {{formatDate this.date}}
+                </div>
+                <span class="match-score-number">
+                  {{this.teamA}} — {{this.teamB}}
+                </span>
+                {{#if this.venue}}
                 <span class="match-score-meta">
                   {{this.venue}}
                 </span>
-              {{/if}}
-            </div>
-            <div class="match-team match-team-right">
-              <span class="match-team-label">Equipo</span>
-              <span class="match-team-name">Negro</span>
+                {{/if}}
+              </div>
+              <div class="match-team match-team-right">
+                <span class="match-team-label">Equipo</span>
+                <span class="match-team-name">Negro</span>
+
+                {{#if (or (eq this.teamOfA "B") (eq this.teamOfB "B"))}}
+                  <span class="h2h-team-badge">
+                    {{#if (eq this.teamOfA "B")}}
+                      {{../playerA.name}}
+                    {{/if}}
+
+                    {{#if (and (eq this.teamOfA "B") (eq this.teamOfB "B"))}}
+                      •
+                    {{/if}}
+
+                    {{#if (eq this.teamOfB "B")}}
+                      {{../playerB.name}}
+                    {{/if}}
+                  </span>
+                {{/if}}
+              </div>
             </div>
           </div>
-        </div>
+        </a>
         {{/each}}
       </div>
-    {{else}}
+      {{else}}
       <div class="list-empty-state">
         Sin partidos para mostrar
       </div>
-    {{/if}}
+      {{/if}}
+    </div>
   </div>
 </div>
-{{/if}}
+
+<div
+  id="history-section"
+  {{#unless (eq view "history")}}
+    style="display:none;"
+  {{/unless}}
+>
+  <div class="h2h-history-filters">
+    <form method="GET" action="/h2h" class="h2h-form">
+      <input type="hidden" name="view" value="history" />
+      <div class="h2h-options">
+        <select name="player" class="season-filter-select">
+          <option value="">Seleccionar jugador</option>
+          {{#each players}}
+          <option
+            value="{{this._id}}"
+            {{#if (eq (toString this._id) ../selectedPlayer)}}selected{{/if}}
+          >
+            {{this.name}}
+          </option>
+          {{/each}}
+        </select>
+        <select name="season" class="season-filter-select">
+          <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>
+            Todas las temporadas
+          </option>
+          <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>
+            2026
+          </option>
+          <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>
+            2025
+          </option>
+          <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>
+            2024
+          </option>
+        </select>
+        <a href="/h2h?view=history" class="btn btn-secondary h2h-clear-btn">
+          Limpiar
+        </a>
+        <button type="submit" class="btn btn-primary">
+          Historial
+        </button>
+      </div>
+    </form>
+  </div>
+  {{#if historyStats}}
+  <div class="product-list-section">
+    <div class="product-list-header h2h-history-header">
+      <span>#</span>
+      <span>Jugador</span>
+      <span>PJ</span>
+      <span>PG</span>
+      <span>PE</span>
+      <span>PP</span>
+      <span>WR</span>
+    </div>
+    <ul class="product-list">
+      {{#each historyStats}}
+      <li class="product-row stat-row h2h-history-row">
+        <span class="col-num">
+          {{add @index 1}}
+        </span>
+        <div class="col-title">
+          <span class="product-row-title">
+            {{this.opponent}}
+          </span>
+        </div>
+        <span class="stat-cell">
+          {{this.played}}
+        </span>
+        <span class="stat-cell cell-win">
+          {{this.wins}}
+        </span>
+        <span class="stat-cell cell-draw">
+          {{this.draws}}
+        </span>
+        <span class="stat-cell cell-loss">
+          {{this.losses}}
+        </span>
+        <span class="stat-cell cell-goals">
+          {{this.winrate}}%
+        </span>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{else}}
+  <div class="list-empty-state">
+    Seleccioná un jugador para ver su historial
+  </div>
+  {{/if}}
+</div>
+
+<script>
+  const tabs = document.querySelectorAll(".records-tab");
+
+  const compareSection = document.getElementById("compare-section");
+  const historySection = document.getElementById("history-section");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+
+      tab.classList.add("active");
+
+      const target = tab.dataset.tab;
+
+      if (target === "compare") {
+        compareSection.style.display = "block";
+        historySection.style.display = "none";
+      } else {
+        compareSection.style.display = "none";
+        historySection.style.display = "block";
+      }
+    });
+  });
+</script>

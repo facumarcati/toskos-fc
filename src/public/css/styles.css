@@ -2329,6 +2329,7 @@ a {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -3209,6 +3210,7 @@ textarea.match-venue-input {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding-bottom: 20px;
 }
 
 .h2h-mode-toggle {
@@ -3389,6 +3391,118 @@ textarea.match-venue-input {
 
 .h2h-matches-panel {
   margin-top: 24px;
+}
+
+.h2h-history-table-wrapper {
+  margin-top: 24px;
+  overflow-x: auto;
+}
+
+.h2h-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.h2h-history-table thead {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.h2h-history-table th {
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+
+.h2h-history-table td {
+  padding: 16px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+}
+
+.h2h-history-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.h2h-history-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.player-cell {
+  text-align: left !important;
+  font-weight: 700;
+}
+
+.win-text {
+  color: var(--win);
+}
+
+.draw-text {
+  color: var(--draw);
+}
+
+.loss-text {
+  color: var(--loss);
+}
+
+.wr-cell {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.h2h-history-header,
+.h2h-history-row {
+  grid-template-columns:
+    36px
+    minmax(120px, 1fr)
+    repeat(4, 48px)
+    64px;
+}
+
+.h2h-history-row .wr-cell {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.h2h-history-header span {
+  text-align: center;
+}
+
+.h2h-history-header span:nth-child(2) {
+  text-align: left;
+}
+
+.h2h-team-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(245, 197, 24, 0.14);
+  border: 1px solid rgba(245, 197, 24, 0.28);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.h2h-match-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
 @media (max-width: 640px) {
