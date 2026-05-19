@@ -21,6 +21,7 @@ router.get("/", async (req, res) => {
     playerB,
     player,
     mode = "vs",
+    historyMode = "vs",
     season = "2026",
     view = "compare",
   } = req.query;
@@ -32,6 +33,7 @@ router.get("/", async (req, res) => {
         view,
         selectedPlayer: player,
         selectedSeason: season,
+        historyMode,
       });
     }
 
@@ -62,21 +64,28 @@ router.get("/", async (req, res) => {
 
       if (!target) continue;
 
-      const opponents = match.players.filter(
-        (p) =>
-          p.player &&
-          p.player._id.toString() !== player &&
-          p.team !== target.team &&
-          !p.player.guest &&
-          p.player.name !== "E/C",
-      );
+      const relatedPlayers = match.players.filter((p) => {
+        if (!p.player) return false;
 
-      for (const opponent of opponents) {
-        const key = opponent.player._id.toString();
+        if (p.player._id.toString() === player) return false;
+
+        if (p.player.guest) return false;
+
+        if (p.player.name === "E/C") return false;
+
+        if (historyMode === "vs") {
+          return p.team !== target.team;
+        }
+
+        return p.team === target.team;
+      });
+
+      for (const related of relatedPlayers) {
+        const key = related.player._id.toString();
 
         if (!historyMap[key]) {
           historyMap[key] = {
-            opponent: opponent.player.name,
+            opponent: related.player.name,
             wins: 0,
             draws: 0,
             losses: 0,
@@ -86,15 +95,26 @@ router.get("/", async (req, res) => {
 
         const entry = historyMap[key];
 
-        const playerGoals = target.team === "A" ? match.teamA : match.teamB;
-
-        const opponentGoals = opponent.team === "A" ? match.teamA : match.teamB;
-
         entry.played++;
 
-        if (playerGoals > opponentGoals) entry.wins++;
-        else if (playerGoals < opponentGoals) entry.losses++;
-        else entry.draws++;
+        if (historyMode === "vs") {
+          const playerGoals = target.team === "A" ? match.teamA : match.teamB;
+
+          const opponentGoals =
+            related.team === "A" ? match.teamA : match.teamB;
+
+          if (playerGoals > opponentGoals) entry.wins++;
+          else if (playerGoals < opponentGoals) entry.losses++;
+          else entry.draws++;
+        } else {
+          const goalsFor = target.team === "A" ? match.teamA : match.teamB;
+
+          const goalsAgainst = target.team === "A" ? match.teamB : match.teamA;
+
+          if (goalsFor > goalsAgainst) entry.wins++;
+          else if (goalsFor < goalsAgainst) entry.losses++;
+          else entry.draws++;
+        }
       }
     }
 
@@ -111,6 +131,7 @@ router.get("/", async (req, res) => {
       selectedPlayer: player,
       selectedSeason: season,
       historyStats,
+      historyMode,
     });
   }
 
@@ -122,6 +143,7 @@ router.get("/", async (req, res) => {
       selectedSeason: season,
       mode,
       view,
+      historyMode,
     });
   }
 
@@ -232,6 +254,7 @@ router.get("/", async (req, res) => {
     stats,
     selectedSeason: season,
     view,
+    historyMode,
   });
 });
 

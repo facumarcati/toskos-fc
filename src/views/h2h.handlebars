@@ -326,6 +326,20 @@
     </form>
   </div>
   {{#if historyStats}}
+  <div class="h2h-options">
+    <div class="h2h-mode-toggle" style="margin-bottom: 16px;">
+      <a href="?view=history&player={{selectedPlayer}}&historyMode=vs&season={{selectedSeason}}"
+        class="h2h-mode-btn {{#if (eq historyMode 'vs')}}active{{/if}}"
+      >
+        Enfrentamientos
+      </a>
+      <a href="?view=history&player={{selectedPlayer}}&historyMode=duo&season={{selectedSeason}}"
+        class="h2h-mode-btn {{#if (eq historyMode 'duo')}}active{{/if}}"
+      >
+        Duplas
+      </a>
+    </div>
+  </div>
   <div class="product-list-section">
     <div class="product-list-header h2h-history-header">
       <span>#</span>

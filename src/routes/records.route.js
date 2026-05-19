@@ -545,6 +545,65 @@ router.get("/", async (req, res) => {
       return b.played - a.played;
     });
 
+  const duoMap = {};
+
+  h2hMatches.forEach((match) => {
+    const validPlayers = match.players.filter(
+      (p) => p.player && !p.player.guest && p.player.name !== "E/C",
+    );
+
+    for (let i = 0; i < validPlayers.length; i++) {
+      for (let j = i + 1; j < validPlayers.length; j++) {
+        const p1 = validPlayers[i];
+        const p2 = validPlayers[j];
+
+        if (p1.team !== p2.team) continue;
+
+        const ids = [p1.player._id.toString(), p2.player._id.toString()].sort();
+
+        const key = ids.join("-");
+
+        if (!duoMap[key]) {
+          duoMap[key] = {
+            playerA: p1.player.name,
+            playerB: p2.player.name,
+            wins: 0,
+            draws: 0,
+            losses: 0,
+            played: 0,
+          };
+        }
+
+        const duo = duoMap[key];
+
+        const isWhite = p1.team === "A";
+
+        const goalsFor = isWhite ? match.teamA : match.teamB;
+        const goalsAgainst = isWhite ? match.teamB : match.teamA;
+
+        duo.played++;
+
+        if (goalsFor > goalsAgainst) duo.wins++;
+        else if (goalsFor < goalsAgainst) duo.losses++;
+        else duo.draws++;
+      }
+    }
+  });
+
+  const bestDuos = Object.values(duoMap)
+    .filter((duo) => duo.played >= 4)
+    .sort((a, b) => {
+      if (b.wins !== a.wins) {
+        return b.wins - a.wins;
+      }
+
+      if (a.losses !== b.losses) {
+        return a.losses - b.losses;
+      }
+
+      return b.played - a.played;
+    });
+
   res.render("records", {
     topScorers,
     topAssists,
@@ -567,6 +626,7 @@ router.get("/", async (req, res) => {
     fiveGoalMatches,
     fiveAssistMatches,
     biggestH2HDiffs,
+    bestDuos,
     selectedSeason: season,
   });
 });
