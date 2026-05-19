@@ -123,7 +123,17 @@ router.get("/", async (req, res) => {
         ...h,
         winrate: h.played > 0 ? ((h.wins / h.played) * 100).toFixed(1) : 0,
       }))
-      .sort((a, b) => b.played - a.played);
+      .sort((a, b) => {
+        if (b.played !== a.played) {
+          return b.played - a.played;
+        }
+
+        if (b.wins !== a.wins) {
+          return b.wins - a.wins;
+        }
+
+        return a.losses - b.losses;
+      });
 
     return res.render("h2h", {
       players,

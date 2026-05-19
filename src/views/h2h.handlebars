@@ -344,15 +344,21 @@
     <div class="product-list-header h2h-history-header">
       <span>#</span>
       <span>Jugador</span>
-      <span>PJ</span>
-      <span>PG</span>
-      <span>PE</span>
-      <span>PP</span>
-      <span>WR</span>
+
+      <span class="sortable-header" data-sort="played">PJ</span>
+      <span class="sortable-header" data-sort="wins">PG</span>
+      <span class="sortable-header" data-sort="draws">PE</span>
+      <span class="sortable-header" data-sort="losses">PP</span>
+      <span class="sortable-header" data-sort="winrate">WR</span>
     </div>
     <ul class="product-list">
       {{#each historyStats}}
-      <li class="product-row stat-row h2h-history-row">
+      <li class="product-row stat-row h2h-history-row"
+          data-played="{{this.played}}"
+          data-wins="{{this.wins}}"
+          data-draws="{{this.draws}}"
+          data-losses="{{this.losses}}"
+          data-winrate="{{this.winrate}}">
         <span class="col-num">
           {{add @index 1}}
         </span>
@@ -411,3 +417,4 @@
     });
   });
 </script>
+<script src="/js/h2h.js"></script>
