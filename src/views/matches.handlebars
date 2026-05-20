@@ -228,6 +228,19 @@
         </svg>
       </a>
       {{/if}}
+      {{#if @root.user}}
+        <span class="match-user-vote
+          {{#if this.userVotePlayerName}}
+            match-user-vote-active
+          {{/if}}
+        ">
+          {{#if this.userVotePlayerName}}
+            ⭐ {{this.userVotePlayerName}}
+          {{else}}
+            Sin voto MVP
+          {{/if}}
+        </span>
+      {{/if}}
     </div>
 
     <div class="footer-right">

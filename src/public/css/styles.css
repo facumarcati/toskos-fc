@@ -1431,6 +1431,19 @@ fieldset {
   gap: 8px;
 }
 
+.match-user-vote {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.match-user-vote-active {
+  color: #ffd54a;
+}
+
 .match-score-number {
   font-family: var(--font-display);
   font-size: 32px;
@@ -1612,6 +1625,9 @@ fieldset {
   opacity: 0.85;
   transition: 0.2s;
   pointer-events: none;
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
 .btn-match-action:hover svg {
@@ -1629,6 +1645,14 @@ fieldset {
   border-color: var(--loss);
   color: var(--loss);
   background: var(--loss-bg);
+}
+
+.btn-close:hover {
+  background: rgba(255, 212, 59, 0.15);
+}
+
+.btn-close:hover svg {
+  fill: rgb(255, 212, 59);
 }
 
 .modal-overlay {
