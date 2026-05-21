@@ -102,96 +102,108 @@
     </form>
   </div>
   {{#if stats}}
-  <div class="h2h-result">
-    {{#if (eq mode "vs")}}
-    <div class="h2h-scoreboard">
-      <div class="h2h-player {{#if (gt stats.winsA stats.winsB)}}h2h-player-winner{{/if}}">
+  <div class="h2h-result-wrapper">
+    <div class="h2h-result" id="h2h-result-card">
+      {{#if (eq mode "vs")}}
+      <div class="h2h-scoreboard">
+        <div class="h2h-player {{#if (gt stats.winsA stats.winsB)}}h2h-player-winner{{/if}}">
+          <span class="h2h-player-name">
+            {{playerA.name}}
+          </span>
+          <span class="h2h-player-wins {{#if (gt stats.winsA stats.winsB)}}h2h-wins-highlight{{/if}}">
+            {{stats.winsA}}
+          </span>
+          <span class="h2h-player-label">
+            victorias
+          </span>
+        </div>
+        <div class="h2h-center">
+          <div class="h2h-center-stat">
+            <span class="h2h-center-num">
+              {{stats.played}}
+            </span>
+            <span class="h2h-center-label">
+              partidos
+            </span>
+          </div>
+          <div class="h2h-center-stat">
+            <span class="h2h-center-num" style="color:var(--draw)">
+              {{stats.draws}}
+            </span>
+            <span class="h2h-center-label">
+              empates
+            </span>
+          </div>
+        </div>
+        <div class="h2h-player h2h-player-right {{#if (gt stats.winsB stats.winsA)}}h2h-player-winner{{/if}}">
+          <span class="h2h-player-name">
+            {{playerB.name}}
+          </span>
+          <span class="h2h-player-wins {{#if (gt stats.winsB stats.winsA)}}h2h-wins-highlight{{/if}}">
+            {{stats.winsB}}
+          </span>
+          <span class="h2h-player-label">
+            victorias
+          </span>
+        </div>
+      </div>
+      {{/if}}
+      {{#if (eq mode "duo")}}
+      <div class="h2h-duo-header">
         <span class="h2h-player-name">
           {{playerA.name}}
         </span>
-        <span class="h2h-player-wins {{#if (gt stats.winsA stats.winsB)}}h2h-wins-highlight{{/if}}">
-          {{stats.winsA}}
+        <span class="h2h-vs-label">
+          &
         </span>
-        <span class="h2h-player-label">
-          victorias
-        </span>
-      </div>
-      <div class="h2h-center">
-        <div class="h2h-center-stat">
-          <span class="h2h-center-num">
-            {{stats.played}}
-          </span>
-          <span class="h2h-center-label">
-            partidos
-          </span>
-        </div>
-        <div class="h2h-center-stat">
-          <span class="h2h-center-num" style="color:var(--draw)">
-            {{stats.draws}}
-          </span>
-          <span class="h2h-center-label">
-            empates
-          </span>
-        </div>
-      </div>
-      <div class="h2h-player h2h-player-right {{#if (gt stats.winsB stats.winsA)}}h2h-player-winner{{/if}}">
         <span class="h2h-player-name">
           {{playerB.name}}
         </span>
-        <span class="h2h-player-wins {{#if (gt stats.winsB stats.winsA)}}h2h-wins-highlight{{/if}}">
-          {{stats.winsB}}
-        </span>
-        <span class="h2h-player-label">
-          victorias
-        </span>
       </div>
-    </div>
-    {{/if}}
-    {{#if (eq mode "duo")}}
-    <div class="h2h-duo-header">
-      <span class="h2h-player-name">
-        {{playerA.name}}
-      </span>
-      <span class="h2h-vs-label">
-        &
-      </span>
-      <span class="h2h-player-name">
-        {{playerB.name}}
-      </span>
-    </div>
-    <div class="h2h-duo-grid">
-      <div class="stat-box">
-        <strong>{{stats.played}}</strong>
-        <span>Partidos</span>
-      </div>
-      <div class="h2h-duo-row2">
+      <div class="h2h-duo-grid">
         <div class="stat-box">
-          <strong style="color:var(--win)">
-            {{stats.wins}}
-          </strong>
-          <span>Victorias</span>
+          <strong>{{stats.played}}</strong>
+          <span>Partidos</span>
         </div>
-        <div class="stat-box">
-          <strong style="color:var(--draw)">
-            {{stats.draws}}
-          </strong>
-          <span>Empates</span>
-        </div>
-        <div class="stat-box">
-          <strong style="color:var(--loss)">
-            {{stats.losses}}
-          </strong>
-          <span>Derrotas</span>
-        </div>
-        <div class="stat-box">
-          <strong style="color:var(--accent)">
-            {{stats.winrate}}%
-          </strong>
-          <span>Winrate</span>
+        <div class="h2h-duo-row2">
+          <div class="stat-box">
+            <strong style="color:var(--win)">
+              {{stats.wins}}
+            </strong>
+            <span>Victorias</span>
+          </div>
+          <div class="stat-box">
+            <strong style="color:var(--draw)">
+              {{stats.draws}}
+            </strong>
+            <span>Empates</span>
+          </div>
+          <div class="stat-box">
+            <strong style="color:var(--loss)">
+              {{stats.losses}}
+            </strong>
+            <span>Derrotas</span>
+          </div>
+          <div class="stat-box">
+            <strong style="color:var(--accent)">
+              {{stats.winrate}}%
+            </strong>
+            <span>Winrate</span>
+          </div>
         </div>
       </div>
+      {{/if}}
     </div>
-    {{/if}}
+    <button
+      type="button"
+      class="btn-match-action btn-copy h2h-copy-btn"
+      onclick="copyH2H()"
+      title="Copiar imagen"
+    >
+      <svg viewBox="0 0 24 24" width="16" height="16">
+        <path d="M16 1H4C2.9 1 2 1.9 2 3v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+      </svg>
+    </button>
   </div>
   {{/if}}
   <div class="h2h-matches-panel">
@@ -416,5 +428,32 @@
       }
     });
   });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+async function copyH2H() {
+  const element = document.getElementById("h2h-result-card");
+
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true
+  });
+
+  canvas.toBlob(async (blob) => {
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "image/png": blob
+        })
+      ]);
+
+      showToast("✓ Imagen copiada", "success");
+    } catch (err) {
+      console.error(err);
+
+      showToast("No se pudo copiar la imagen", "error");
+    }
+  });
+}
 </script>
 <script src="/js/h2h.js"></script>

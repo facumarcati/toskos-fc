@@ -3282,6 +3282,16 @@ textarea.match-venue-input {
   box-shadow: var(--shadow-card);
 }
 
+.h2h-result-wrapper {
+  position: relative;
+}
+
+.h2h-copy-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+}
+
 .h2h-scoreboard {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
