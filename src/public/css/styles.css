@@ -1456,6 +1456,7 @@ fieldset {
 .match-score-meta {
   font-size: 13px;
   color: var(--text-secondary);
+  text-align: center;
 }
 
 .match-date {
@@ -3237,11 +3238,18 @@ textarea.match-venue-input {
   padding-bottom: 20px;
 }
 
+.h2h-options select {
+  min-width: 160px;
+}
+
 .h2h-mode-toggle {
-  display: flex;
+  display: inline-flex;
   background: var(--bg-raised);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
+  overflow: hidden;
+  width: fit-content;
+  max-width: 100%;
 }
 
 .h2h-btns {
@@ -3593,5 +3601,59 @@ textarea.match-venue-input {
 
   .h2h-duo-row2 {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .h2h-history-header,
+  .h2h-history-row {
+    grid-template-columns:
+      28px
+      minmax(90px, 1fr)
+      repeat(5, 38px);
+
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .h2h-history-header span,
+  .h2h-history-row span {
+    font-size: 11px;
+  }
+
+  .h2h-history-row .product-row-title {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .h2h-history-row .wr-cell {
+    font-size: 11px;
+  }
+
+  .h2h-options {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .h2h-options select,
+  .h2h-options .btn,
+  .h2h-options .h2h-clear-btn {
+    width: 100%;
+  }
+
+  .h2h-options .btn {
+    justify-content: center;
+  }
+
+  .h2h-mode-toggle {
+    width: 100%;
+  }
+
+  .h2h-mode-btn {
+    flex: 1;
+    text-align: center;
   }
 }
