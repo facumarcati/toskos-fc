@@ -206,6 +206,15 @@
     </button>
   </div>
   {{/if}}
+  {{#if stats.matches.length}}
+  <div class="h2h-chart-card">
+    <div class="h2h-chart-header">
+      <span>Evolución del H2H</span>
+    </div>
+    
+    <canvas id="h2hChart" height="140"></canvas>
+  </div>
+  {{/if}}
   <div class="h2h-matches-panel">
     <div class="h2h-matches">
       <p class="section-label h2h-matches-title">
@@ -455,5 +464,20 @@ async function copyH2H() {
     }
   });
 }
+</script>
+<script>
+  window.h2hChartData = {
+    playerA: "{{playerA.name}}",
+    playerB: "{{playerB.name}}",
+    matches: [
+      {{#each stats.matches}}
+      {
+        teamA: {{this.teamA}},
+        teamB: {{this.teamB}},
+        teamOfA: "{{this.teamOfA}}"
+      },
+      {{/each}}
+    ]
+  };
 </script>
 <script src="/js/h2h.js"></script>

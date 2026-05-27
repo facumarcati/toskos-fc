@@ -3288,7 +3288,7 @@ textarea.match-venue-input {
 
 .h2h-copy-btn {
   position: absolute;
-  bottom: 12px;
+  top: 12px;
   right: 12px;
 }
 
@@ -3537,6 +3537,34 @@ textarea.match-venue-input {
   display: block;
   text-decoration: none;
   color: inherit;
+}
+
+.h2h-chart-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  margin: 20px 0;
+}
+
+.h2h-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.h2h-chart-header span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+#h2hChart {
+  width: 100%;
+  display: block;
 }
 
 @media (max-width: 640px) {
