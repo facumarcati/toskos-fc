@@ -168,7 +168,7 @@ if (chartData && chartData.matches && chartData.matches.length) {
       ctx.fillStyle = "white";
 
       const label =
-        value > 0 ? `+${value}` : value < 0 ? `${Math.abs(value)}` : "0";
+        value > 0 ? `${value}` : value < 0 ? `${Math.abs(value)}` : "0";
 
       ctx.fillText(label, x, y - 12);
     });
