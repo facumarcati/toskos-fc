@@ -69,13 +69,35 @@ router.get("/", async (req, res) => {
 
     (match.mvpVotes || []).forEach((v) => {
       const pid = v.voted.toString();
+
       voteCountByPlayer[pid] = (voteCountByPlayer[pid] || 0) + 1;
     });
+
+    let userVotePlayerId = null;
+    let userVotePlayerName = null;
+
+    if (req.session?.userId) {
+      const userVote = (match.mvpVotes || []).find(
+        (v) => v.voter?.toString() === req.session.userId.toString(),
+      );
+
+      if (userVote) {
+        userVotePlayerId = userVote.voted.toString();
+
+        const votedPlayer = match.players.find(
+          (p) => p.player && p.player._id.toString() === userVotePlayerId,
+        );
+
+        userVotePlayerName = votedPlayer?.player?.name || null;
+      }
+    }
 
     return {
       ...match,
       mvpPlayers: getMatchMVP(match),
       voteCountByPlayer,
+      userVotePlayerId,
+      userVotePlayerName,
     };
   });
 

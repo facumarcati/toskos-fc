@@ -11,11 +11,139 @@ router.get("/", async (req, res) => {
   const players = await Player.find({
     _id: { $in: activePlayerIds },
     name: { $ne: "E/C" },
+    guest: { $ne: true },
   })
     .sort({ name: 1 })
     .lean();
 
-  const { playerA, playerB, mode = "vs", season = "2026" } = req.query;
+  const {
+    playerA,
+    playerB,
+    player,
+    mode = "vs",
+    historyMode = "vs",
+    season = "2026",
+    view = "compare",
+  } = req.query;
+
+  if (view === "history") {
+    if (!player) {
+      return res.render("h2h", {
+        players,
+        view,
+        selectedPlayer: player,
+        selectedSeason: season,
+        historyMode,
+      });
+    }
+
+    let historyFilter = {
+      "players.player": new mongoose.Types.ObjectId(player),
+    };
+
+    if (season !== "all") {
+      const start = new Date(`${season}-01-01`);
+      const end = new Date(`${Number(season) + 1}-01-01`);
+
+      historyFilter.date = {
+        $gte: start,
+        $lt: end,
+      };
+    }
+
+    const matches = await Match.find(historyFilter)
+      .populate("players.player")
+      .lean();
+
+    const historyMap = {};
+
+    for (const match of matches) {
+      const target = match.players.find(
+        (p) => p.player?._id.toString() === player,
+      );
+
+      if (!target) continue;
+
+      const relatedPlayers = match.players.filter((p) => {
+        if (!p.player) return false;
+
+        if (p.player._id.toString() === player) return false;
+
+        if (p.player.guest) return false;
+
+        if (p.player.name === "E/C") return false;
+
+        if (historyMode === "vs") {
+          return p.team !== target.team;
+        }
+
+        return p.team === target.team;
+      });
+
+      for (const related of relatedPlayers) {
+        const key = related.player._id.toString();
+
+        if (!historyMap[key]) {
+          historyMap[key] = {
+            opponent: related.player.name,
+            wins: 0,
+            draws: 0,
+            losses: 0,
+            played: 0,
+          };
+        }
+
+        const entry = historyMap[key];
+
+        entry.played++;
+
+        if (historyMode === "vs") {
+          const playerGoals = target.team === "A" ? match.teamA : match.teamB;
+
+          const opponentGoals =
+            related.team === "A" ? match.teamA : match.teamB;
+
+          if (playerGoals > opponentGoals) entry.wins++;
+          else if (playerGoals < opponentGoals) entry.losses++;
+          else entry.draws++;
+        } else {
+          const goalsFor = target.team === "A" ? match.teamA : match.teamB;
+
+          const goalsAgainst = target.team === "A" ? match.teamB : match.teamA;
+
+          if (goalsFor > goalsAgainst) entry.wins++;
+          else if (goalsFor < goalsAgainst) entry.losses++;
+          else entry.draws++;
+        }
+      }
+    }
+
+    const historyStats = Object.values(historyMap)
+      .map((h) => ({
+        ...h,
+        winrate: h.played > 0 ? ((h.wins / h.played) * 100).toFixed(1) : 0,
+      }))
+      .sort((a, b) => {
+        if (b.played !== a.played) {
+          return b.played - a.played;
+        }
+
+        if (b.wins !== a.wins) {
+          return b.wins - a.wins;
+        }
+
+        return a.losses - b.losses;
+      });
+
+    return res.render("h2h", {
+      players,
+      view,
+      selectedPlayer: player,
+      selectedSeason: season,
+      historyStats,
+      historyMode,
+    });
+  }
 
   if (!playerA || !playerB || playerA === playerB) {
     return res.render("h2h", {
@@ -24,6 +152,8 @@ router.get("/", async (req, res) => {
       selectedPlayerB: playerB,
       selectedSeason: season,
       mode,
+      view,
+      historyMode,
     });
   }
 
@@ -48,12 +178,18 @@ router.get("/", async (req, res) => {
   let stats = null;
 
   if (mode === "vs") {
-    const vsMatches = allMatches.filter((m) => {
-      const pA = m.players.find((p) => p.player.toString() === playerA);
-      const pB = m.players.find((p) => p.player.toString() === playerB);
-
-      return pA && pB && pA.team !== pB.team;
-    });
+    const vsMatches = allMatches
+      .filter((m) => {
+        const pA = m.players.find((p) => p.player.toString() === playerA);
+        const pB = m.players.find((p) => p.player.toString() === playerB);
+        return pA && pB && pA.team !== pB.team;
+      })
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .map((m) => ({
+        ...m,
+        teamOfA: m.players.find((p) => p.player.toString() === playerA)?.team,
+        teamOfB: m.players.find((p) => p.player.toString() === playerB)?.team,
+      }));
 
     let winsA = 0,
       winsB = 0,
@@ -78,11 +214,17 @@ router.get("/", async (req, res) => {
       matches: vsMatches,
     };
   } else {
-    const duoMatches = allMatches.filter((m) => {
-      const pA = m.players.find((p) => p.player.toString() === playerA);
-      const pB = m.players.find((p) => p.player.toString() === playerB);
-      return pA && pB && pA.team === pB.team;
-    });
+    const duoMatches = allMatches
+      .filter((m) => {
+        const pA = m.players.find((p) => p.player.toString() === playerA);
+        const pB = m.players.find((p) => p.player.toString() === playerB);
+        return pA && pB && pA.team === pB.team;
+      })
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .map((m) => ({
+        ...m,
+        teamOfA: m.players.find((p) => p.player.toString() === playerA)?.team,
+      }));
 
     let wins = 0,
       draws = 0,
@@ -121,6 +263,8 @@ router.get("/", async (req, res) => {
     mode,
     stats,
     selectedSeason: season,
+    view,
+    historyMode,
   });
 });
 
