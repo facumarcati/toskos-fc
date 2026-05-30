@@ -3247,7 +3247,6 @@ textarea.match-venue-input {
   background: var(--bg-raised);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  overflow: hidden;
   width: fit-content;
   max-width: 100%;
 }
