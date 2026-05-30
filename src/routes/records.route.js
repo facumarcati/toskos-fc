@@ -276,7 +276,6 @@ router.get("/", async (req, res) => {
       },
     },
     { $sort: { ownGoals: -1 } },
-    { $limit: 5 },
   ]);
 
   const matchesForMVP = await Match.find(matchFilter)
