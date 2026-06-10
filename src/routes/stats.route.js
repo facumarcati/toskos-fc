@@ -20,15 +20,19 @@ router.get("/", async (req, res) => {
 
   const sortDirection = orderDir === "asc" ? 1 : -1;
 
+  const ACTIVE_SEASONS = ["2024", "2025", "2026"];
+
   let matchFilter = {};
 
   if (season && season !== "all") {
     const start = new Date(`${season}-01-01`);
     const end = new Date(`${Number(season) + 1}-01-01`);
 
+    matchFilter.date = { $gte: start, $lt: end };
+  } else if (season === "all") {
     matchFilter.date = {
-      $gte: start,
-      $lt: end,
+      $gte: new Date(`${Math.min(...ACTIVE_SEASONS)}-01-01`),
+      $lt: new Date(`${Math.max(...ACTIVE_SEASONS) + 1}-01-01`),
     };
   }
 

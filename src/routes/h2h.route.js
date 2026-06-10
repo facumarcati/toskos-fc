@@ -5,6 +5,24 @@ import Player from "../models/player.model.js";
 
 const router = Router();
 
+const ACTIVE_SEASONS = ["2024", "2025", "2026"];
+
+function buildSeasonFilter(season) {
+  if (season && season !== "all") {
+    const start = new Date(`${season}-01-01`);
+    const end = new Date(`${Number(season) + 1}-01-01`);
+
+    return { $gte: start, $lt: end };
+  } else if (season === "all") {
+    return {
+      $gte: new Date(`${Math.min(...ACTIVE_SEASONS)}-01-01`),
+      $lt: new Date(`${Math.max(...ACTIVE_SEASONS) + 1}-01-01`),
+    };
+  }
+
+  return null;
+}
+
 router.get("/", async (req, res) => {
   const activePlayerIds = await Match.distinct("players.player");
 
@@ -41,15 +59,9 @@ router.get("/", async (req, res) => {
       "players.player": new mongoose.Types.ObjectId(player),
     };
 
-    if (season !== "all") {
-      const start = new Date(`${season}-01-01`);
-      const end = new Date(`${Number(season) + 1}-01-01`);
+    const dateFilter = buildSeasonFilter(season);
 
-      historyFilter.date = {
-        $gte: start,
-        $lt: end,
-      };
-    }
+    if (dateFilter) historyFilter.date = dateFilter;
 
     const matches = await Match.find(historyFilter)
       .populate("players.player")
@@ -164,11 +176,9 @@ router.get("/", async (req, res) => {
     "players.player": { $all: [playerAId, playerBId] },
   };
 
-  if (season !== "all") {
-    const start = new Date(`${season}-01-01`);
-    const end = new Date(`${Number(season) + 1}-01-01`);
-    matchFilter.date = { $gte: start, $lt: end };
-  }
+  const dateFilter = buildSeasonFilter(season);
+
+  if (dateFilter) matchFilter.date = dateFilter;
 
   const allMatches = await Match.find(matchFilter).lean();
 

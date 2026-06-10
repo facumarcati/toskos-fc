@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
 
   let filter = {};
 
-  const validSeasons = ["2024", "2025", "2026"];
+  const validSeasons = ["2021", "2024", "2025", "2026"];
 
   if (season && season !== "all" && validSeasons.includes(season)) {
     const start = new Date(`${season}-01-01`);
