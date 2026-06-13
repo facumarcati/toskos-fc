@@ -32,12 +32,6 @@
   <button class="records-tab" data-category="players">
     Jugadores
   </button>
-  <button class="records-tab" data-category="h2h">
-    H2H
-  </button>
-  <button class="records-tab" data-category="duos">
-    Duos
-  </button>
   <button class="records-tab" data-category="percentages">
     Porcentajes
   </button>
@@ -231,68 +225,6 @@
         </div>
       </div>
     {{/if}}
-  </div>
-
-  <div class="records-category" data-category="h2h">
-    <div class="records-section">
-      <h2 class="record-title">Mayores diferencias H2H</h2>
-      <div class="record-list">
-        {{#each biggestH2HDiffs}}
-          <div class="record-card">
-            <span class="record-pos record-pos-{{add @index 1}}">
-              {{add @index 1}}°
-            </span>
-            <div class="record-info">
-              <span class="record-name">
-                {{this.dominantPlayer}} vs {{this.dominatedPlayer}}
-              </span>
-              <span class="record-meta">
-                {{this.played}} partidos
-              </span>
-            </div>
-            <div class="record-score">
-              <span class="record-main">
-                +{{this.diff}}
-              </span>
-              <span class="record-meta">
-                {{this.dominantWins}} - {{this.draws}} - {{this.dominatedWins}}
-              </span>
-            </div>
-          </div>
-        {{/each}}
-      </div>
-    </div>
-  </div>
-  
-  <div class="records-category" data-category="duos">
-    <div class="records-section">
-      <h2 class="record-title">Mejores duplas</h2>
-      <div class="record-list">
-        {{#each bestDuos}}
-          <div class="record-card">
-            <span class="record-pos record-pos-{{add @index 1}}">
-              {{add @index 1}}°
-            </span>
-            <div class="record-info">
-              <span class="record-name">
-                {{this.playerA}} & {{this.playerB}}
-              </span>
-              <span class="record-meta">
-                {{this.played}} partidos
-              </span>
-            </div>
-            <div class="record-score">
-              <span class="record-main">
-                {{this.wins}}
-              </span>
-              <span class="record-meta">
-                {{this.wins}} - {{this.draws}} - {{this.losses}}
-              </span>
-            </div>
-          </div>
-        {{/each}}
-      </div>
-    </div>
   </div>
 
   <div class="records-category" data-category="percentages">

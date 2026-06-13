@@ -18,13 +18,20 @@
   >
     Historial de jugador
   </button>
+  <a
+    type="button"
+    href="/h2h?view=records&season={{selectedSeason}}"
+    class="records-tab {{#if (eq view 'records')}}active{{/if}}"
+  >
+    Records
+  </a>
 </div>
 
 <div
   id="compare-section"
-  {{#if (eq view "history")}}
+  {{#unless (eq view "compare")}}
     style="display:none;"
-  {{/if}}
+  {{/unless}}
 >
   <div class="h2h-filters">
     <form method="GET" action="/h2h" class="h2h-form">
@@ -420,27 +427,125 @@
   {{/if}}
 </div>
 
+<div
+  id="records-section"
+  {{#unless (eq view "records")}}
+    style="display:none;"
+  {{/unless}}
+>
+  <div class="h2h-history-filters">
+    <form method="GET" action="/h2h" class="h2h-form">
+      <input type="hidden" name="view" value="records" />
+      <input type="hidden" name="recordsCategory" value="{{recordsCategory}}" />
+      <select name="season" class="season-filter-select" onchange="this.form.submit()">
+        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
+        <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
+        <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
+        <option value="2024" {{#if (eq selectedSeason "2024")}}selected{{/if}}>2024</option>
+        <option value="2021" {{#if (eq selectedSeason "2021")}}selected{{/if}}>2021</option>
+      </select>
+    </form>
+  </div>
+
+  <div class="h2h-options" style="padding-bottom: 8px;">
+    <div class="h2h-mode-toggle-records" style="margin-bottom: 16px;">
+      <a href="?view=records&recordsCategory=h2h&season={{selectedSeason}}"
+        class="h2h-mode-btn {{#if (eq recordsCategory 'h2h')}}active{{/if}}"
+      >
+        Mayores dif H2H
+      </a>
+      <a href="?view=records&recordsCategory=duos&season={{selectedSeason}}"
+        class="h2h-mode-btn {{#if (eq recordsCategory 'duos')}}active{{/if}}"
+      >
+        Mejores duplas
+      </a>
+    </div>
+  </div>
+
+  <div class="records-content">
+    <div class="records-category {{#if (eq recordsCategory 'h2h')}}active{{/if}}" data-category="h2h-records"
+      {{#unless (eq recordsCategory "h2h")}}style="display:none;"{{/unless}}
+    >
+      <div class="records-section">
+        <h2 class="record-title">Mayores diferencias H2H</h2>
+        <div class="record-list h2h-record-list">
+          {{#each biggestH2HDiffs}}
+            <div class="record-card h2h-record-card">
+              <span class="record-pos record-pos-{{add @index 1}} h2h-record-pos">{{add @index 1}}°</span>
+              <div class="record-info h2h-record-info">
+                <span class="record-name">{{this.dominantPlayer}}</span>
+                <span class="h2h-record-diff">+{{this.diff}}</span>
+              </div>
+              <div class="record-score h2h-record-score">
+                <span class="record-meta">{{this.played}} partidos</span>
+                <div class="record-score-values">
+                  <span class="record-main">{{this.dominantWins}}</span>
+                  <span class="record-sep">-</span>
+                  <span class="record-main">{{this.draws}}</span>
+                  <span class="record-sep">-</span>
+                  <span class="record-main">{{this.dominatedWins}}</span>
+                </div>
+              </div>
+              <div class="record-rival h2h-record-rival">
+                <span class="record-name">{{this.dominatedPlayer}}</span>
+              </div>
+            </div>
+          {{else}}
+            <div class="list-empty-state">
+              Sin datos suficientes para esta temporada
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    <div class="records-category {{#if (eq recordsCategory 'duos')}}active{{/if}}" data-category="duo-records"
+      {{#unless (eq recordsCategory "duos")}}style="display:none;"{{/unless}}
+    >
+      <div class="records-section">
+        <h2 class="record-title">Mejores duplas</h2>
+        <div class="record-list">
+          {{#each bestDuos}}
+            <div class="record-card">
+              <span class="record-pos record-pos-{{add @index 1}}">{{add @index 1}}°</span>
+              <div class="record-info">
+                <span class="record-name">{{this.playerA}} & {{this.playerB}}</span>
+                <span class="record-meta">{{this.played}} partidos</span>
+              </div>
+              <div class="record-score">
+                <span class="record-main">{{this.wins}}</span>
+                <span class="record-meta">{{this.wins}} - {{this.draws}} - {{this.losses}}</span>
+              </div>
+            </div>
+          {{else}}
+            <div class="list-empty-state">
+              Sin datos suficientes para esta temporada
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  const tabs = document.querySelectorAll(".records-tab");
+  const allTabs = document.querySelectorAll(".records-tab");
+  const clickableTabs = document.querySelectorAll(".records-tab[data-tab]");
 
   const compareSection = document.getElementById("compare-section");
   const historySection = document.getElementById("history-section");
+  const recordsSection = document.getElementById("records-section");
 
-  tabs.forEach(tab => {
+  clickableTabs.forEach(tab => {
     tab.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.remove("active"));
-
+      allTabs.forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
 
       const target = tab.dataset.tab;
 
-      if (target === "compare") {
-        compareSection.style.display = "block";
-        historySection.style.display = "none";
-      } else {
-        compareSection.style.display = "none";
-        historySection.style.display = "block";
-      }
+      compareSection.style.display = target === "compare" ? "block" : "none";
+      historySection.style.display = target === "history" ? "block" : "none";
+      recordsSection.style.display = "none";
     });
   });
 </script>
