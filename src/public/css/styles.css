@@ -2755,6 +2755,213 @@ a {
   font-size: 14px;
 }
 
+/* ── H2H Biggest Diffs Table ───────────────── */
+.h2h-list-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.h2h-list-header,
+.h2h-list-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 1fr 48px 48px 48px 48px 56px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+}
+
+.h2h-list-header {
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.h2h-list-header span {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.h2h-col-player,
+.h2h-col-rival {
+  /* heredan el layout de col-title */
+}
+
+.h2h-col-stat {
+  text-align: center;
+}
+
+.h2h-col-dif {
+  text-align: center;
+}
+
+.h2h-list {
+  list-style: none;
+}
+
+.h2h-list li:nth-child(1) .product-row-title {
+  color: #f5c518;
+}
+.h2h-list li:nth-child(2) .product-row-title {
+  color: #9e9e9e;
+}
+.h2h-list li:nth-child(3) .product-row-title {
+  color: #cd7f32;
+}
+
+.h2h-list li:nth-child(1) .col-num {
+  color: #f5c518;
+}
+.h2h-list li:nth-child(2) .col-num {
+  color: #9e9e9e;
+}
+.h2h-list li:nth-child(3) .col-num {
+  color: #cd7f32;
+}
+
+.h2h-list-row {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.h2h-list li:last-child .h2h-list-row {
+  border-bottom: none;
+}
+
+.h2h-list-row:hover {
+  background: var(--bg-hover);
+}
+
+.h2h-rival-name {
+  color: var(--text-secondary) !important;
+}
+
+.h2h-dif-cell {
+  color: var(--accent) !important;
+  font-weight: 700;
+}
+
+.h2h-sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.h2h-sortable:hover {
+  color: var(--accent);
+}
+
+.h2h-sort-active {
+  color: var(--accent);
+}
+
+/* ── Duo Table ─────────────────────────────── */
+.duo-list-header,
+.duo-list-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 48px 48px 48px 48px 56px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+}
+
+.duo-list-header {
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.duo-list-header span {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.duo-col-players {
+  min-width: 0;
+}
+
+.duo-col-stat,
+.duo-col-wr {
+  text-align: center;
+}
+
+.duo-list {
+  list-style: none;
+}
+
+.duo-list li:nth-child(1) .product-row-title {
+  color: #f5c518;
+}
+.duo-list li:nth-child(2) .product-row-title {
+  color: #9e9e9e;
+}
+.duo-list li:nth-child(3) .product-row-title {
+  color: #cd7f32;
+}
+
+.duo-list li:nth-child(1) .col-num {
+  color: #f5c518;
+}
+.duo-list li:nth-child(2) .col-num {
+  color: #9e9e9e;
+}
+.duo-list li:nth-child(3) .col-num {
+  color: #cd7f32;
+}
+
+.duo-list-row {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.duo-list li:last-child .duo-list-row {
+  border-bottom: none;
+}
+
+.duo-list-row:hover {
+  background: var(--bg-hover);
+}
+
+@media (max-width: 640px) {
+  .duo-list-header,
+  .duo-list-row {
+    grid-template-columns: 24px 1fr 32px 32px 32px 32px 44px;
+    padding: 8px 10px;
+    gap: 4px;
+  }
+
+  .duo-list-header span {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (max-width: 640px) {
+  .h2h-list-header,
+  .h2h-list-row {
+    grid-template-columns: 24px 1fr 1fr 32px 32px 32px 32px 40px;
+    padding: 8px 10px;
+    gap: 4px;
+  }
+
+  .h2h-list-header span {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+  }
+}
+
 @media (max-width: 640px) {
   .matches-header {
     flex-direction: column;

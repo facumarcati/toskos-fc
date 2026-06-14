@@ -292,7 +292,11 @@ router.get("/", async (req, res) => {
         if (b.wins !== a.wins) return b.wins - a.wins;
         if (a.losses !== b.losses) return a.losses - b.losses;
         return b.played - a.played;
-      });
+      })
+      .map((duo) => ({
+        ...duo,
+        winrate: ((duo.wins / duo.played) * 100).toFixed(1),
+      }));
 
     return res.render("h2h", {
       players,

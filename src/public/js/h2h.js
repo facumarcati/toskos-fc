@@ -210,3 +210,113 @@ if (chartData && chartData.matches && chartData.matches.length) {
     });
   }
 }
+
+(function () {
+  const h2hHeader = document.querySelector(".h2h-list-header");
+  if (!h2hHeader) return;
+
+  const h2hList = document.querySelector(".h2h-list");
+  if (!h2hList) return;
+
+  let currentSort = "diff";
+  let currentDir = "desc";
+
+  function sortH2H(key, dir) {
+    const items = Array.from(
+      h2hList.querySelectorAll("li:not(.list-empty-state)"),
+    );
+
+    items.sort((a, b) => {
+      const rowA = a.querySelector(".h2h-list-row");
+      const rowB = b.querySelector(".h2h-list-row");
+      const valA = parseFloat(rowA?.dataset[key] ?? 0);
+      const valB = parseFloat(rowB?.dataset[key] ?? 0);
+      return dir === "desc" ? valB - valA : valA - valB;
+    });
+
+    items.forEach((item, i) => {
+      const numEl = item.querySelector(".col-num");
+      if (numEl) numEl.textContent = `${i + 1}`;
+      h2hList.appendChild(item);
+    });
+  }
+
+  function updateH2HHeaders(activeKey, dir) {
+    h2hHeader.querySelectorAll(".h2h-sortable").forEach((el) => {
+      el.classList.remove("h2h-sort-active", "h2h-sort-asc");
+      if (el.dataset.sort === activeKey) {
+        el.classList.add("h2h-sort-active");
+        if (dir === "asc") el.classList.add("h2h-sort-asc");
+      }
+    });
+  }
+
+  h2hHeader.querySelectorAll(".h2h-sortable").forEach((el) => {
+    el.addEventListener("click", () => {
+      const key = el.dataset.sort;
+      if (key === currentSort) {
+        currentDir = currentDir === "desc" ? "asc" : "desc";
+      } else {
+        currentSort = key;
+        currentDir = "desc";
+      }
+      sortH2H(currentSort, currentDir);
+      updateH2HHeaders(currentSort, currentDir);
+    });
+  });
+})();
+
+(function () {
+  const duoHeader = document.querySelector(".duo-list-header");
+  if (!duoHeader) return;
+
+  const duoList = document.querySelector(".duo-list");
+  if (!duoList) return;
+
+  let currentSort = "wr";
+  let currentDir = "desc";
+
+  function sortDuos(key, dir) {
+    const items = Array.from(
+      duoList.querySelectorAll("li:not(.list-empty-state)"),
+    );
+
+    items.sort((a, b) => {
+      const rowA = a.querySelector(".duo-list-row");
+      const rowB = b.querySelector(".duo-list-row");
+      const valA = parseFloat(rowA?.dataset[key] ?? 0);
+      const valB = parseFloat(rowB?.dataset[key] ?? 0);
+      return dir === "desc" ? valB - valA : valA - valB;
+    });
+
+    items.forEach((item, i) => {
+      const numEl = item.querySelector(".col-num");
+      if (numEl) numEl.textContent = `${i + 1}`;
+      duoList.appendChild(item);
+    });
+  }
+
+  function updateDuoHeaders(activeKey, dir) {
+    duoHeader.querySelectorAll(".h2h-sortable").forEach((el) => {
+      el.classList.remove("h2h-sort-active", "h2h-sort-asc");
+      if (el.dataset.sort === activeKey) {
+        el.classList.add("h2h-sort-active");
+        if (dir === "asc") el.classList.add("h2h-sort-asc");
+      }
+    });
+  }
+
+  duoHeader.querySelectorAll(".h2h-sortable").forEach((el) => {
+    el.addEventListener("click", () => {
+      const key = el.dataset.sort;
+      if (key === currentSort) {
+        currentDir = currentDir === "desc" ? "asc" : "desc";
+      } else {
+        currentSort = key;
+        currentDir = "desc";
+      }
+      sortDuos(currentSort, currentDir);
+      updateDuoHeaders(currentSort, currentDir);
+    });
+  });
+})();
