@@ -226,11 +226,30 @@ if (chartData && chartData.matches && chartData.matches.length) {
       h2hList.querySelectorAll("li:not(.list-empty-state)"),
     );
 
+    const isText = key === "player" || key === "rival";
+
     items.sort((a, b) => {
       const rowA = a.querySelector(".h2h-list-row");
       const rowB = b.querySelector(".h2h-list-row");
+
+      if (isText) {
+        const valA = (rowA?.dataset[key] ?? "").toLowerCase();
+        const valB = (rowB?.dataset[key] ?? "").toLowerCase();
+
+        const nameCompare =
+          dir === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+
+        if (nameCompare !== 0) return nameCompare;
+
+        const diffA = parseFloat(rowA?.dataset.diff ?? 0);
+        const diffB = parseFloat(rowB?.dataset.diff ?? 0);
+
+        return diffB - diffA;
+      }
+
       const valA = parseFloat(rowA?.dataset[key] ?? 0);
       const valB = parseFloat(rowB?.dataset[key] ?? 0);
+
       return dir === "desc" ? valB - valA : valA - valB;
     });
 
@@ -254,12 +273,15 @@ if (chartData && chartData.matches && chartData.matches.length) {
   h2hHeader.querySelectorAll(".h2h-sortable").forEach((el) => {
     el.addEventListener("click", () => {
       const key = el.dataset.sort;
+      const isText = key === "player" || key === "rival";
+
       if (key === currentSort) {
         currentDir = currentDir === "desc" ? "asc" : "desc";
       } else {
         currentSort = key;
-        currentDir = "desc";
+        currentDir = isText ? "asc" : "desc";
       }
+
       sortH2H(currentSort, currentDir);
       updateH2HHeaders(currentSort, currentDir);
     });

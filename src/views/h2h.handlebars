@@ -471,8 +471,8 @@
         <div class="h2h-list-section">
           <div class="h2h-list-header">
             <span class="col-num">#</span>
-            <span class="h2h-col-player">Jugador</span>
-            <span class="h2h-col-rival">Rival</span>
+            <span class="h2h-col-player h2h-sortable" data-sort="player">Jugador</span>
+            <span class="h2h-col-rival h2h-sortable" data-sort="rival">Rival</span>
             <span class="h2h-col-stat h2h-sortable" data-sort="played">PJ</span>
             <span class="h2h-col-stat h2h-sortable" data-sort="wins">PG</span>
             <span class="h2h-col-stat h2h-sortable" data-sort="draws">PE</span>
@@ -487,7 +487,9 @@
                     data-wins="{{this.dominantWins}}"
                     data-draws="{{this.draws}}"
                     data-losses="{{this.dominatedWins}}"
-                    data-diff="{{this.diff}}">
+                    data-diff="{{this.diff}}"
+                    data-player="{{this.dominantPlayer}}"
+                    data-rival="{{this.dominatedPlayer}}">
                   <span class="col-num">{{add @index 1}}</span>
                   <div class="h2h-col-player col-title">
                     <span class="product-row-title">{{this.dominantPlayer}}</span>
