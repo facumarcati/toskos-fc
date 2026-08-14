@@ -3502,12 +3502,12 @@ textarea.match-venue-input {
 /* ── H2H Rival Filter ──────────────────────── */
 .h2h-rival-filter {
   position: relative;
-  padding-bottom: 16px;
 }
 
 .h2h-rival-filter-btn {
   display: inline-flex;
   align-items: center;
+  font-size: 11px;
 }
 
 .h2h-rival-filter-panel {

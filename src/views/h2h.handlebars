@@ -373,24 +373,24 @@
         Duplas
       </a>
     </div>
-  </div>
-  <div class="h2h-rival-filter" id="rivalFilterWrapper">
-    <button type="button" class="btn btn-secondary h2h-rival-filter-btn" id="rivalFilterBtn">
-      Filtrar por jugador
-      <span class="h2h-rival-filter-count" id="rivalFilterCount" style="display:none;"></span>
-    </button>
-    <div class="h2h-rival-filter-panel" id="rivalFilterPanel">
-      <button type="button" class="h2h-rival-filter-clear" id="rivalFilterClear">
-        Limpiar selección
+    <div class="h2h-rival-filter" id="rivalFilterWrapper">
+      <button type="button" class="btn btn-secondary h2h-rival-filter-btn" id="rivalFilterBtn">
+        Filtrar por jugador
+        <span class="h2h-rival-filter-count" id="rivalFilterCount" style="display:none;"></span>
       </button>
-      {{#each players}}
-        {{#unless (eq (toString this._id) ../selectedPlayer)}}
-        <label class="h2h-rival-filter-option">
-          <input type="checkbox" class="rival-filter-checkbox" value="{{this._id}}" />
-          {{this.name}}
-        </label>
-        {{/unless}}
-      {{/each}}
+      <div class="h2h-rival-filter-panel" id="rivalFilterPanel">
+        <button type="button" class="h2h-rival-filter-clear" id="rivalFilterClear">
+          Limpiar selección
+        </button>
+        {{#each players}}
+          {{#unless (eq (toString this._id) ../selectedPlayer)}}
+          <label class="h2h-rival-filter-option">
+            <input type="checkbox" class="rival-filter-checkbox" value="{{this._id}}" />
+            {{this.name}}
+          </label>
+          {{/unless}}
+        {{/each}}
+      </div>
     </div>
   </div>
   <div class="product-list-section">
