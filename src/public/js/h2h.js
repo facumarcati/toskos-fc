@@ -30,10 +30,12 @@ sortableHeaders.forEach((header) => {
     });
 
     rows.forEach((row, index) => {
-      row.querySelector(".col-num").textContent = `${index + 1}`;
-
       list.appendChild(row);
     });
+
+    if (window.renumberVisibleHistoryRows) {
+      window.renumberVisibleHistoryRows();
+    }
   });
 });
 
@@ -341,4 +343,65 @@ if (chartData && chartData.matches && chartData.matches.length) {
       updateDuoHeaders(currentSort, currentDir);
     });
   });
+})();
+
+(function () {
+  const btn = document.getElementById("rivalFilterBtn");
+  const panel = document.getElementById("rivalFilterPanel");
+  const clearBtn = document.getElementById("rivalFilterClear");
+  const countEl = document.getElementById("rivalFilterCount");
+
+  if (!btn || !panel) return;
+
+  const checkboxes = Array.from(
+    panel.querySelectorAll(".rival-filter-checkbox"),
+  );
+
+  function getRows() {
+    return Array.from(document.querySelectorAll(".h2h-history-row"));
+  }
+
+  function renumberVisibleRows() {
+    let i = 1;
+    getRows().forEach((row) => {
+      if (row.style.display !== "none") {
+        const numEl = row.querySelector(".col-num");
+        if (numEl) numEl.textContent = `${i}`;
+        i++;
+      }
+    });
+  }
+
+  function applyFilter() {
+    const selected = checkboxes.filter((c) => c.checked).map((c) => c.value);
+
+    getRows().forEach((row) => {
+      const oppId = row.dataset.opponentId;
+      const visible = selected.length === 0 || selected.includes(oppId);
+      row.style.display = visible ? "" : "none";
+    });
+
+    renumberVisibleRows();
+    countEl.textContent = "- " + selected.length || "";
+    countEl.style.display = selected.length ? "inline-flex" : "none";
+  }
+
+  btn.addEventListener("click", () => {
+    panel.classList.toggle("open");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!panel.contains(e.target) && e.target !== btn) {
+      panel.classList.remove("open");
+    }
+  });
+
+  checkboxes.forEach((c) => c.addEventListener("change", applyFilter));
+
+  clearBtn.addEventListener("click", () => {
+    checkboxes.forEach((c) => (c.checked = false));
+    applyFilter();
+  });
+
+  window.renumberVisibleHistoryRows = renumberVisibleRows;
 })();

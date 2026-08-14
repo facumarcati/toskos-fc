@@ -361,7 +361,7 @@
   </div>
   {{#if historyStats}}
   <div class="h2h-options">
-    <div class="h2h-mode-toggle" style="margin-bottom: 16px;">
+    <div class="h2h-mode-toggle">
       <a href="?view=history&player={{selectedPlayer}}&historyMode=vs&season={{selectedSeason}}"
         class="h2h-mode-btn {{#if (eq historyMode 'vs')}}active{{/if}}"
       >
@@ -372,6 +372,25 @@
       >
         Duplas
       </a>
+    </div>
+  </div>
+  <div class="h2h-rival-filter" id="rivalFilterWrapper">
+    <button type="button" class="btn btn-secondary h2h-rival-filter-btn" id="rivalFilterBtn">
+      Filtrar por jugador
+      <span class="h2h-rival-filter-count" id="rivalFilterCount" style="display:none;"></span>
+    </button>
+    <div class="h2h-rival-filter-panel" id="rivalFilterPanel">
+      <button type="button" class="h2h-rival-filter-clear" id="rivalFilterClear">
+        Limpiar selección
+      </button>
+      {{#each players}}
+        {{#unless (eq (toString this._id) ../selectedPlayer)}}
+        <label class="h2h-rival-filter-option">
+          <input type="checkbox" class="rival-filter-checkbox" value="{{this._id}}" />
+          {{this.name}}
+        </label>
+        {{/unless}}
+      {{/each}}
     </div>
   </div>
   <div class="product-list-section">
@@ -388,6 +407,7 @@
     <ul class="product-list">
       {{#each historyStats}}
       <li class="product-row stat-row h2h-history-row"
+          data-opponent-id="{{this.opponentId}}"
           data-played="{{this.played}}"
           data-wins="{{this.wins}}"
           data-draws="{{this.draws}}"
@@ -448,7 +468,7 @@
   </div>
 
   <div class="h2h-options" style="padding-bottom: 8px;">
-    <div class="h2h-mode-toggle-records" style="margin-bottom: 16px;">
+    <div class="h2h-mode-toggle-records">
       <a href="?view=records&recordsCategory=h2h&season={{selectedSeason}}"
         class="h2h-mode-btn {{#if (eq recordsCategory 'h2h')}}active{{/if}}"
       >

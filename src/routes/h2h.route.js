@@ -101,6 +101,7 @@ router.get("/", async (req, res) => {
         if (!historyMap[key]) {
           historyMap[key] = {
             opponent: related.player.name,
+            opponentId: key,
             wins: 0,
             draws: 0,
             losses: 0,

@@ -3499,6 +3499,128 @@ textarea.match-venue-input {
   color: var(--text-primary);
 }
 
+/* ── H2H Rival Filter ──────────────────────── */
+.h2h-rival-filter {
+  position: relative;
+  padding-bottom: 16px;
+}
+
+.h2h-rival-filter-btn {
+  display: inline-flex;
+  align-items: center;
+}
+
+.h2h-rival-filter-panel {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 240px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 10px;
+}
+
+.h2h-rival-filter-panel.open {
+  display: block;
+}
+
+.h2h-rival-filter-panel::-webkit-scrollbar {
+  width: 4px;
+}
+
+.h2h-rival-filter-panel::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+}
+
+.h2h-rival-filter-clear {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.h2h-rival-filter-clear:hover {
+  color: var(--loss);
+}
+
+.h2h-rival-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary-soft);
+  transition: background 0.15s;
+}
+
+.h2h-rival-filter-option:hover {
+  background: var(--bg-hover);
+}
+
+.h2h-rival-filter-option input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--bg-base);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.h2h-rival-filter-option input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='none' stroke='%23111' stroke-width='1.5' d='M1.5 5l2.5 2.5 4.5-4.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+@media (max-width: 640px) {
+  .h2h-rival-filter {
+    width: 100%;
+  }
+
+  .h2h-rival-filter-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .h2h-rival-filter-panel {
+    left: 0;
+    right: 0;
+    min-width: unset;
+    width: 100%;
+  }
+}
+
 /* Result */
 .h2h-result {
   background: var(--bg-surface);
