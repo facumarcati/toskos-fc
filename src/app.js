@@ -15,6 +15,7 @@ import playerRouter from "./routes/player.route.js";
 import adminRouter from "./routes/admin.route.js";
 import profileRouter from "./routes/profile.route.js";
 import h2hRouter from "./routes/h2h.route.js";
+import trophiesRouter from "./routes/trophies.routes.js";
 
 import Player from "./models/player.model.js";
 
@@ -129,6 +130,7 @@ app.use("/players", playerRouter);
 app.use("/admin", adminRouter);
 app.use("/profile", profileRouter);
 app.use("/h2h", h2hRouter);
+app.use("/trophies", trophiesRouter);
 
 http.listen(PORT, () => {
   console.log("Servidor iniciado en http://localhost:" + PORT);

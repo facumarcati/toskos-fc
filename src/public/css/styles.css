@@ -2615,6 +2615,280 @@ a {
   color: var(--text-secondary);
 }
 
+/* ===== Podio de trofeos ===== */
+.trophy-season {
+  margin-bottom: 56px;
+}
+
+.trophy-season-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.trophy-season-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: #fff;
+  margin: 0;
+}
+
+.badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.trophy-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 720px) {
+  .trophy-categories-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.trophy-category-panel {
+  min-width: 0;
+  background: #14161c;
+  border: 1px solid #23262f;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.trophy-category-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8b8f9a;
+  margin: 0 0 14px;
+}
+
+.trophy-podium-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.trophy-podium-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  background: #1b1e26;
+  border: 1px solid #262a34;
+  border-radius: 10px;
+  padding: 14px 8px;
+}
+
+.trophy-podium-card[data-position="1"] {
+  border-color: #d4a12a;
+  background: linear-gradient(180deg, rgba(212, 161, 42, 0.12), #1b1e26 60%);
+}
+
+.trophy-podium-card[data-position="2"] {
+  border-color: #9aa0ab;
+  background: linear-gradient(180deg, rgba(154, 160, 171, 0.1), #1b1e26 60%);
+}
+
+.trophy-podium-card[data-position="3"] {
+  border-color: #b5732f;
+  background: linear-gradient(180deg, rgba(181, 115, 47, 0.1), #1b1e26 60%);
+}
+
+.trophy-podium-medal {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.trophy-podium-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #fff;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trophy-podium-value {
+  font-size: 0.75rem;
+  color: #8b8f9a;
+}
+
+.trophy-podium-empty {
+  grid-column: 1 / -1;
+  color: #8b8f9a;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* ===== Ranking de trofeos ===== */
+
+.trophy-table {
+  border: 1px solid #23262f;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.trophy-table-header,
+.trophy-table-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 70px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+}
+
+.trophy-table-header {
+  background: #1b1e26;
+  border-bottom: 1px solid #23262f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8b8f9a;
+}
+
+.trophy-table-header span:last-child {
+  text-align: right;
+}
+
+.trophy-table-row {
+  border-bottom: 1px solid #1e2129;
+}
+
+.trophy-table-row:last-child {
+  border-bottom: none;
+}
+
+.trophy-table-rank {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8b8f9a;
+  text-align: start;
+}
+
+.trophy-table-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trophy-table-count {
+  display: flex;
+  margin-right: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #d4a12a;
+}
+
+.trophy-table-row[data-rank="1"] .trophy-table-name,
+.trophy-table-row[data-rank="1"] .trophy-table-rank {
+  color: #d4a12a;
+}
+
+.trophy-table-row[data-rank="2"] .trophy-table-name,
+.trophy-table-row[data-rank="2"] .trophy-table-rank {
+  color: #c7ccd6;
+}
+
+.trophy-table-row[data-rank="3"] .trophy-table-name,
+.trophy-table-row[data-rank="3"] .trophy-table-rank {
+  color: #b5732f;
+}
+
+.trophy-table-empty {
+  padding: 20px 16px;
+  text-align: center;
+  color: #8b8f9a;
+  font-size: 13px;
+}
+
+.trophy-leaderboard-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8b8f9a;
+}
+
+.trophy-leaderboard-sidebar {
+  display: none;
+  position: fixed;
+  top: 140px;
+  left: calc(50% + 500px);
+  width: 260px;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  background: #14161c;
+  border: 1px solid #23262f;
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.trophy-leaderboard-inline {
+  display: block;
+  background: #14161c;
+  border: 1px solid #23262f;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 36px;
+}
+
+@media (min-width: 1600px) {
+  .trophy-leaderboard-sidebar {
+    display: block;
+  }
+  .trophy-leaderboard-inline {
+    display: none;
+  }
+}
+
+.trophy-leaderboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.trophy-leaderboard-header .trophy-leaderboard-title {
+  margin: 0;
+}
+
+.trophy-toggle-checkbox {
+  font-size: 0.72rem;
+  white-space: nowrap;
+  margin: 6 0 14;
+}
+
 .player-name {
   display: flex;
   align-items: center;

@@ -415,3 +415,170 @@ export async function getPlayerTrophies(playerId) {
 
   return trophies;
 }
+
+export async function getPodiumsForSeason(season) {
+  const start = new Date(`${season}-01-01`);
+  const end = new Date(`${Number(season) + 1}-01-01`);
+
+  const seasonFilter = {
+    date: { $gte: start, $lt: end },
+  };
+
+  const basePipeline = [
+    { $match: seasonFilter },
+    { $unwind: "$players" },
+    {
+      $lookup: {
+        from: "players",
+        localField: "players.player",
+        foreignField: "_id",
+        as: "playerInfo",
+      },
+    },
+    { $unwind: "$playerInfo" },
+    { $match: { "playerInfo.guest": { $ne: true } } },
+  ];
+
+  const winCond = {
+    $cond: [
+      {
+        $or: [
+          {
+            $and: [
+              { $eq: ["$players.team", "A"] },
+              { $gt: ["$teamA", "$teamB"] },
+            ],
+          },
+          {
+            $and: [
+              { $eq: ["$players.team", "B"] },
+              { $gt: ["$teamB", "$teamA"] },
+            ],
+          },
+        ],
+      },
+      1,
+      0,
+    ],
+  };
+
+  const scorers = await Match.aggregate([
+    ...basePipeline,
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        value: { $sum: "$players.goals" },
+        assists: { $sum: "$players.assists" },
+        matches: { $sum: 1 },
+      },
+    },
+    { $sort: { value: -1, assists: -1, matches: 1 } },
+  ]);
+
+  const assists = await Match.aggregate([
+    ...basePipeline,
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        value: { $sum: "$players.assists" },
+        goals: { $sum: "$players.goals" },
+        matches: { $sum: 1 },
+      },
+    },
+    { $sort: { value: -1, goals: -1, matches: 1 } },
+  ]);
+
+  const matchesPlayed = await Match.aggregate([
+    ...basePipeline,
+    { $addFields: { win: winCond } },
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        value: { $sum: 1 },
+        wins: { $sum: "$win" },
+        goals: { $sum: "$players.goals" },
+        assists: { $sum: "$players.assists" },
+      },
+    },
+    { $sort: { value: -1, wins: -1, goals: -1, assists: -1 } },
+  ]);
+
+  const wins = await Match.aggregate([
+    ...basePipeline,
+    { $addFields: { win: winCond } },
+    {
+      $group: {
+        _id: "$players.player",
+        name: { $first: "$playerInfo.name" },
+        value: { $sum: "$win" },
+        matches: { $sum: 1 },
+        goals: { $sum: "$players.goals" },
+        assists: { $sum: "$players.assists" },
+      },
+    },
+    { $sort: { value: -1, matches: 1, goals: -1, assists: -1 } },
+  ]);
+
+  const categories = [
+    { key: "scorers", label: "Goleador", unit: "goles", data: scorers },
+    { key: "assists", label: "Asistidor", unit: "asistencias", data: assists },
+    { key: "matches", label: "Más Partidos", unit: "PJ", data: matchesPlayed },
+    { key: "wins", label: "Más Victorias", unit: "PG", data: wins },
+  ];
+
+  return categories.map((cat) => {
+    const ranked = getRankingPosition(cat.data).filter(
+      (p) => p.position < medalsLimit,
+    );
+
+    return {
+      key: cat.key,
+      label: cat.label,
+      unit: cat.unit,
+      podium: ranked.map((p) => ({
+        playerId: p._id.toString(),
+        name: p.name,
+        value: p.value,
+        position: p.position + 1,
+      })),
+    };
+  });
+}
+
+export async function getTrophyLeaderboard({
+  includeCurrentSeason = true,
+} = {}) {
+  const currentYear = new Date().getFullYear();
+
+  const seasons = [];
+  for (let y = 2024; y <= currentYear; y++) {
+    if (!includeCurrentSeason && y === currentYear) continue;
+    seasons.push(y);
+  }
+
+  const totals = {};
+
+  for (const season of seasons) {
+    const categories = await getPodiumsForSeason(season);
+
+    categories.forEach((cat) => {
+      cat.podium.forEach((p) => {
+        if (!totals[p.playerId]) {
+          totals[p.playerId] = { name: p.name, titles: 0 };
+        }
+        totals[p.playerId].titles += 1;
+      });
+    });
+  }
+
+  return Object.entries(totals)
+    .map(([playerId, data]) => ({
+      playerId,
+      name: data.name,
+      titles: data.titles,
+    }))
+    .sort((a, b) => b.titles - a.titles);
+}

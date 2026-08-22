@@ -1,0 +1,94 @@
+<div class="page-header">
+  <span class="eyebrow">Trofeos</span>
+  <h1>Podio por temporada</h1>
+</div>
+
+<aside class="trophy-leaderboard-sidebar">
+  <div>
+    <p class="trophy-leaderboard-title">Ranking de títulos</p>
+    <label class="filter-checkbox trophy-toggle-checkbox">
+      <input type="checkbox" {{#if includeCurrentSeason}}checked{{/if}}
+          onchange="location.href='/trophies?includeCurrent=' + (this.checked ? '1' : '0')" />
+      Incluir {{currentYear}}
+      </label>
+  </div>
+  <div class="trophy-table">
+    <div class="trophy-table-header">
+      <span>#</span>
+      <span>Jugador</span>
+      <span>Títulos</span>
+    </div>
+    {{#each leaderboard}}
+    <div class="trophy-table-row" data-rank="{{add @index 1}}">
+      <span class="trophy-table-rank">{{add @index 1}}</span>
+      <span class="trophy-table-name">{{this.name}}</span>
+      <span class="trophy-table-count">{{this.titles}}</span>
+    </div>
+    {{else}}
+    <div class="trophy-table-empty">Sin datos todavía</div>
+    {{/each}}
+  </div>
+</aside>
+
+<div class="trophy-leaderboard-inline">
+  <p class="trophy-leaderboard-title">Ranking de títulos</p>
+  <label class="filter-checkbox trophy-toggle-checkbox">
+      <input type="checkbox" {{#if includeCurrentSeason}}checked{{/if}}
+        onchange="location.href='/trophies?includeCurrent=' + (this.checked ? '1' : '0')" />
+      Incluir {{currentYear}}
+    </label>
+  <div class="trophy-table">
+    <div class="trophy-table-header">
+      <span>#</span>
+      <span>Jugador</span>
+      <span>Títulos</span>
+    </div>
+    {{#each leaderboard}}
+    <div class="trophy-table-row" data-rank="{{add @index 1}}">
+      <span class="trophy-table-rank">{{add @index 1}}</span>
+      <span class="trophy-table-name">{{this.name}}</span>
+      <span class="trophy-table-count">{{this.titles}}</span>
+    </div>
+    {{else}}
+    <div class="trophy-table-empty">Sin datos todavía</div>
+    {{/each}}
+  </div>
+</div>
+
+{{#each seasons}}
+<div class="trophy-season">
+  <div class="trophy-season-header">
+    <h2>Temporada {{this.season}}</h2>
+    {{#if this.isLive}}
+      <span class="badge-live">En vivo</span>
+    {{/if}}
+  </div>
+
+  <div class="trophy-categories-grid">
+    {{#each this.categories}}
+    <div class="trophy-category-panel">
+      <p class="trophy-category-label">{{this.label}}</p>
+
+      <div class="trophy-podium-grid">
+        {{#if this.podium.length}}
+          {{#each this.podium}}
+          <div class="trophy-podium-card" data-position="{{this.position}}">
+            <span class="trophy-podium-medal">
+              {{#if (eq this.position 1)}}🥇
+              {{else if (eq this.position 2)}}🥈
+              {{else}}🥉
+              {{/if}}
+            </span>
+            <span class="trophy-podium-name">{{this.name}}</span>
+            <span class="trophy-podium-value">{{this.value}} {{../unit}}</span>
+          </div>
+          {{/each}}
+        {{else}}
+          <div class="trophy-podium-empty">Sin datos todavía</div>
+        {{/if}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
+{{/each}}
