@@ -5,6 +5,9 @@ import Match from "../models/match.model.js";
 
 const router = Router();
 
+const SEASONS = [2026, 2025, 2024, 2021];
+const ALL_SEASONS_MIN = 2024;
+
 router.get("/:id", async (req, res) => {
   try {
     const playerId = req.params.id;
@@ -23,14 +26,12 @@ router.get("/:id", async (req, res) => {
       "players.player": playerId,
     };
 
-    if (season !== "all") {
+    if (season === "all") {
+      filter.date = { $gte: new Date(`${ALL_SEASONS_MIN}-01-01`) };
+    } else {
       const start = new Date(`${season}-01-01`);
       const end = new Date(`${Number(season) + 1}-01-01`);
-
-      filter.date = {
-        $gte: start,
-        $lt: end,
-      };
+      filter.date = { $gte: start, $lt: end };
     }
 
     const allMatches = await Match.find(filter).lean();
@@ -60,6 +61,7 @@ router.get("/:id", async (req, res) => {
       matches,
       totalMatches,
       selectedSeason: season,
+      seasons: SEASONS,
       trophies,
       currentUser: req.session.user,
     });
@@ -237,18 +239,18 @@ router.patch("/:id/name", async (req, res) => {
 router.get("/:id/matches", async (req, res) => {
   const { page = 1, season = "all", limit = 3 } = req.query;
   const limitNum = Math.min(parseInt(limit), 999);
-
   const skip = (page - 1) * limitNum;
 
   let filter = {
     "players.player": req.params.id,
   };
 
-  if (season !== "all") {
+  if (season === "all") {
+    filter.date = { $gte: new Date(`${ALL_SEASONS_MIN}-01-01`) };
+  } else {
     const start = new Date(`${season}-01-01`);
-    const end = new Date(`${season}-12-31`);
-
-    filter.date = { $gte: start, $lte: end };
+    const end = new Date(`${Number(season) + 1}-01-01`);
+    filter.date = { $gte: start, $lt: end };
   }
 
   const matches = await Match.find(filter)
