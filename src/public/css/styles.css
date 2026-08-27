@@ -2699,17 +2699,14 @@ a {
 }
 
 .trophy-podium-card[data-position="1"] {
-  border-color: #d4a12a;
   background: linear-gradient(180deg, rgba(212, 161, 42, 0.12), #1b1e26 60%);
 }
 
 .trophy-podium-card[data-position="2"] {
-  border-color: #9aa0ab;
   background: linear-gradient(180deg, rgba(154, 160, 171, 0.1), #1b1e26 60%);
 }
 
 .trophy-podium-card[data-position="3"] {
-  border-color: #b5732f;
   background: linear-gradient(180deg, rgba(181, 115, 47, 0.1), #1b1e26 60%);
 }
 

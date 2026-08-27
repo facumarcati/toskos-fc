@@ -11,7 +11,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 
 router.get("/", async (req, res) => {
   try {
-    const includeCurrentSeason = req.query.includeCurrent !== "0";
+    const includeCurrentSeason = req.query.includeCurrent === "1";
 
     const seasons = await Promise.all(
       TROPHY_SEASONS.map(async (season) => ({
@@ -32,6 +32,19 @@ router.get("/", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al cargar trofeos");
+  }
+});
+
+router.get("/leaderboard", async (req, res) => {
+  try {
+    const includeCurrentSeason = req.query.includeCurrent === "1";
+
+    const leaderboard = await getTrophyLeaderboard({ includeCurrentSeason });
+
+    res.json({ leaderboard });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al cargar leaderboard" });
   }
 });
 

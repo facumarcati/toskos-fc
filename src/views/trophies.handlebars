@@ -7,9 +7,9 @@
   <div>
     <p class="trophy-leaderboard-title">Ranking de títulos</p>
     <label class="filter-checkbox trophy-toggle-checkbox">
-      <input type="checkbox" {{#if includeCurrentSeason}}checked{{/if}}
-          onchange="location.href='/trophies?includeCurrent=' + (this.checked ? '1' : '0')" />
-      Incluir {{currentYear}}
+      <label class="filter-checkbox trophy-toggle-checkbox">
+        <input type="checkbox" class="js-trophy-toggle" {{#if includeCurrentSeason}}checked{{/if}} />
+        Incluir {{currentYear}}
       </label>
   </div>
   <div class="trophy-table">
@@ -18,40 +18,44 @@
       <span>Jugador</span>
       <span>Títulos</span>
     </div>
-    {{#each leaderboard}}
-    <div class="trophy-table-row" data-rank="{{add @index 1}}">
-      <span class="trophy-table-rank">{{add @index 1}}</span>
-      <span class="trophy-table-name">{{this.name}}</span>
-      <span class="trophy-table-count">{{this.titles}}</span>
+    <div class="js-trophy-table-rows">
+      {{#each leaderboard}}
+      <div class="trophy-table-row" data-rank="{{add @index 1}}">
+        <span class="trophy-table-rank">{{add @index 1}}</span>
+        <span class="trophy-table-name">{{this.name}}</span>
+        <span class="trophy-table-count">{{this.titles}}</span>
+      </div>
+      {{else}}
+      <div class="trophy-table-empty">Sin datos todavía</div>
+      {{/each}}
     </div>
-    {{else}}
-    <div class="trophy-table-empty">Sin datos todavía</div>
-    {{/each}}
   </div>
 </aside>
 
 <div class="trophy-leaderboard-inline">
   <p class="trophy-leaderboard-title">Ranking de títulos</p>
   <label class="filter-checkbox trophy-toggle-checkbox">
-      <input type="checkbox" {{#if includeCurrentSeason}}checked{{/if}}
-        onchange="location.href='/trophies?includeCurrent=' + (this.checked ? '1' : '0')" />
-      Incluir {{currentYear}}
-    </label>
+      <label class="filter-checkbox trophy-toggle-checkbox">
+        <input type="checkbox" class="js-trophy-toggle" {{#if includeCurrentSeason}}checked{{/if}} />
+        Incluir {{currentYear}}
+      </label>
   <div class="trophy-table">
     <div class="trophy-table-header">
       <span>#</span>
       <span>Jugador</span>
       <span>Títulos</span>
     </div>
-    {{#each leaderboard}}
-    <div class="trophy-table-row" data-rank="{{add @index 1}}">
-      <span class="trophy-table-rank">{{add @index 1}}</span>
-      <span class="trophy-table-name">{{this.name}}</span>
-      <span class="trophy-table-count">{{this.titles}}</span>
+    <div class="js-trophy-table-rows">
+      {{#each leaderboard}}
+      <div class="trophy-table-row" data-rank="{{add @index 1}}">
+        <span class="trophy-table-rank">{{add @index 1}}</span>
+        <span class="trophy-table-name">{{this.name}}</span>
+        <span class="trophy-table-count">{{this.titles}}</span>
+      </div>
+      {{else}}
+      <div class="trophy-table-empty">Sin datos todavía</div>
+      {{/each}}
     </div>
-    {{else}}
-    <div class="trophy-table-empty">Sin datos todavía</div>
-    {{/each}}
   </div>
 </div>
 
@@ -92,3 +96,5 @@
   </div>
 </div>
 {{/each}}
+
+<script src="/js/trophies.js"></script>
