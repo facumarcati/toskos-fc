@@ -1508,6 +1508,12 @@ fieldset {
   color: var(--text-primary);
 }
 
+.player-owngoal-tag {
+  color: #ff4d4f;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .mvp-badge {
   display: inline-flex;
   gap: 4px;

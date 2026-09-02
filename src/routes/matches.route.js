@@ -61,6 +61,7 @@ router.get("/", async (req, res) => {
 
   const matchesRaw = await Match.find(filter)
     .populate("players.player")
+    .populate("players.ownGoalScorer")
     .sort({ date: order === "asc" ? 1 : -1 })
     .lean();
 
@@ -205,12 +206,15 @@ router.post("/", isAdmin, async (req, res) => {
 
   const playerStats = [];
 
+  let ecPlayer = null;
+
   for (const p of players) {
     const name = p.name.trim();
 
     let player = await Player.findOne({ name: new RegExp(`^${name}$`, "i") });
 
     const isGuest = p.guest === "on";
+    const isOwnGoal = p.isOwnGoal === "true";
 
     if (!player) {
       player = await Player.create({
@@ -218,13 +222,31 @@ router.post("/", isAdmin, async (req, res) => {
       });
     }
 
-    playerStats.push({
-      player: player._id,
-      team: p.team,
-      goals: Number(p.goals) || 0,
-      assists: Number(p.assists) || 0,
-      guest: isGuest,
-    });
+    if (isOwnGoal) {
+      if (!ecPlayer) {
+        ecPlayer = await Player.findOne({ name: "E/C" });
+
+        if (!ecPlayer) {
+          ecPlayer = await Player.create({ name: "E/C" });
+        }
+      }
+
+      playerStats.push({
+        player: ecPlayer._id,
+        team: p.team,
+        goals: Number(p.goals) || 0,
+        assists: 0,
+        ownGoalScorer: player._id,
+      });
+    } else {
+      playerStats.push({
+        player: player._id,
+        team: p.team,
+        goals: Number(p.goals) || 0,
+        assists: Number(p.assists) || 0,
+        guest: isGuest,
+      });
+    }
   }
 
   const matchDate = new Date(date);
@@ -256,12 +278,25 @@ router.post("/", isAdmin, async (req, res) => {
 router.get("/:id/edit", isAdmin, async (req, res) => {
   const { season = "2026" } = req.query;
 
-  const match = await Match.findById(req.params.id).populate("players.player");
+  const match = await Match.findById(req.params.id)
+    .populate("players.player")
+    .populate("players.ownGoalScorer")
+    .lean();
+
   const players = await Player.find().sort({ name: 1 }).lean();
 
   if (!match) return res.status(404).send("Partido no encontrado");
 
-  match.dateFormatted = match.date.toISOString().split("T")[0];
+  match.dateFormatted = new Date(match.date).toISOString().split("T")[0];
+
+  match.playersForEdit = match.players.map((p, i) => ({
+    originalIndex: i,
+    team: p.team,
+    goals: p.goals,
+    assists: p.assists,
+    isOwnGoal: !!p.ownGoalScorer,
+    name: p.ownGoalScorer ? p.ownGoalScorer.name : p.player?.name,
+  }));
 
   res.render("editMatch", { match, season, players });
 });
@@ -277,18 +312,40 @@ router.post("/:id/edit", isAdmin, async (req, res) => {
 
   const playerStats = [];
 
+  let ecPlayer = null;
+
   for (const p of players) {
     const name = String(p.name).trim();
     let player = await Player.findOne({ name: new RegExp(`^${name}$`, "i") });
 
+    const isOwnGoal = p.isOwnGoal === "true";
+
     if (!player) player = await Player.create({ name });
 
-    playerStats.push({
-      player: player._id,
-      team: p.team,
-      goals: Number(p.goals) || 0,
-      assists: Number(p.assists) || 0,
-    });
+    if (isOwnGoal) {
+      if (!ecPlayer) {
+        ecPlayer = await Player.findOne({ name: "E/C" });
+
+        if (!ecPlayer) {
+          ecPlayer = await Player.create({ name: "E/C" });
+        }
+      }
+
+      playerStats.push({
+        player: ecPlayer._id,
+        team: p.team,
+        goals: Number(p.goals) || 0,
+        assists: 0,
+        ownGoalScorer: player._id,
+      });
+    } else {
+      playerStats.push({
+        player: player._id,
+        team: p.team,
+        goals: Number(p.goals) || 0,
+        assists: Number(p.assists) || 0,
+      });
+    }
   }
 
   const matchDate = new Date(date);

@@ -25,6 +25,8 @@ function addPlayer(team) {
     <span class="player-row-label">🎯</span>
     <input type="number" name="players[${index}][assists]" value="0" min="0" />
     <input type="hidden" name="players[${index}][team]" value="${team}" />
+    <button type="button" class="btn-og" onclick="toggleOwnGoalPlayer(this)">EC</button>
+    <input type="hidden" name="players[${index}][isOwnGoal]" value="false" />
     <button type="button" class="btn-remove-player" onclick="removePlayer(this)">✕</button>
   </div>`;
 
@@ -55,6 +57,11 @@ function removePlayer(btn) {
   }
 
   updateScore();
+}
+
+function toggleOwnGoalPlayer(btn) {
+  const isActive = btn.classList.toggle("btn-og-active");
+  btn.nextElementSibling.value = isActive ? "true" : "false";
 }
 
 function updateScore() {

@@ -14,6 +14,11 @@ const playerStatsSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  ownGoalScorer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Player",
+    default: null,
+  },
 });
 
 const matchSchema = new mongoose.Schema({

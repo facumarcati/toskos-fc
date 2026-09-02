@@ -92,21 +92,21 @@
       <p class="section-label">Equipo Blanco</p>
       <fieldset>
         <div id="teamA">
-          {{#each match.players}}
+          {{#each match.playersForEdit}}
             {{#if (eq this.team "A")}}
               <div class="player-row" data-existing="true">
                 <span class="player-row-label">{{add @index 1}}</span>
                 <input
                   type="text"
-                  name="players[{{@index}}][name]"
-                  value="{{this.player.name}}"
+                  name="players[{{this.originalIndex}}][name]"
+                  value="{{this.name}}"
                   list="playersList"
                   autocomplete="off"
                 />
                 <span class="player-row-label">⚽</span>
                 <input
                   type="number"
-                  name="players[{{@index}}][goals]"
+                  name="players[{{this.originalIndex}}][goals]"
                   value="{{this.goals}}"
                   min="0"
                   oninput="updateScore()"
@@ -114,20 +114,22 @@
                 <span class="player-row-label">🎯</span>
                 <input
                   type="number"
-                  name="players[{{@index}}][assists]"
+                  name="players[{{this.originalIndex}}][assists]"
                   value="{{this.assists}}"
                   min="0"
                 />
-                <input
-                  type="hidden"
-                  name="players[{{@index}}][team]"
-                  value="A"
-                />
+                <input type="hidden" name="players[{{this.originalIndex}}][team]" value="A" />
                 <button
                   type="button"
-                  class="btn-remove-player"
-                  onclick="removePlayer(this)"
-                >✕</button>
+                  class="btn-og {{#if this.isOwnGoal}}btn-og-active{{/if}}"
+                  onclick="toggleOwnGoalPlayer(this)"
+                >EC</button>
+                <input
+                  type="hidden"
+                  name="players[{{this.originalIndex}}][isOwnGoal]"
+                  value="{{#if this.isOwnGoal}}true{{else}}false{{/if}}"
+                />
+                <button type="button" class="btn-remove-player" onclick="removePlayer(this)">✕</button>
               </div>
             {{/if}}
           {{/each}}
@@ -141,21 +143,21 @@
       <p class="section-label">Equipo Negro</p>
       <fieldset>
         <div id="teamB">
-          {{#each match.players}}
+          {{#each match.playersForEdit}}
             {{#if (eq this.team "B")}}
               <div class="player-row" data-existing="true">
-                <span class="player-row-label"></span>
+                <span class="player-row-label">{{add @index 1}}</span>
                 <input
                   type="text"
-                  name="players[{{@index}}][name]"
-                  value="{{this.player.name}}"
+                  name="players[{{this.originalIndex}}][name]"
+                  value="{{this.name}}"
                   list="playersList"
                   autocomplete="off"
                 />
                 <span class="player-row-label">⚽</span>
                 <input
                   type="number"
-                  name="players[{{@index}}][goals]"
+                  name="players[{{this.originalIndex}}][goals]"
                   value="{{this.goals}}"
                   min="0"
                   oninput="updateScore()"
@@ -163,20 +165,22 @@
                 <span class="player-row-label">🎯</span>
                 <input
                   type="number"
-                  name="players[{{@index}}][assists]"
+                  name="players[{{this.originalIndex}}][assists]"
                   value="{{this.assists}}"
                   min="0"
                 />
-                <input
-                  type="hidden"
-                  name="players[{{@index}}][team]"
-                  value="B"
-                />
+                <input type="hidden" name="players[{{this.originalIndex}}][team]" value="B" />
                 <button
                   type="button"
-                  class="btn-remove-player"
-                  onclick="removePlayer(this)"
-                >✕</button>
+                  class="btn-og {{#if this.isOwnGoal}}btn-og-active{{/if}}"
+                  onclick="toggleOwnGoalPlayer(this)"
+                >EC</button>
+                <input
+                  type="hidden"
+                  name="players[{{this.originalIndex}}][isOwnGoal]"
+                  value="{{#if this.isOwnGoal}}true{{else}}false{{/if}}"
+                />
+                <button type="button" class="btn-remove-player" onclick="removePlayer(this)">✕</button>
               </div>
             {{/if}}
           {{/each}}

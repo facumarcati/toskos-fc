@@ -274,13 +274,22 @@ router.get("/", async (req, res) => {
 
   const topOwnGoals = await Match.aggregate([
     { $match: matchFilter },
-    { $unwind: "$goalTimeline" },
-    { $match: { "goalTimeline.ownGoal": true } },
+    { $unwind: "$players" },
+    { $match: { "players.ownGoalScorer": { $ne: null } } },
+    {
+      $lookup: {
+        from: "players",
+        localField: "players.ownGoalScorer",
+        foreignField: "_id",
+        as: "scorerInfo",
+      },
+    },
+    { $unwind: "$scorerInfo" },
     {
       $group: {
-        _id: { $toLower: "$goalTimeline.scorer" },
-        name: { $first: "$goalTimeline.scorer" },
-        ownGoals: { $sum: 1 },
+        _id: "$players.ownGoalScorer",
+        name: { $first: "$scorerInfo.name" },
+        ownGoals: { $sum: "$players.goals" },
       },
     },
     { $sort: { ownGoals: -1 } },

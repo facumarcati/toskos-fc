@@ -71,7 +71,12 @@ export async function getTitlesByPlayer(season = "all") {
         },
       },
       { $unwind: "$playerInfo" },
-      { $match: { "playerInfo.guest": { $ne: true } } },
+      {
+        $match: {
+          "playerInfo.guest": { $ne: true },
+          "playerInfo.name": { $ne: "E/C" },
+        },
+      },
     ];
 
     const scorers = await Match.aggregate([
@@ -253,7 +258,12 @@ export async function getPlayerTrophies(playerId) {
         },
       },
       { $unwind: "$playerInfo" },
-      { $match: { "playerInfo.guest": { $ne: true } } },
+      {
+        $match: {
+          "playerInfo.guest": { $ne: true },
+          "playerInfo.name": { $ne: "E/C" },
+        },
+      },
     ];
 
     const scorers = await Match.aggregate([
@@ -436,7 +446,12 @@ export async function getPodiumsForSeason(season) {
       },
     },
     { $unwind: "$playerInfo" },
-    { $match: { "playerInfo.guest": { $ne: true } } },
+    {
+      $match: {
+        "playerInfo.guest": { $ne: true },
+        "playerInfo.name": { $ne: "E/C" },
+      },
+    },
   ];
 
   const winCond = {

@@ -138,8 +138,12 @@
               title="Logueate para votar"
               style="cursor: default;"
             {{/if}}>
-            <span class="player-item-name">
-              {{this.player.name}}
+            <span class="player-item-name {{#if this.ownGoalScorer}}player-owngoal{{/if}}">
+              {{#if this.ownGoalScorer}}
+                {{this.ownGoalScorer.name}} <span class="player-owngoal-tag">(e/c)</span>
+              {{else}}
+                {{this.player.name}}
+              {{/if}}
               {{#if (gt (getVoteCount ../voteCountByPlayer this.player._id) 0)}}
                 <span class="mvp-badge {{#if (includes ../mvpPlayers this.player._id)}}mvp-badge-leader{{/if}}">
                   {{#if (includes ../mvpPlayers this.player._id)}}
@@ -185,8 +189,12 @@
             title="Logueate para votar"
             style="cursor: default;"
           {{/if}}>
-          <span class="player-item-name">
-            {{this.player.name}}
+          <span class="player-item-name {{#if this.ownGoalScorer}}player-owngoal{{/if}}">
+            {{#if this.ownGoalScorer}}
+              {{this.ownGoalScorer.name}} <span class="player-owngoal-tag">(e/c)</span>
+            {{else}}
+              {{this.player.name}}
+            {{/if}}
             {{#if (gt (getVoteCount ../voteCountByPlayer this.player._id) 0)}}
               <span class="mvp-badge {{#if (includes ../mvpPlayers this.player._id)}}mvp-badge-leader{{/if}}">
                 {{#if (includes ../mvpPlayers this.player._id)}}
