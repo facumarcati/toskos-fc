@@ -62,6 +62,22 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body.no-scroll-home {
+  height: 100vh;
+  overflow: hidden;
+}
+
+body.no-scroll-home .page {
+  padding: 0;
+  overflow: hidden;
+}
+
+body.no-scroll-home .home-hero {
+  min-height: 0;
+  height: 100%;
+  padding: 24px;
+}
+
 /* ── Scrollbar ─────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
