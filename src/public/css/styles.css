@@ -2672,6 +2672,96 @@ a {
   white-space: nowrap;
 }
 
+.season-countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 16px;
+  margin: 0 auto 20px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.season-countdown-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.season-countdown-label::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(245, 197, 24, 0.8);
+  animation: pulse-dot 1.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+.season-countdown-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+}
+
+.countdown-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-unit-label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.countdown-sep {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+@media (max-width: 640px) {
+  .countdown-value {
+    font-size: 22px;
+  }
+  .countdown-unit {
+    min-width: 36px;
+  }
+}
+
 .trophy-categories-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2858,20 +2948,6 @@ a {
   color: #8b8f9a;
 }
 
-.trophy-leaderboard-sidebar {
-  display: none;
-  position: fixed;
-  top: 140px;
-  left: calc(50% + 500px);
-  width: 260px;
-  max-height: calc(100vh - 180px);
-  overflow-y: auto;
-  background: #14161c;
-  border: 1px solid #23262f;
-  border-radius: 14px;
-  padding: 18px;
-}
-
 .trophy-leaderboard-inline {
   display: block;
   background: #14161c;
@@ -2879,6 +2955,62 @@ a {
   border-radius: 14px;
   padding: 18px;
   margin-bottom: 36px;
+}
+
+.trophy-sidebar-fixed {
+  display: none;
+  position: fixed;
+  top: 130px;
+  left: calc(50% + 500px);
+  width: 260px;
+  max-height: calc(100vh - 170px);
+  overflow-y: auto;
+}
+
+@media (min-width: 1600px) {
+  .trophy-sidebar-fixed {
+    display: block;
+  }
+  .trophy-leaderboard-inline {
+    display: none;
+  }
+  .trophy-countdown-mobile {
+    display: none;
+  }
+}
+
+.trophy-leaderboard-sidebar {
+  background: #14161c;
+  border: 1px solid #23262f;
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.trophy-sidebar-fixed .season-countdown {
+  margin: 0 auto 10px;
+  padding-bottom: 10px;
+}
+
+.trophy-sidebar-fixed .season-countdown-label {
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.trophy-sidebar-fixed .countdown-value {
+  font-size: 20px;
+}
+
+.trophy-sidebar-fixed .countdown-unit-label {
+  font-size: 8px;
+}
+
+.trophy-sidebar-fixed .countdown-sep {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.trophy-sidebar-fixed .countdown-unit {
+  min-width: 30px;
 }
 
 @media (min-width: 1600px) {

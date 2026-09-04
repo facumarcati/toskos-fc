@@ -3,42 +3,92 @@
   <h1>Podio por temporada</h1>
 </div>
 
-<aside class="trophy-leaderboard-sidebar">
-  <div>
-    <p class="trophy-leaderboard-title">Ranking de títulos</p>
-    <label class="filter-checkbox trophy-toggle-checkbox">
+<div class="trophy-sidebar-fixed">
+  <div class="season-countdown" data-end="{{seasonEndISO}}">
+    <span class="season-countdown-label">Cierre de temporada {{currentYear}}</span>
+    <div class="season-countdown-timer">
+      <div class="countdown-unit">
+        <span class="countdown-value" data-unit="days">00</span>
+        <span class="countdown-unit-label">Días</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <span class="countdown-value" data-unit="hours">00</span>
+        <span class="countdown-unit-label">Hs</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <span class="countdown-value" data-unit="minutes">00</span>
+        <span class="countdown-unit-label">Min</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <span class="countdown-value" data-unit="seconds">00</span>
+        <span class="countdown-unit-label">Seg</span>
+      </div>
+    </div>
+  </div>
+
+  <aside class="trophy-leaderboard-sidebar">
+    <div>
+      <p class="trophy-leaderboard-title">Ranking de títulos</p>
       <label class="filter-checkbox trophy-toggle-checkbox">
         <input type="checkbox" class="js-trophy-toggle" {{#if includeCurrentSeason}}checked{{/if}} />
         Incluir {{currentYear}}
       </label>
-  </div>
-  <div class="trophy-table">
-    <div class="trophy-table-header">
-      <span>#</span>
-      <span>Jugador</span>
-      <span>Títulos</span>
     </div>
-    <div class="js-trophy-table-rows">
-      {{#each leaderboard}}
-      <div class="trophy-table-row" data-rank="{{add @index 1}}">
-        <span class="trophy-table-rank">{{add @index 1}}</span>
-        <span class="trophy-table-name">{{this.name}}</span>
-        <span class="trophy-table-count">{{this.titles}}</span>
+    <div class="trophy-table">
+      <div class="trophy-table-header">
+        <span>#</span>
+        <span>Jugador</span>
+        <span>Títulos</span>
       </div>
-      {{else}}
-      <div class="trophy-table-empty">Sin datos todavía</div>
-      {{/each}}
+      <div class="js-trophy-table-rows">
+        {{#each leaderboard}}
+        <div class="trophy-table-row" data-rank="{{add @index 1}}">
+          <span class="trophy-table-rank">{{add @index 1}}</span>
+          <span class="trophy-table-name">{{this.name}}</span>
+          <span class="trophy-table-count">{{this.titles}}</span>
+        </div>
+        {{else}}
+        <div class="trophy-table-empty">Sin datos todavía</div>
+        {{/each}}
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="season-countdown trophy-countdown-mobile" data-end="{{seasonEndISO}}">
+  <span class="season-countdown-label">Cierre de temporada {{currentYear}}</span>
+  <div class="season-countdown-timer">
+    <div class="countdown-unit">
+      <span class="countdown-value" data-unit="days">00</span>
+      <span class="countdown-unit-label">Días</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-value" data-unit="hours">00</span>
+      <span class="countdown-unit-label">Hs</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-value" data-unit="minutes">00</span>
+      <span class="countdown-unit-label">Min</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-value" data-unit="seconds">00</span>
+      <span class="countdown-unit-label">Seg</span>
     </div>
   </div>
-</aside>
+</div>
 
 <div class="trophy-leaderboard-inline">
   <p class="trophy-leaderboard-title">Ranking de títulos</p>
   <label class="filter-checkbox trophy-toggle-checkbox">
-      <label class="filter-checkbox trophy-toggle-checkbox">
-        <input type="checkbox" class="js-trophy-toggle" {{#if includeCurrentSeason}}checked{{/if}} />
-        Incluir {{currentYear}}
-      </label>
+    <input type="checkbox" class="js-trophy-toggle" {{#if includeCurrentSeason}}checked{{/if}} />
+    Incluir {{currentYear}}
+  </label>
   <div class="trophy-table">
     <div class="trophy-table-header">
       <span>#</span>

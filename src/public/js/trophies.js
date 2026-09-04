@@ -47,3 +47,48 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+function initSeasonCountdown() {
+  const elements = document.querySelectorAll(".season-countdown[data-end]");
+  if (!elements.length) return;
+
+  function pad(n) {
+    return String(n).padStart(2, "0");
+  }
+
+  function tick() {
+    elements.forEach((el) => {
+      const endDate = new Date(el.dataset.end);
+      const diff = endDate.getTime() - Date.now();
+
+      const daysEl = el.querySelector('[data-unit="days"]');
+      const hoursEl = el.querySelector('[data-unit="hours"]');
+      const minutesEl = el.querySelector('[data-unit="minutes"]');
+      const secondsEl = el.querySelector('[data-unit="seconds"]');
+
+      if (diff <= 0) {
+        daysEl.textContent = "00";
+        hoursEl.textContent = "00";
+        minutesEl.textContent = "00";
+        secondsEl.textContent = "00";
+        return;
+      }
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      daysEl.textContent = pad(days);
+      hoursEl.textContent = pad(hours);
+      minutesEl.textContent = pad(minutes);
+      secondsEl.textContent = pad(seconds);
+    });
+  }
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+document.addEventListener("DOMContentLoaded", initSeasonCountdown);

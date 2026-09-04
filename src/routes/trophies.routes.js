@@ -23,11 +23,16 @@ router.get("/", async (req, res) => {
 
     const leaderboard = await getTrophyLeaderboard({ includeCurrentSeason });
 
+    const seasonEndISO = new Date(
+      `${CURRENT_YEAR + 1}-01-01T00:00:00-03:00`,
+    ).toISOString();
+
     res.render("trophies", {
       seasons,
       leaderboard,
       includeCurrentSeason,
       currentYear: CURRENT_YEAR,
+      seasonEndISO,
     });
   } catch (error) {
     console.error(error);
