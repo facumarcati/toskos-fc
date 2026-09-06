@@ -6,7 +6,8 @@ import Match from "../models/match.model.js";
 const router = Router();
 
 const SEASONS = [2026, 2025, 2024, 2021];
-const ALL_SEASONS_MIN = 2024;
+const ACTIVE_SEASONS_MIN = 2024;
+const ALL_TIME_MIN = 2021;
 
 router.get("/:id", async (req, res) => {
   try {
@@ -26,8 +27,10 @@ router.get("/:id", async (req, res) => {
       "players.player": playerId,
     };
 
-    if (season === "all") {
-      filter.date = { $gte: new Date(`${ALL_SEASONS_MIN}-01-01`) };
+    if (season === "all_time") {
+      filter.date = { $gte: new Date(`${ALL_TIME_MIN}-01-01`) };
+    } else if (season === "all") {
+      filter.date = { $gte: new Date(`${ACTIVE_SEASONS_MIN}-01-01`) };
     } else {
       const start = new Date(`${season}-01-01`);
       const end = new Date(`${Number(season) + 1}-01-01`);
@@ -245,8 +248,10 @@ router.get("/:id/matches", async (req, res) => {
     "players.player": req.params.id,
   };
 
-  if (season === "all") {
-    filter.date = { $gte: new Date(`${ALL_SEASONS_MIN}-01-01`) };
+  if (season === "all_time") {
+    filter.date = { $gte: new Date(`${ALL_TIME_MIN}-01-01`) };
+  } else if (season === "all") {
+    filter.date = { $gte: new Date(`${ACTIVE_SEASONS_MIN}-01-01`) };
   } else {
     const start = new Date(`${season}-01-01`);
     const end = new Date(`${Number(season) + 1}-01-01`);

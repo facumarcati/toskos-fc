@@ -22,17 +22,23 @@ router.get("/", async (req, res) => {
 
   const ACTIVE_SEASONS = ["2024", "2025", "2026"];
 
+  const ALL_SEASONS = ["2021", "2024", "2025", "2026"];
+
   let matchFilter = {};
 
-  if (season && season !== "all") {
+  if (season && season !== "all" && season !== "all_time") {
     const start = new Date(`${season}-01-01`);
     const end = new Date(`${Number(season) + 1}-01-01`);
-
     matchFilter.date = { $gte: start, $lt: end };
   } else if (season === "all") {
     matchFilter.date = {
       $gte: new Date(`${Math.min(...ACTIVE_SEASONS)}-01-01`),
       $lt: new Date(`${Math.max(...ACTIVE_SEASONS) + 1}-01-01`),
+    };
+  } else if (season === "all_time") {
+    matchFilter.date = {
+      $gte: new Date(`${Math.min(...ALL_SEASONS)}-01-01`),
+      $lt: new Date(`${Math.max(...ALL_SEASONS) + 1}-01-01`),
     };
   }
 

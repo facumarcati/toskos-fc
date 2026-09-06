@@ -44,7 +44,12 @@
 <div class="matches-header">
   <form method="GET" class="season-filter">
     <select name="season" onchange="this.form.submit()">
-        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
+       <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>
+          Todas las temporadas (P)
+        </option>
+        <option value="all_time" {{#if (eq selectedSeason "all_time")}}selected{{/if}}>
+          Todas las temporadas (A+P)
+        </option>
         {{#each seasons}}
         <option value="{{this}}" {{#if (eq ../selectedSeason (toString this))}}selected{{/if}}>{{this}}</option>
         {{/each}}
