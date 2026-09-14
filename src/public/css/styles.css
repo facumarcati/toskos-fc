@@ -25,6 +25,7 @@
   --draw-bg: rgba(245, 197, 24, 0.12);
   --loss: #f05252;
   --loss-bg: rgba(240, 82, 82, 0.12);
+  --ga-stat: #a78bfa;
 
   --font-display: "Josefin Sans", sans-serif;
   --font-body: "Montserrat", sans-serif;
@@ -1911,6 +1912,26 @@ fieldset {
 }
 .cell-assists {
   color: var(--text-secondary);
+}
+
+.ga-column {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .product-list-header,
+  .product-row {
+    grid-template-columns: 36px 1fr repeat(7, 52px);
+  }
+
+  .ga-column {
+    display: inline;
+  }
+}
+
+.cell-ga {
+  color: var(--ga-stat);
+  font-weight: 700;
 }
 
 .list-empty-state {

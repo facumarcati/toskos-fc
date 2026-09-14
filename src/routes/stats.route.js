@@ -14,7 +14,15 @@ router.get("/", async (req, res) => {
 
   const includeGuests = guests === "1";
 
-  const validSorts = ["goals", "assists", "wins", "matches", "draws", "losses"];
+  const validSorts = [
+    "goals",
+    "assists",
+    "wins",
+    "matches",
+    "draws",
+    "losses",
+    "ga",
+  ];
 
   const sort = validSorts.includes(sortBy) ? sortBy : "goals";
 
@@ -54,6 +62,9 @@ router.get("/", async (req, res) => {
     sortObj.assists = -1;
     sortObj.matches = 1;
   } else if (sort === "assists") {
+    sortObj.goals = -1;
+    sortObj.matches = 1;
+  } else if (sort === "ga") {
     sortObj.goals = -1;
     sortObj.matches = 1;
   } else if (sort === "wins") {
@@ -172,6 +183,7 @@ router.get("/", async (req, res) => {
     {
       $addFields: {
         isEC: { $eq: ["$name", "E/C"] },
+        ga: { $add: ["$goals", "$assists"] },
       },
     },
     {
