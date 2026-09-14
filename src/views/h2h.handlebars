@@ -171,35 +171,27 @@
         </span>
       </div>
       <div class="h2h-duo-grid">
-        <div class="stat-box">
+        <div class="h2h-duo-stat h2h-duo-stat-lg">
           <strong>{{stats.played}}</strong>
           <span>Partidos</span>
         </div>
-        <div class="h2h-duo-row2">
-          <div class="stat-box">
-            <strong style="color:var(--win)">
-              {{stats.wins}}
-            </strong>
-            <span>Victorias</span>
-          </div>
-          <div class="stat-box">
-            <strong style="color:var(--draw)">
-              {{stats.draws}}
-            </strong>
-            <span>Empates</span>
-          </div>
-          <div class="stat-box">
-            <strong style="color:var(--loss)">
-              {{stats.losses}}
-            </strong>
-            <span>Derrotas</span>
-          </div>
-          <div class="stat-box">
-            <strong style="color:var(--accent)">
-              {{stats.winrate}}%
-            </strong>
-            <span>Winrate</span>
-          </div>
+        <div class="h2h-duo-divider"></div>
+        <div class="h2h-duo-stat">
+          <strong style="color:var(--win)">{{stats.wins}}</strong>
+          <span>Victorias</span>
+        </div>
+        <div class="h2h-duo-stat">
+          <strong style="color:var(--draw)">{{stats.draws}}</strong>
+          <span>Empates</span>
+        </div>
+        <div class="h2h-duo-stat">
+          <strong style="color:var(--loss)">{{stats.losses}}</strong>
+          <span>Derrotas</span>
+        </div>
+        <div class="h2h-duo-divider"></div>
+        <div class="h2h-duo-stat h2h-duo-stat-lg">
+          <strong style="color:var(--accent)">{{stats.winrate}}%</strong>
+          <span>Winrate</span>
         </div>
       </div>
       {{/if}}

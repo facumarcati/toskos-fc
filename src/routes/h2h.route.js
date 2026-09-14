@@ -238,7 +238,7 @@ router.get("/", async (req, res) => {
           diff,
         };
       })
-      .filter((h2h) => h2h.played >= 4 && h2h.diff > 0)
+      .filter((h2h) => h2h.played >= 5 && h2h.diff > 0)
       .sort((a, b) => {
         if (b.diff !== a.diff) return b.diff - a.diff;
         return b.played - a.played;
@@ -288,7 +288,7 @@ router.get("/", async (req, res) => {
     });
 
     const bestDuos = Object.values(duoMap)
-      .filter((duo) => duo.played >= 4)
+      .filter((duo) => duo.played >= 5)
       .sort((a, b) => {
         if (b.wins !== a.wins) return b.wins - a.wins;
         if (a.losses !== b.losses) return a.losses - b.losses;
