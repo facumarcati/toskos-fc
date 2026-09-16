@@ -65,6 +65,7 @@ body {
 
 body.no-scroll-home {
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -76,6 +77,7 @@ body.no-scroll-home .page {
 body.no-scroll-home .home-hero {
   min-height: 0;
   height: 100%;
+  height: -webkit-fill-available;
   padding: 24px;
 }
 
