@@ -79,6 +79,7 @@
       <span class="sortable-header" data-sort="losses">PP</span>
       <span class="sortable-header" data-sort="goals">G</span>
       <span class="sortable-header" data-sort="assists">A</span>
+      <span class="sortable-header ga-column" data-sort="ga">G+A</span>
     </div>
 
     <ul class="product-list">
@@ -119,6 +120,9 @@
           </span>
           <span class="stat-cell cell-assists">
             {{#if (isEC this.name)}}-{{else}}{{this.assists}}{{/if}}
+          </span>
+          <span class="stat-cell cell-ga ga-column">
+            {{#if (isEC this.name)}}-{{else}}{{add this.goals this.assists}}{{/if}}
           </span>
         </li>
       {{else}}
