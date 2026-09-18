@@ -24,6 +24,8 @@ router.get("/", async (req, res) => {
     };
   }
 
+  matchFilter.matchType = { $ne: "friendly" };
+
   const topScorers = await Match.aggregate([
     { $match: matchFilter },
     { $unwind: "$players" },

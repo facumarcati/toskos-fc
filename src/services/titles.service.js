@@ -57,6 +57,7 @@ export async function getTitlesByPlayer(season = "all") {
 
     const seasonFilter = {
       date: { $gte: start, $lt: end },
+      matchType: { $ne: "friendly" },
     };
 
     const basePipeline = [
@@ -244,6 +245,7 @@ export async function getPlayerTrophies(playerId) {
 
     const seasonFilter = {
       date: { $gte: start, $lt: end },
+      matchType: { $ne: "friendly" },
     };
 
     const basePipeline = [
@@ -432,6 +434,7 @@ export async function getPodiumsForSeason(season) {
 
   const seasonFilter = {
     date: { $gte: start, $lt: end },
+    matchType: { $ne: "friendly" },
   };
 
   const basePipeline = [

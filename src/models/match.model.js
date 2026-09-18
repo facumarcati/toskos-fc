@@ -32,6 +32,11 @@ const matchSchema = new mongoose.Schema({
   youtubeHlUrl: { type: String, default: "" },
   teamA: Number,
   teamB: Number,
+  matchType: {
+    type: String,
+    enum: ["official", "friendly"],
+    default: "official",
+  },
   players: [playerStatsSchema],
   mvpVotes: [
     {

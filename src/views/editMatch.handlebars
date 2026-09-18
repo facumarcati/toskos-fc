@@ -32,7 +32,7 @@
         />
       </div>
     </div>
-    <div class="form-row">
+        <div class="form-row form-row-3"> 
       <div>
         <p class="section-label">YouTube</p>
         <input
@@ -50,6 +50,13 @@
           class="match-venue-input"
           value="{{match.youtubeHlUrl}}"
         />
+      </div>
+      <div>
+        <p class="section-label">Tipo de partido</p>
+        <select name="matchType" class="match-venue-input">
+          <option value="official" {{#unless (eq match.matchType "friendly")}}selected{{/unless}}>Oficial</option>
+          <option value="friendly" {{#if (eq match.matchType "friendly")}}selected{{/if}}>Amistoso</option>
+        </select>
       </div>
     </div>
   </div>

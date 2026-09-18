@@ -50,6 +50,8 @@ router.get("/", async (req, res) => {
     };
   }
 
+  matchFilter.matchType = { $ne: "friendly" };
+
   const sortObj = {};
 
   if (sort !== "goals") {

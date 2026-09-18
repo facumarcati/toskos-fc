@@ -107,6 +107,9 @@
     </div>
 
     <div class="match-score">
+      {{#if (eq this.matchType "friendly")}}
+        <span class="badge-friendly">Amistoso</span>
+      {{/if}}
       <div class="match-date">{{formatDate this.date}} · {{this.venue}}</div>
       <span class="match-score-number">{{this.teamA}} — {{this.teamB}}</span>
     </div>

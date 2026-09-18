@@ -95,6 +95,7 @@ router.get("/", async (req, res) => {
 
     return {
       ...match,
+      isFriendly: match.matchType === "friendly",
       mvpPlayers: getMatchMVP(match),
       voteCountByPlayer,
       userVotePlayerId,
@@ -102,12 +103,14 @@ router.get("/", async (req, res) => {
     };
   });
 
-  const winsA = matches.filter((m) => m.teamA > m.teamB).length;
-  const winsB = matches.filter((m) => m.teamB > m.teamA).length;
-  const draws = matches.filter((m) => m.teamA === m.teamB).length;
+  const officialMatches = matches.filter((m) => m.matchType !== "friendly");
 
-  const goalsA = matches.reduce((acc, m) => acc + m.teamA, 0);
-  const goalsB = matches.reduce((acc, m) => acc + m.teamB, 0);
+  const winsA = officialMatches.filter((m) => m.teamA > m.teamB).length;
+  const winsB = officialMatches.filter((m) => m.teamB > m.teamA).length;
+  const draws = officialMatches.filter((m) => m.teamA === m.teamB).length;
+
+  const goalsA = officialMatches.reduce((acc, m) => acc + m.teamA, 0);
+  const goalsB = officialMatches.reduce((acc, m) => acc + m.teamB, 0);
 
   res.render("matches", {
     matches,
@@ -123,6 +126,7 @@ router.get("/", async (req, res) => {
     goalsA,
     goalsB,
     user,
+    isAdmin: req.session?.role === "admin",
   });
 });
 
@@ -184,11 +188,13 @@ router.get("/:id", async (req, res) => {
   res.render("matchDetail", {
     match: {
       ...match,
+      isFriendly: match.matchType === "friendly",
       mvpPlayers: getMatchMVP(match),
       voteCountByPlayer,
       goalTimelineProcessed,
     },
     user,
+    isAdmin: req.session?.role === "admin",
   });
 });
 
@@ -260,6 +266,8 @@ router.post("/", isAdmin, async (req, res) => {
       ownGoal: g.ownGoal === "true",
     }));
 
+  const matchType = req.body.matchType === "friendly" ? "friendly" : "official";
+
   await Match.create({
     teamA,
     teamB,
@@ -267,6 +275,7 @@ router.post("/", isAdmin, async (req, res) => {
     venue,
     youtubeUrl,
     youtubeHlUrl,
+    matchType,
     players: playerStats,
     goalTimeline,
   });
@@ -359,7 +368,7 @@ router.post("/:id/edit", isAdmin, async (req, res) => {
       ownGoal: g.ownGoal === "true",
     }));
 
-  await Match.findByIdAndUpdate(req.params.id, {
+  const update = {
     teamA,
     teamB,
     date: matchDate,
@@ -368,7 +377,13 @@ router.post("/:id/edit", isAdmin, async (req, res) => {
     youtubeHlUrl,
     players: playerStats,
     goalTimeline,
-  });
+  };
+
+  if (["official", "friendly"].includes(req.body.matchType)) {
+    update.matchType = req.body.matchType;
+  }
+
+  await Match.findByIdAndUpdate(req.params.id, update);
 
   io.emit("match:updated");
   res.redirect(`/matches?season=${season}`);
@@ -380,6 +395,21 @@ router.post("/:id/delete", isAdmin, async (req, res) => {
 
   io.emit("match:deleted");
   res.redirect(`/matches?season=${season}`);
+});
+
+router.post("/:id/type", isAdmin, async (req, res) => {
+  const { matchType } = req.body;
+
+  if (!["official", "friendly"].includes(matchType)) {
+    return res.status(400).send("Tipo de partido inválido");
+  }
+
+  const match = await Match.findByIdAndUpdate(req.params.id, { matchType });
+
+  if (!match) return res.status(404).send("Partido no encontrado");
+
+  io.emit("match:updated");
+  res.redirect(req.get("Referer") || "/matches");
 });
 
 router.post("/:id/vote-mvp", async (req, res) => {

@@ -26,19 +26,21 @@
         />
       </div>
     </div>
-    <div class="form-row">
+        <div class="form-row form-row-3">
       <div>
         <p class="section-label">YouTube</p>
-        <input
-          type="url"
-          name="youtubeUrl"
-          class="match-venue-input"
-          autocomplete="off"
-        />
+        <input type="url" name="youtubeUrl" class="match-venue-input" autocomplete="off" />
       </div>
       <div>
         <p class="section-label">YouTube — Highlight</p>
         <input type="url" name="youtubeHlUrl" class="match-venue-input" />
+      </div>
+      <div>
+        <p class="section-label">Tipo de partido</p>
+        <select name="matchType" class="match-venue-input">
+          <option value="official" selected>Oficial</option>
+          <option value="friendly">Amistoso</option>
+        </select>
       </div>
     </div>
   </div>

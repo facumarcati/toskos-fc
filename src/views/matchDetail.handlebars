@@ -21,7 +21,12 @@
       <span class="match-team-name">Blanco</span>
     </div>
     <div class="match-score">
-      <div class="match-date">{{formatDate match.date}} · {{match.venue}}</div>
+      {{#if (eq match.matchType "friendly")}}
+        <span class="badge-friendly">Amistoso</span>
+      {{/if}}
+      <div class="match-date">
+        {{formatDate match.date}} · {{match.venue}}
+      </div>
       <span class="match-score-number">{{match.teamA}} — {{match.teamB}}</span>
     </div>
     <div class="match-team match-team-right">

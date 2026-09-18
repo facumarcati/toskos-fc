@@ -1423,15 +1423,17 @@ fieldset {
 }
 
 .match-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 3px 8px;
+  line-height: 1;
+  padding: 4px 8px 2px;
   border-radius: 99px;
-  margin-top: 4px;
 }
 
 .badge-win {
@@ -1483,6 +1485,23 @@ fieldset {
   letter-spacing: 0.02em;
   color: var(--text-secondary);
   text-align: center;
+}
+
+.badge-friendly {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  padding: 4px 9px 2px;
+  border-radius: 99px;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 /* Players section */
@@ -4511,4 +4530,25 @@ textarea.match-venue-input {
     flex: 1;
     text-align: center;
   }
+}
+
+.form-row.form-row-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 700px) {
+  .form-row.form-row-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+select.match-venue-input {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 36px;
+  color-scheme: dark;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23828B97' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
 }

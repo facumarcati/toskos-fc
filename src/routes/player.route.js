@@ -25,6 +25,7 @@ router.get("/:id", async (req, res) => {
 
     const filter = {
       "players.player": playerId,
+      matchType: { $ne: "friendly" },
     };
 
     if (season === "all_time") {
@@ -37,12 +38,15 @@ router.get("/:id", async (req, res) => {
       filter.date = { $gte: start, $lt: end };
     }
 
+    const listFilter = { ...filter };
+    delete listFilter.matchType;
+
     const allMatches = await Match.find(filter).lean();
 
     const stats = calculateStats(playerId, allMatches);
 
     const matches = (
-      await Match.find(filter).sort({ date: -1 }).limit(3).lean()
+      await Match.find(listFilter).sort({ date: -1 }).limit(3).lean()
     ).map((match) => {
       const playerStats = match.players.find(
         (p) => p.player.toString() === playerId,
@@ -54,7 +58,7 @@ router.get("/:id", async (req, res) => {
       };
     });
 
-    const totalMatches = allMatches.length;
+    const totalMatches = await Match.countDocuments(listFilter);
 
     const trophies = await getPlayerTrophies(playerId);
 

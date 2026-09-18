@@ -60,6 +60,7 @@ router.get("/", async (req, res) => {
 
     let historyFilter = {
       "players.player": new mongoose.Types.ObjectId(player),
+      matchType: { $ne: "friendly" },
     };
 
     const dateFilter = buildSeasonFilter(season);
@@ -163,7 +164,7 @@ router.get("/", async (req, res) => {
   }
 
   if (view === "records") {
-    let matchFilter = {};
+    let matchFilter = { matchType: { $ne: "friendly" } };
     const dateFilter = buildSeasonFilter(season);
     if (dateFilter) matchFilter.date = dateFilter;
 
@@ -327,6 +328,7 @@ router.get("/", async (req, res) => {
 
   let matchFilter = {
     "players.player": { $all: [playerAId, playerBId] },
+    matchType: { $ne: "friendly" },
   };
 
   const dateFilter = buildSeasonFilter(season);
