@@ -160,31 +160,38 @@
 {{!-- Timeline de goles --}}
 {{#if match.goalTimelineProcessed.length}}
 <div class="form-panel">
-  <p class="section-label" style="text-align: center; font-size: 13px">Goles del partido</p>
-  <div class="goal-timeline-vertical">
-    {{#each match.goalTimelineProcessed}}
-      <div class="gtv-row gtv-row-{{this.side}}">
-        <div class="gtv-cell gtv-left">
-          {{#if (eq this.side "left")}}
-            <span class="gtv-scorer">
-              {{this.scorer}}{{#if this.isOwnGoal}} <span class="gtv-og">(EC)</span>{{/if}}
-            </span>
-            {{#if this.assist}}<span class="gtv-assist">asist. {{this.assist}}</span>{{/if}}
-          {{/if}}
+   <button type="button" class="goal-timeline-toggle" onclick="toggleGoalTimeline(this)">
+    <span>Goles del partido</span>
+    <svg class="goal-timeline-arrow" viewBox="0 0 24 24" width="14" height="14">
+      <path d="M7 10l5 5 5-5z" fill="currentColor"/>
+    </svg>
+  </button>
+  <div class="goal-timeline-wrapper">
+    <div class="goal-timeline-vertical">
+      {{#each match.goalTimelineProcessed}}
+        <div class="gtv-row gtv-row-{{this.side}}">
+          <div class="gtv-cell gtv-left">
+            {{#if (eq this.side "left")}}
+              <span class="gtv-scorer">
+                {{this.scorer}}{{#if this.isOwnGoal}} <span class="gtv-og">(EC)</span>{{/if}}
+              </span>
+              {{#if this.assist}}<span class="gtv-assist">asist. {{this.assist}}</span>{{/if}}
+            {{/if}}
+          </div>
+          <div class="gtv-center">
+            <span class="gtv-score">{{this.scoreA}}–{{this.scoreB}}</span>
+          </div>
+          <div class="gtv-cell gtv-right">
+            {{#if (eq this.side "right")}}
+              <span class="gtv-scorer">
+                {{this.scorer}}{{#if this.isOwnGoal}} <span class="gtv-og">(EC)</span>{{/if}}
+              </span>
+              {{#if this.assist}}<span class="gtv-assist">asist. {{this.assist}}</span>{{/if}}
+            {{/if}}
+          </div>
         </div>
-        <div class="gtv-center">
-          <span class="gtv-score">{{this.scoreA}}–{{this.scoreB}}</span>
-        </div>
-        <div class="gtv-cell gtv-right">
-          {{#if (eq this.side "right")}}
-            <span class="gtv-scorer">
-              {{this.scorer}}{{#if this.isOwnGoal}} <span class="gtv-og">(EC)</span>{{/if}}
-            </span>
-            {{#if this.assist}}<span class="gtv-assist">asist. {{this.assist}}</span>{{/if}}
-          {{/if}}
-        </div>
-      </div>
-    {{/each}}
+      {{/each}}
+    </div>
   </div>
 </div>
 {{/if}}
@@ -233,5 +240,12 @@ async function copyMatch(matchId) {
       showToast("No se pudo copiar la imagen", "error");
     }
   });
+}
+</script>
+<script>
+function toggleGoalTimeline(btn) {
+  const wrapper = btn.nextElementSibling;
+  btn.classList.toggle("collapsed");
+  wrapper.classList.toggle("collapsed");
 }
 </script>

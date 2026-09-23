@@ -3657,6 +3657,52 @@ a {
   z-index: 0;
 }
 
+.goal-timeline-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.goal-timeline-toggle:hover {
+  color: var(--text-primary);
+}
+
+.goal-timeline-arrow {
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.goal-timeline-toggle.collapsed .goal-timeline-arrow {
+  transform: rotate(-90deg);
+}
+
+.goal-timeline-wrapper {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.goal-timeline-wrapper.collapsed {
+  grid-template-rows: 0fr;
+}
+
+.goal-timeline-wrapper .goal-timeline-vertical {
+  overflow: hidden;
+  min-height: 0;
+}
+
 .gtv-row {
   display: grid;
   grid-template-columns: 1fr 80px 1fr;

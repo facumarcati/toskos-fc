@@ -98,6 +98,11 @@ function buildMatchCard(match, playerId, season) {
       ? `<span class="match-badge badge-loss">Derrota</span>`
       : `<span class="match-badge badge-draw">Empate</span>`;
 
+  const friendlyBadge =
+    match.matchType === "friendly"
+      ? `<span class="badge-friendly">Amistoso</span>`
+      : "";
+
   const date = new Date(match.date).toLocaleDateString("es-AR", {
     day: "2-digit",
     month: "2-digit",
@@ -118,6 +123,7 @@ function buildMatchCard(match, playerId, season) {
           <span class="match-team-name">Blanco</span>
         </div>
         <div class="match-score">
+          ${friendlyBadge}
           <div class="match-date">${date} · ${match.venue}</div>
           <span class="match-score-number">${match.teamA} — ${match.teamB}</span>
         </div>
@@ -146,36 +152,31 @@ function initLoadMore() {
   const title = document.getElementById("matchesTitle");
   if (!btn || !container) return;
 
-  const originalHTML = container.innerHTML;
+  let allMatches = null;
   let expanded = false;
 
   btn.addEventListener("click", async () => {
     const { player: playerId, season } = btn.dataset;
 
-    if (expanded) {
-      container.innerHTML = originalHTML;
-      btn.textContent = "Ver más";
-      title.textContent = "Partidos recientes";
-      expanded = false;
-      return;
+    if (!allMatches) {
+      const res = await fetch(
+        `/players/${playerId}/matches?page=1&limit=999&season=${season}`,
+      );
+      allMatches = await res.json();
     }
 
-    const res = await fetch(
-      `/players/${playerId}/matches?page=1&limit=999&season=${season}`,
-    );
-    const matches = await res.json();
+    expanded = !expanded;
 
-    container.querySelectorAll(".match-card").forEach((c) => c.remove());
-    matches.forEach((m) =>
-      container.insertAdjacentHTML(
-        "beforeend",
-        buildMatchCard(m, playerId, season),
-      ),
-    );
+    const toShow = expanded ? allMatches : allMatches.slice(0, 3);
 
-    title.textContent = `Partidos totales — ${matches.length}`;
-    btn.textContent = "Ver menos";
-    expanded = true;
+    container.innerHTML = toShow
+      .map((m) => buildMatchCard(m, playerId, season))
+      .join("");
+
+    title.textContent = expanded
+      ? `Partidos totales — ${allMatches.length}`
+      : "Partidos recientes";
+    btn.textContent = expanded ? "Ver menos" : "Ver más";
   });
 }
 
