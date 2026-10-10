@@ -245,7 +245,9 @@ async function copyMatch(matchId) {
 <script>
 function toggleGoalTimeline(btn) {
   const wrapper = btn.nextElementSibling;
-  btn.classList.toggle("collapsed");
-  wrapper.classList.toggle("collapsed");
+  if (!wrapper) return;
+  const isCollapsed = btn.classList.toggle("collapsed");
+  wrapper.classList.toggle("collapsed", isCollapsed);
+  btn.setAttribute("aria-expanded", String(!isCollapsed));
 }
 </script>

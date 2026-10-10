@@ -2069,7 +2069,7 @@ a {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 800px) {
   nav {
     padding: 12px 16px;
     gap: 2px;
@@ -4597,4 +4597,410 @@ select.match-venue-input {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23828B97' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
+}
+
+/* ==========================================
+   PLAYER PROFILE - RESPONSIVE
+   ========================================== */
+
+@media (max-width: 640px) {
+  /* Encabezado del jugador */
+  .page-header {
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+  }
+
+  .page-header .eyebrow {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .page-header .player-name {
+    font-size: clamp(25px, 7vw, 34px);
+    line-height: 1.2;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  #playerNameText {
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+  .btn-edit-name,
+  .btn-edit-username {
+    flex-shrink: 0;
+    font-size: 16px;
+    padding: 6px;
+  }
+
+  .player-name-input {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    font-size: 16px;
+  }
+
+  .player-username {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+
+  .page-header .filter-checkbox {
+    font-size: 12px;
+    align-items: center;
+  }
+
+  /* Selector de temporadas */
+  .matches-header {
+    margin-bottom: 20px;
+  }
+
+  .matches-header .season-filter {
+    width: 100%;
+  }
+
+  .matches-header .season-filter select {
+    width: 100%;
+    min-height: 44px;
+    font-size: 13px;
+    padding: 12px 36px 12px 14px;
+  }
+
+  /* Títulos de secciones */
+  .profile-layout .section-label,
+  .profile-teams .section-label,
+  .profile-trophies .section-label {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  /* Estadísticas generales - solo textos */
+  .profile-layout .stats-grid .stat-box strong {
+    font-size: 20px;
+  }
+
+  .profile-layout .stats-grid .stat-box span {
+    font-size: 10px;
+    line-height: 1.3;
+    letter-spacing: 0;
+  }
+
+  /* Victorias, Empates y Derrotas */
+  .profile-layout .stats-grid .stat-box:nth-child(n + 8) span {
+    font-size: 10px;
+  }
+
+  /* Estadísticas de equipos - solo textos */
+  .profile-teams .team-grid .stat-box strong {
+    font-size: 20px;
+  }
+
+  .profile-teams .team-grid .stat-box span {
+    font-size: 10px;
+  }
+
+  /* Títulos y textos de trofeos */
+  .profile-trophies .trophy-title {
+    font-size: 13px;
+  }
+
+  .profile-trophies .trophy-value {
+    font-size: 12px;
+  }
+
+  /* Partidos recientes */
+  .player-matches {
+    margin-top: 28px;
+  }
+
+  .player-matches .section-header h2 {
+    font-size: 20px;
+  }
+
+  .player-matches .match-team-name {
+    font-size: 14px;
+  }
+
+  .player-matches .match-score-number {
+    font-size: 26px;
+  }
+
+  .player-matches .match-date {
+    font-size: 11px;
+  }
+
+  .player-matches .match-badge {
+    font-size: 11px;
+  }
+
+  .player-matches .player-stat {
+    font-size: 12px;
+  }
+
+  .player-matches .btn-match-action {
+    font-size: 12px;
+  }
+
+  .player-matches #loadMoreMatches {
+    font-size: 13px;
+  }
+}
+
+/* TÍTULOS - RESPONSIVE */
+@media (max-width: 640px) {
+  .profile-trophies {
+    margin-top: 24px;
+  }
+
+  .profile-trophies .trophy-list {
+    display: grid;
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+  }
+
+  .profile-trophies .trophy-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 12px;
+    padding: 14px;
+    min-width: 0;
+  }
+
+  .profile-trophies .trophy-medal {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .profile-trophies .trophy-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    gap: 4px;
+  }
+
+  .profile-trophies .trophy-title {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .profile-trophies .trophy-value {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+}
+
+/* ==========================================
+   PLAYER PROFILE - TITULOS
+   ========================================== */
+
+/* ESCRITORIO */
+.profile-trophies {
+  margin-top: 24px;
+}
+
+.profile-trophies .trophy-category-panel {
+  width: 100%;
+  min-width: 0;
+}
+
+.profile-trophies .trophy-podium-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.profile-trophies .trophy-podium-card {
+  min-width: 0;
+}
+
+/* TABLETS */
+@media (max-width: 800px) {
+  .profile-trophies .trophy-podium-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* CELULARES */
+@media (max-width: 480px) {
+  .profile-trophies .trophy-category-panel {
+    padding: 16px;
+  }
+
+  .profile-trophies .trophy-podium-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .profile-trophies .trophy-podium-card {
+    padding: 12px 6px;
+    gap: 5px;
+  }
+
+  .profile-trophies .trophy-podium-medal {
+    font-size: 22px;
+  }
+
+  .profile-trophies .trophy-podium-name {
+    font-size: 11px;
+    line-height: 1.3;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-trophies .trophy-podium-value {
+    font-size: 10px;
+    text-align: center;
+  }
+}
+
+.profile-trophies .trophy-podium-name {
+  text-transform: uppercase;
+}
+
+/* ==========================================
+   GOLES DEL PARTIDO - ACORDEÓN
+   ========================================== */
+
+/* Panel contenedor */
+.form-panel:has(> .goal-timeline-toggle) {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Encabezado siempre centrado */
+.goal-timeline-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 16px;
+  margin: 0;
+
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.goal-timeline-toggle:hover {
+  color: var(--text-primary);
+}
+
+/* Flecha */
+.goal-timeline-arrow {
+  display: inline-block;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: transform 0.35s ease;
+}
+
+.goal-timeline-toggle.collapsed .goal-timeline-arrow {
+  transform: rotate(-90deg);
+}
+
+/* Contenedor animado */
+.goal-timeline-wrapper {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+
+  transition:
+    grid-template-rows 0.35s ease,
+    opacity 0.25s ease,
+    visibility 0.35s;
+}
+
+.goal-timeline-wrapper.collapsed {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Línea de tiempo */
+.goal-timeline-wrapper .goal-timeline-vertical {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 8px 0;
+}
+
+/* Línea central */
+.goal-timeline-vertical::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  bottom: 16px;
+  width: 2px;
+  background: var(--border-strong);
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .goal-timeline-toggle {
+    height: 44px;
+    min-height: 44px;
+    font-size: 12px;
+  }
+}
+
+/* Accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .goal-timeline-wrapper,
+  .goal-timeline-arrow {
+    transition: none;
+  }
+}
+
+/* Corrección del panel de goles cerrado */
+.form-panel:has(> .goal-timeline-toggle) {
+  padding: 0;
+  overflow: hidden;
+}
+
+.form-panel > .goal-timeline-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 16px;
+  margin: 0;
+}
+
+.goal-timeline-wrapper.collapsed {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.goal-timeline-wrapper.collapsed .goal-timeline-vertical {
+  padding-top: 0;
+  padding-bottom: 0;
 }

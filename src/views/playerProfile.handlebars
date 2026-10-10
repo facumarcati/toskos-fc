@@ -182,16 +182,23 @@
 
 {{#if trophies.length}}
 <div class="profile-trophies">
-  <div class="form-panel">
-    <p class="section-label">Títulos</p>
-    <div class="trophy-list">
+  <div class="trophy-category-panel">
+    <p class="trophy-category-label">Títulos</p>
+
+    <div class="trophy-podium-grid">
       {{#each trophies}}
-      <div class="trophy-card" data-position="{{this.position}}">
-        <span class="trophy-medal">{{this.medal}}</span>
-        <div class="trophy-info">
-          <span class="trophy-title">{{this.type}} {{this.season}}</span>
-          <span class="trophy-value">{{this.value}} {{this.unit}}</span>
-        </div>
+      <div class="trophy-podium-card" data-position="{{this.position}}">
+        <span class="trophy-podium-medal">
+          {{this.medal}}
+        </span>
+
+        <span class="trophy-podium-name">
+          {{this.type}} {{this.season}}
+        </span>
+
+        <span class="trophy-podium-value">
+          {{this.value}} {{this.unit}}
+        </span>
       </div>
       {{/each}}
     </div>
