@@ -1,13 +1,38 @@
-<div class="home-hero">
-  <span class="eyebrow">2017-2026</span>
+<link rel="stylesheet" href="/css/home.css" />
 
-  <h1>Toskos FC</h1>
-
-  <p>Registro de partidos y estadísticas</p>
-
-  <div class="home-actions">
-    <a href="/matches/new" class="btn btn-primary">+ Nuevo Partido</a>
-    <a href="/matches" class="btn btn-secondary">Ver Partidos</a>
-    <a href="/stats" class="btn btn-secondary">Estadísticas</a>
-  </div>
-</div>
+<main class="home-start">
+  <section class="home-intro" aria-labelledby="home-title">
+    <div class="home-copy">
+      <p class="home-kicker"><span></span> 2017 - 2026</p>
+      <h1 id="home-title">Toskos<span>FC</span></h1>
+      <p class="home-description">Partidos, estadísticas y rivalidades.</p>
+      <div class="home-cta">
+        <a href="/matches" class="btn home-action home-action--matches">Ver partidos
+          <span aria-hidden="true">↗</span></a>
+        {{#if (eq user.role "admin")}}
+          <a href="/matches/new" class="btn home-action home-action--create">Nuevo partido
+            <span aria-hidden="true">+</span></a>
+        {{/if}}
+        <a href="/stats" class="btn home-action home-action--stats">Estadísticas
+          <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 19V13M12 19V5M19 19V9" /></svg></a>
+      </div>
+    </div>
+    <div class="home-emblem" aria-hidden="true">
+      <div class="home-emblem-orbit"></div>
+      <img
+        src="/img/escudo-tsk.png"
+        alt=""
+        width="300"
+        height="300"
+        fetchpriority="high"
+      />
+      <div class="home-rivalry"><span
+          class="home-shirt home-shirt-white"
+        ></span>
+        Blanco
+        <span class="home-rivalry-vs">vs</span>
+        Negro
+        <span class="home-shirt home-shirt-black"></span></div>
+    </div>
+  </section>
+</main>

@@ -6,9 +6,15 @@ import Player from "../models/player.model.js";
 const router = Router();
 
 const ACTIVE_SEASONS = ["2024", "2025", "2026"];
+const ALL_SEASONS = ["2021", ...ACTIVE_SEASONS];
 
 function buildSeasonFilter(season) {
-  if (season && season !== "all") {
+  if (season === "all_time") {
+    return {
+      $gte: new Date(`${Math.min(...ALL_SEASONS)}-01-01`),
+      $lt: new Date(`${Math.max(...ALL_SEASONS) + 1}-01-01`),
+    };
+  } else if (season && season !== "all") {
     const start = new Date(`${season}-01-01`);
     const end = new Date(`${Number(season) + 1}-01-01`);
 
@@ -51,8 +57,6 @@ router.get("/", async (req, res) => {
         players,
         view,
         selectedSeason: season,
-        biggestH2HDiffs,
-        bestDuos,
         recordsCategory,
         mode,
       });
@@ -389,6 +393,7 @@ router.get("/", async (req, res) => {
       .map((m) => ({
         ...m,
         teamOfA: m.players.find((p) => p.player.toString() === playerA)?.team,
+        teamOfB: m.players.find((p) => p.player.toString() === playerB)?.team,
       }));
 
     let wins = 0,

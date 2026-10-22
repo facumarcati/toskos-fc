@@ -26,13 +26,13 @@ window.addEventListener("scroll", () => {
   scrollTopBtn.classList.toggle("visible", window.scrollY > 300);
 });
 
-// Nav active state basado en URL actual
+// Keep section navigation active on detail pages, ignoring query parameters.
 const path = window.location.pathname;
-document.querySelectorAll("nav a").forEach((link) => {
-  link.classList.remove("nav-active");
-  if (link.getAttribute("href") === path) {
-    link.classList.add("nav-active");
-  }
+document.querySelectorAll("[data-nav-link]").forEach((link) => {
+  const href = link.getAttribute("href");
+  const active = href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
+  link.classList.toggle("nav-active", active);
+  if (active) link.setAttribute("aria-current", "page");
 });
 
 // Guardar scroll al clickear editar
@@ -93,16 +93,31 @@ if (donutCanvas && typeof donutData !== "undefined") {
   });
 }
 
-function toggleMenu() {
-  document.getElementById("navMenu").classList.toggle("open");
-  document.getElementById("navHamburger").classList.toggle("open");
+function setMenuOpen(open) {
+  const menu = document.getElementById("navMenu");
+  const button = document.getElementById("navHamburger");
+  menu.classList.toggle("open", open);
+  button.classList.toggle("open", open);
+  button.setAttribute("aria-expanded", String(open));
+  button.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+  // Hidden mobile links must also be removed from keyboard navigation.
+  menu.inert = window.matchMedia("(max-width: 1150px)").matches && !open;
 }
-
-document.querySelectorAll(".nav-menu a").forEach((link) => {
-  link.addEventListener("click", () => {
-    document.getElementById("navMenu").classList.remove("open");
-    document.getElementById("navHamburger").classList.remove("open");
-  });
+function toggleMenu() {
+  setMenuOpen(!document.getElementById("navMenu").classList.contains("open"));
+}
+const navBreakpoint = window.matchMedia("(max-width: 1150px)");
+setMenuOpen(false);
+navBreakpoint.addEventListener("change", () => setMenuOpen(false));
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".site-header")) setMenuOpen(false);
+  if (event.target.closest(".nav-menu a")) setMenuOpen(false);
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !document.getElementById("profileMenu")?.classList.contains("show") && document.getElementById("navMenu").classList.contains("open")) {
+    setMenuOpen(false);
+    document.getElementById("navHamburger").focus();
+  }
 });
 
 function showToast(message, type = "success", duration = 3000) {

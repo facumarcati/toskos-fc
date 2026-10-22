@@ -39,179 +39,190 @@ sortableHeaders.forEach((header) => {
   });
 });
 
-const chartData = window.h2hChartData;
+function renderH2HChart() {
+  const chart = document.getElementById("h2hChart");
+  if (!chart) return;
+  const chartData = {
+    playerA: chart.dataset.playerA,
+    playerB: chart.dataset.playerB,
+    matches: JSON.parse(chart.dataset.matches || "[]"),
+  };
 
-if (chartData && chartData.matches && chartData.matches.length) {
-  const canvas = document.getElementById("h2hChart");
+  if (chartData && chartData.matches && chartData.matches.length) {
+    const canvas = document.getElementById("h2hChart");
 
-  if (canvas) {
-    const ctx = canvas.getContext("2d");
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
 
-    const ratio = window.devicePixelRatio || 1;
+      const ratio = window.devicePixelRatio || 1;
 
-    const width = canvas.offsetWidth;
-    const height = 180;
+      const width = canvas.offsetWidth;
+      const height = 180;
 
-    canvas.width = width * ratio;
-    canvas.height = height * ratio;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
 
-    ctx.scale(ratio, ratio);
+      ctx.scale(ratio, ratio);
 
-    const paddingTop = 25;
-    const paddingBottom = 35;
-    const paddingLeft = 55;
-    const paddingRight = 20;
+      const paddingTop = 25;
+      const paddingBottom = 35;
+      const paddingLeft = 55;
+      const paddingRight = 20;
 
-    let progression = [0];
-    let current = 0;
+      let progression = [0];
+      let current = 0;
 
-    chartData.matches
-      .slice()
-      .reverse()
-      .forEach((match) => {
-        const isWhite = match.teamOfA === "A";
+      chartData.matches
+        .slice()
+        .reverse()
+        .forEach((match) => {
+          const isWhite = match.teamOfA === "A";
 
-        const goalsA = isWhite ? match.teamA : match.teamB;
-        const goalsB = isWhite ? match.teamB : match.teamA;
+          const goalsA = isWhite ? match.teamA : match.teamB;
+          const goalsB = isWhite ? match.teamB : match.teamA;
 
-        if (goalsA > goalsB) current++;
-        else if (goalsA < goalsB) current--;
+          if (goalsA > goalsB) current++;
+          else if (goalsA < goalsB) current--;
 
-        progression.push(current);
-      });
+          progression.push(current);
+        });
 
-    const maxValue = Math.max(...progression, 2);
-    const minValue = Math.min(...progression, -2);
+      const maxValue = Math.max(...progression, 2);
+      const minValue = Math.min(...progression, -2);
 
-    const chartWidth = width - paddingLeft - paddingRight;
-    const chartHeight = height - paddingTop - paddingBottom;
+      const chartWidth = width - paddingLeft - paddingRight;
+      const chartHeight = height - paddingTop - paddingBottom;
 
-    function getX(i) {
-      return paddingLeft + (i / (progression.length - 1)) * chartWidth;
-    }
+      function getX(i) {
+        return paddingLeft + (i / (progression.length - 1)) * chartWidth;
+      }
 
-    function getY(v) {
-      return (
-        paddingTop + ((maxValue - v) / (maxValue - minValue)) * chartHeight
-      );
-    }
+      function getY(v) {
+        return (
+          paddingTop + ((maxValue - v) / (maxValue - minValue)) * chartHeight
+        );
+      }
 
-    ctx.strokeStyle = "rgba(255,255,255,.08)";
+      ctx.strokeStyle = "rgba(255,255,255,.08)";
 
-    ctx.lineWidth = 1;
+      ctx.lineWidth = 1;
 
-    for (let i = minValue; i <= maxValue; i++) {
-      const y = getY(i);
+      for (let i = minValue; i <= maxValue; i++) {
+        const y = getY(i);
+
+        ctx.beginPath();
+
+        ctx.moveTo(paddingLeft, y);
+
+        ctx.lineTo(width - paddingRight, y);
+
+        ctx.stroke();
+      }
+
+      ctx.font = '12px "Josefin Sans", sans-serif';
+
+      ctx.textAlign = "left";
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(chartData.playerA, 8, getY(maxValue) + 4);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(chartData.playerB, 8, getY(minValue) + 4);
+
+      ctx.fillStyle = "rgba(255,255,255,.55)";
+      ctx.fillText("E", 8, getY(0) + 4);
+
+      ctx.strokeStyle = "rgba(255,255,255,.18)";
 
       ctx.beginPath();
 
-      ctx.moveTo(paddingLeft, y);
+      ctx.moveTo(paddingLeft, getY(0));
 
-      ctx.lineTo(width - paddingRight, y);
+      ctx.lineTo(width - paddingRight, getY(0));
 
       ctx.stroke();
-    }
-
-    ctx.font = '12px "Josefin Sans", sans-serif';
-
-    ctx.textAlign = "left";
-
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText(chartData.playerA, 8, getY(maxValue) + 4);
-
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText(chartData.playerB, 8, getY(minValue) + 4);
-
-    ctx.fillStyle = "rgba(255,255,255,.55)";
-    ctx.fillText("E", 8, getY(0) + 4);
-
-    ctx.strokeStyle = "rgba(255,255,255,.18)";
-
-    ctx.beginPath();
-
-    ctx.moveTo(paddingLeft, getY(0));
-
-    ctx.lineTo(width - paddingRight, getY(0));
-
-    ctx.stroke();
-
-    ctx.beginPath();
-
-    progression.forEach((value, index) => {
-      const x = getX(index);
-      const y = getY(value);
-
-      if (index === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-
-    ctx.strokeStyle = "#facc15";
-
-    ctx.lineWidth = 3;
-
-    ctx.stroke();
-
-    progression.forEach((value, index) => {
-      const x = getX(index);
-      const y = getY(value);
 
       ctx.beginPath();
 
-      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      progression.forEach((value, index) => {
+        const x = getX(index);
+        const y = getY(value);
 
-      ctx.fillStyle = value > 0 ? "#22c55e" : value < 0 ? "#ef4444" : "#facc15";
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
 
-      ctx.fill();
+      ctx.strokeStyle = "#facc15";
 
-      ctx.font = '10px "Josefin Sans", sans-serif';
+      ctx.lineWidth = 3;
+
+      ctx.stroke();
+
+      progression.forEach((value, index) => {
+        const x = getX(index);
+        const y = getY(value);
+
+        ctx.beginPath();
+
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+
+        ctx.fillStyle = value > 0 ? "#22c55e" : value < 0 ? "#ef4444" : "#facc15";
+
+        ctx.fill();
+
+        ctx.font = '10px "Josefin Sans", sans-serif';
+
+        ctx.textAlign = "center";
+
+        ctx.fillStyle = "white";
+
+        const label =
+          value > 0 ? `${value}` : value < 0 ? `${Math.abs(value)}` : "0";
+
+        ctx.fillText(label, x, y - 12);
+      });
+
+      ctx.strokeStyle = "rgba(255,255,255,.15)";
+
+      ctx.lineWidth = 1;
+
+      const axisY = height - paddingBottom + 8;
+
+      ctx.beginPath();
+
+      ctx.moveTo(paddingLeft, axisY);
+
+      ctx.lineTo(width - paddingRight, axisY);
+
+      ctx.stroke();
+
+      ctx.font = '12px "Josefin Sans", sans-serif';
+
+      ctx.fillStyle = "rgba(255,255,255,.55)";
 
       ctx.textAlign = "center";
 
-      ctx.fillStyle = "white";
+      progression.forEach((_, index) => {
+        const x = getX(index);
 
-      const label =
-        value > 0 ? `${value}` : value < 0 ? `${Math.abs(value)}` : "0";
+        ctx.beginPath();
 
-      ctx.fillText(label, x, y - 12);
-    });
+        ctx.moveTo(x, axisY - 4);
 
-    ctx.strokeStyle = "rgba(255,255,255,.15)";
+        ctx.lineTo(x, axisY + 4);
 
-    ctx.lineWidth = 1;
+        ctx.stroke();
 
-    const axisY = height - paddingBottom + 8;
-
-    ctx.beginPath();
-
-    ctx.moveTo(paddingLeft, axisY);
-
-    ctx.lineTo(width - paddingRight, axisY);
-
-    ctx.stroke();
-
-    ctx.font = '12px "Josefin Sans", sans-serif';
-
-    ctx.fillStyle = "rgba(255,255,255,.55)";
-
-    ctx.textAlign = "center";
-
-    progression.forEach((_, index) => {
-      const x = getX(index);
-
-      ctx.beginPath();
-
-      ctx.moveTo(x, axisY - 4);
-
-      ctx.lineTo(x, axisY + 4);
-
-      ctx.stroke();
-
-      if (index >= 0) {
-        ctx.fillText(index.toString(), x, axisY + 16);
-      }
-    });
+        if (index >= 0) {
+          ctx.fillText(index.toString(), x, axisY + 16);
+        }
+      });
+    }
   }
+
 }
+
+renderH2HChart();
 
 (function () {
   const h2hHeader = document.querySelector(".h2h-list-header");
@@ -404,4 +415,97 @@ if (chartData && chartData.matches && chartData.matches.length) {
   });
 
   window.renumberVisibleHistoryRows = renumberVisibleRows;
+})();
+
+// Update only comparison results; the selected players remain in the same form.
+(function initComparison() {
+  const form = document.getElementById("h2h-compare-form");
+  if (!form) return;
+
+  const results = document.getElementById("h2h-compare-results");
+  const status = document.getElementById("h2h-compare-status");
+  const mode = form.elements.namedItem("mode");
+  const playerA = form.elements.namedItem("playerA");
+  const playerB = form.elements.namedItem("playerB");
+  const modeButtons = form.querySelectorAll("[data-compare-mode]");
+  let currentRequest = null;
+
+  function showStatus(message) {
+    status.textContent = message;
+    status.hidden = !message;
+  }
+
+  function resetResults() {
+    currentRequest?.abort();
+    currentRequest = null;
+    results.replaceChildren();
+    results.removeAttribute("aria-busy");
+    showStatus("");
+  }
+
+  async function updateComparison() {
+    resetResults();
+    if (!playerA.value || !playerB.value) {
+      showStatus("Seleccioná los dos jugadores para ver la comparación.");
+      return;
+    }
+    if (playerA.value === playerB.value) {
+      showStatus("Seleccioná dos jugadores diferentes.");
+      return;
+    }
+
+    const controller = new AbortController();
+    currentRequest = controller;
+    const url = new URL(form.action);
+    url.search = new URLSearchParams(new FormData(form)).toString();
+    results.setAttribute("aria-busy", "true");
+    showStatus("Cargando comparación…");
+
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        cache: "no-store",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+      });
+      if (!response.ok) throw new Error("Comparison request failed");
+      const html = await response.text();
+      if (controller.signal.aborted) return;
+      const page = new DOMParser().parseFromString(html, "text/html");
+      const nextResults = page.getElementById("h2h-compare-results");
+      if (!nextResults) throw new Error("Comparison results missing");
+      results.replaceChildren(...nextResults.childNodes);
+      renderH2HChart();
+      window.history.replaceState(null, "", url);
+      showStatus("");
+    } catch (error) {
+      if (controller.signal.aborted) return;
+      showStatus("No se pudo cargar la comparación. Intentá de nuevo con Ver.");
+    } finally {
+      if (currentRequest === controller) {
+        currentRequest = null;
+        results.removeAttribute("aria-busy");
+      }
+    }
+  }
+
+  modeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (mode.value === button.dataset.compareMode) return;
+      mode.value = button.dataset.compareMode;
+      modeButtons.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-pressed", String(active));
+      });
+      document.getElementById("h2h-comparison-separator").textContent = mode.value === "duo" ? "&" : "VS";
+      resetResults();
+      if (playerA.value && playerB.value) updateComparison();
+    });
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    updateComparison();
+  });
+  form.addEventListener("change", resetResults);
 })();

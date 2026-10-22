@@ -77,72 +77,51 @@ function initEditName() {
 }
 
 // ── Match card builder ───────────────────────
-function buildMatchCard(match, playerId, season) {
+function escapeMatchText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[character]);
+}
+
+function buildMatchCard(match, playerId) {
   const playerStats = match.players.find(
-    (p) => p.player.toString() === playerId,
+    (player) => String(player.player?._id ?? player.player) === String(playerId),
   );
-  const goals = playerStats?.goals ?? 0;
-  const assists = playerStats?.assists ?? 0;
-  const isWinA = match.teamA > match.teamB;
-  const isWinB = match.teamB > match.teamA;
-  const isDraw = match.teamA === match.teamB;
   const playerTeam = playerStats?.team;
-  const playerWon =
-    (playerTeam === "A" && isWinA) || (playerTeam === "B" && isWinB);
-  const playerLost =
-    (playerTeam === "A" && isWinB) || (playerTeam === "B" && isWinA);
-
-  const resultBadge = playerWon
-    ? `<span class="match-badge badge-win">Victoria</span>`
-    : playerLost
-      ? `<span class="match-badge badge-loss">Derrota</span>`
-      : `<span class="match-badge badge-draw">Empate</span>`;
-
-  const friendlyBadge =
-    match.matchType === "friendly"
-      ? `<span class="badge-friendly">Amistoso</span>`
-      : "";
-
+  const goalsFor = playerTeam === "A" ? match.teamA : match.teamB;
+  const goalsAgainst = playerTeam === "A" ? match.teamB : match.teamA;
+  const result = goalsFor === goalsAgainst ? "draw" : goalsFor > goalsAgainst ? "win" : "loss";
   const date = new Date(match.date).toLocaleDateString("es-AR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
+    day: "2-digit", month: "2-digit", year: "numeric",
   });
 
+  function team(side, name) {
+    const ownTeam = playerTeam === side;
+    return `
+      <div class="match-team ${side === "B" ? "match-team-right" : ""} ${ownTeam ? "player-match-team--own" : ""}">
+        <span class="match-team-label">Equipo</span>
+        <span class="match-team-name">${name}</span>
+        ${ownTeam ? `
+          <div class="player-match-performance">
+            <span><span aria-hidden="true">⚽</span> ${escapeMatchText(playerStats.goals ?? 0)} G</span>
+            <span><span aria-hidden="true">🎯</span> ${escapeMatchText(playerStats.assists ?? 0)} A</span>
+          </div>` : ""}
+      </div>`;
+  }
+
   return `
-    <div class="match-card match-card-compact">
-      <div class="match-scoreboard ${
-        isWinA
-          ? "scoreboard-win-a"
-          : isWinB
-            ? "scoreboard-win-b"
-            : "scoreboard-draw"
-      }">
-        <div class="match-team">
-          <span class="match-team-label">Equipo</span>
-          <span class="match-team-name">Blanco</span>
-        </div>
+    <a href="/matches/${encodeURIComponent(match._id)}" class="match-card match-card-compact player-match-card player-match-card--${result} player-match-card--side-${escapeMatchText(playerTeam)}">
+      <div class="match-scoreboard">
+        ${team("A", "Blanco")}
         <div class="match-score">
-          ${friendlyBadge}
-          <div class="match-date">${date} · ${match.venue}</div>
-          <span class="match-score-number">${match.teamA} — ${match.teamB}</span>
+          <div class="match-date">${date}</div>
+          <span class="match-score-number">${escapeMatchText(match.teamA)} — ${escapeMatchText(match.teamB)}</span>
+          ${match.venue ? `<span class="match-score-meta">${escapeMatchText(match.venue)}</span>` : ""}
+          ${match.matchType === "friendly" ? '<span class="badge-friendly">Amistoso</span>' : ""}
         </div>
-        <div class="match-team match-team-right">
-          <span class="match-team-label">Equipo</span>
-          <span class="match-team-name">Negro</span>
-        </div>
+        ${team("B", "Negro")}
       </div>
-      <div class="match-card-footer match-card-footer-compact">
-        <div class="footer-left">
-          ${resultBadge}
-          <span class="player-stat ${goals > 0 ? "stat-active" : ""}">⚽ ${goals}</span>
-          <span class="player-stat ${assists > 0 ? "stat-active" : ""}">🎯 ${assists}</span>
-        </div>
-        <div class="footer-right">
-          <a href="/matches?season=${season}#match-${match._id}" class="btn-match-action btn-edit">Ver</a>
-        </div>
-      </div>
-    </div>`;
+    </a>`;
 }
 
 // ── Load more matches ────────────────────────
@@ -170,7 +149,7 @@ function initLoadMore() {
     const toShow = expanded ? allMatches : allMatches.slice(0, 3);
 
     container.innerHTML = toShow
-      .map((m) => buildMatchCard(m, playerId, season))
+      .map((m) => buildMatchCard(m, playerId))
       .join("");
 
     title.textContent = expanded

@@ -51,10 +51,16 @@ router.get("/:id", async (req, res) => {
       const playerStats = match.players.find(
         (p) => p.player.toString() === playerId,
       );
+      const goalsFor = playerStats?.team === "A" ? match.teamA : match.teamB;
+      const goalsAgainst = playerStats?.team === "A" ? match.teamB : match.teamA;
+      const playerResult = goalsFor === goalsAgainst
+        ? "draw"
+        : goalsFor > goalsAgainst ? "win" : "loss";
 
       return {
         ...match,
         playerStats,
+        playerResult,
       };
     });
 

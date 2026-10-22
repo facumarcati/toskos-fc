@@ -1,0 +1,119 @@
+.player-match-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  --player-result-color: var(--text-secondary);
+  --player-result-tint: rgba(130, 139, 151, 0.12);
+  --player-result-border: rgba(130, 139, 151, 0.24);
+  --player-gradient-direction: to right;
+  border-color: var(--player-result-border);
+}
+
+.player-match-card--win {
+  --player-result-color: var(--win);
+  --player-result-tint: var(--win-bg);
+  --player-result-border: rgba(62, 207, 110, 0.24);
+}
+
+.player-match-card--loss {
+  --player-result-color: var(--loss);
+  --player-result-tint: var(--loss-bg);
+  --player-result-border: rgba(240, 82, 82, 0.24);
+}
+
+.player-match-card--draw {
+  --player-result-color: var(--draw);
+  --player-result-tint: var(--draw-bg);
+  --player-result-border: rgba(245, 197, 24, 0.24);
+}
+
+.player-match-card--side-B {
+  --player-gradient-direction: to left;
+}
+
+.player-match-card .match-scoreboard {
+  border-bottom: 0;
+  background:
+    linear-gradient(var(--player-gradient-direction), var(--player-result-tint), transparent 75%),
+    linear-gradient(135deg, var(--bg-raised), var(--bg-surface));
+}
+
+.player-match-card--draw .match-scoreboard {
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(250, 204, 21, 0.12) 35%,
+      rgba(250, 204, 21, 0.18) 50%,
+      rgba(250, 204, 21, 0.12) 65%,
+      transparent 100%
+    ),
+    linear-gradient(135deg, var(--bg-raised), var(--bg-surface));
+}
+
+.player-match-card .match-team {
+  min-width: 0;
+}
+
+.player-match-team--own .match-team-name,
+.player-match-team--own .match-team-label {
+  color: var(--player-result-color);
+}
+
+.player-match-performance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 8px;
+  color: var(--text-primary-soft);
+  font-size: 12px;
+}
+
+.match-team-right .player-match-performance {
+  justify-content: flex-end;
+}
+
+.player-match-performance span {
+  white-space: nowrap;
+}
+
+.player-match-card .match-score-meta {
+  max-width: 240px;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.player-match-card:hover,
+.player-match-card:focus-visible {
+  border-color: var(--player-result-color);
+  box-shadow: var(--shadow-card);
+}
+
+.player-match-card:focus-visible {
+  outline: 2px solid var(--player-result-color);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .player-match-card .match-scoreboard {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 8px;
+    padding: 20px 14px;
+  }
+
+  .player-match-card .match-team-label {
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  .player-match-card .match-score-number {
+    white-space: nowrap;
+    font-size: clamp(20px, 5.5vw, 26px);
+  }
+
+  .player-match-card .match-score-meta,
+  .player-match-performance {
+    font-size: 10px;
+  }
+
+}

@@ -1,0 +1,203 @@
+body.no-scroll-home {
+  height: auto;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: auto;
+}
+
+body.no-scroll-home .page {
+  display: flex;
+  max-width: 1000px;
+  padding: 0 40px;
+  overflow: visible;
+}
+
+body.no-scroll-home .navbar .nav-create { display: none; }
+
+.home-start {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.home-intro {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.home-copy { position: relative; z-index: 1; animation: home-arrive 0.6s ease-out both; }
+
+.home-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.home-kicker > span { width: 22px; height: 2px; background: var(--accent); }
+.home-copy h1 { font-size: clamp(64px, 7vw, 88px); line-height: 0.92; letter-spacing: -0.055em; }
+.home-copy h1 > span { display: block; margin-top: 8px; color: var(--accent); }
+
+.home-description { margin-top: 24px; color: var(--text-secondary); font-size: 13px; line-height: 1.85; }
+.home-cta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.home-cta .home-action {
+  justify-content: space-between;
+  height: 46px;
+  min-height: 46px;
+  gap: 18px;
+  padding: 0 16px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-action > span {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.home-action svg { flex-shrink: 0; }
+
+.home-action--matches {
+  color: #171508;
+  border-color: #f9d553;
+  background-color: #eec019;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.13), transparent);
+}
+
+.home-action--matches:hover {
+  background-color: #f5cc33;
+  box-shadow: 0 3px 16px rgba(245, 197, 24, 0.15);
+}
+
+.home-action--create {
+  color: #e6cb78;
+  border-color: rgba(218, 187, 102, 0.38);
+  background-color: rgba(218, 187, 102, 0.055);
+  background-image: linear-gradient(135deg, rgba(218, 187, 102, 0.075), transparent);
+}
+
+.home-action--create:hover {
+  border-color: rgba(218, 187, 102, 0.7);
+  background-color: rgba(218, 187, 102, 0.12);
+}
+
+.home-action--stats {
+  color: #dedbd2;
+  border-color: rgba(222, 219, 210, 0.2);
+  background-color: #202224;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.035), transparent);
+}
+
+.home-action--stats svg { color: #b0ada3; }
+.home-action--stats:hover { background-color: #303132; border-color: rgba(222, 219, 210, 0.4); }
+
+.home-emblem {
+  display: grid;
+  place-items: center;
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 1;
+  width: 100%;
+  max-width: 300px;
+  justify-self: end;
+  animation: home-arrive 0.8s 0.1s ease-out both;
+}
+
+.home-emblem::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -15%;
+  background: radial-gradient(ellipse, rgba(245, 197, 24, 0.09), transparent 67%);
+}
+
+.home-emblem-orbit { position: absolute; inset: 2%; border: 1px solid rgba(245, 197, 24, 0.1); border-radius: 50%; }
+.home-emblem-orbit::before, .home-emblem-orbit::after { content: ""; position: absolute; border-radius: 50%; }
+.home-emblem-orbit::before { inset: 24px; border: 1px dashed rgba(245, 197, 24, 0.08); }
+.home-emblem-orbit::after { width: 5px; height: 5px; top: 14%; right: 14%; background: var(--accent); box-shadow: 0 0 18px rgba(245, 197, 24, 0.5); }
+.home-emblem img { width: 72%; height: auto; object-fit: contain; filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.35)); }
+
+.home-rivalry {
+  position: absolute;
+  bottom: -15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 99px;
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.home-rivalry-vs { margin: 0 5px; color: var(--text-muted); font-size: 9px; }
+.home-shirt { width: 7px; height: 7px; border-radius: 50%; }
+.home-shirt-white { background: #f4f4f5; }
+.home-shirt-black { background: #30343b; border: 1px solid #606671; }
+.home-start a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+@keyframes home-arrive {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  body.no-scroll-home .page { padding: 0 24px; }
+  .home-start { padding: 32px 0; }
+  .home-intro { gap: 16px; grid-template-columns: 1.2fr 0.8fr; }
+  .home-copy h1 { font-size: clamp(64px, 11vw, 86px); }
+  .home-kicker { font-size: 9px; letter-spacing: 0.1em; }
+  .home-emblem { max-width: 270px; }
+  .home-rivalry { gap: 6px; padding: 8px 12px; font-size: 9px; }
+}
+
+@media (max-width: 540px) {
+  .home-intro { position: relative; grid-template-columns: 1fr; }
+  .home-copy h1 { font-size: clamp(68px, 18vw, 84px); }
+  .home-kicker { margin-bottom: 24px; }
+  .home-emblem { position: absolute; width: 138px; top: 70px; right: 0; z-index: 0; opacity: 0.6; }
+  .home-emblem::before { inset: 0; }
+  .home-emblem img { width: 78%; }
+  .home-emblem-orbit { inset: -5%; }
+  .home-emblem-orbit::before { inset: 14px; }
+  .home-rivalry { display: none; }
+  .home-description { font-size: 12px; }
+  .home-cta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .home-cta .home-action { gap: 10px; padding: 0 14px; font-size: 10px; }
+  .home-action--matches { grid-column: 1 / -1; }
+  .home-action--stats:nth-child(2) { grid-column: 1 / -1; }
+}
+
+@media (max-width: 359px) {
+  .home-emblem { width: 110px; top: 82px; }
+  .home-cta { gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-copy, .home-emblem { animation: none; }
+  .home-start a { transition: none; }
+}

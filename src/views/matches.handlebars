@@ -36,7 +36,6 @@
     <form method="GET" action="/matches" class="season-filter">
       <input type="hidden" name="order" value="{{selectedOrder}}" />
       <input type="hidden" name="venue" value="{{selectedVenue}}" />
-      <input type="hidden" name="date" value="{{selectedDate}}" />
       <select name="season" onchange="this.form.submit()">
         <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
         <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
@@ -49,7 +48,6 @@
     <form method="GET" action="/matches" class="season-filter">
       <input type="hidden" name="season" value="{{selectedSeason}}" />
       <input type="hidden" name="order" value="{{selectedOrder}}" />
-      <input type="hidden" name="date" value="{{selectedDate}}" />
       <select name="venue" onchange="this.form.submit()">
         <option value="">Todas las canchas</option>
         {{#each venues}}
@@ -58,31 +56,16 @@
       </select>
     </form>
 
-    <form method="GET" action="/matches" class="season-filter" style="display:flex; flex-direction: row; gap:6px; align-items:center;">
-      <input type="hidden" name="season" value="{{selectedSeason}}" />
-      <input type="hidden" name="order" value="{{selectedOrder}}" />
-      <input type="hidden" name="venue" value="{{selectedVenue}}" />
-      <input
-        type="date"
-        name="date"
-        class="match-date-input-filter"
-        value="{{selectedDate}}"
-        style="padding: 7px 12px; font-size:12px; height:auto;"
-      />
-      <button type="submit" class="btn-order">→</button>
-    </form>
-
     <form method="GET" action="/matches">
       <input type="hidden" name="season" value="{{selectedSeason}}" />
       <input type="hidden" name="venue" value="{{selectedVenue}}" />
-      <input type="hidden" name="date" value="{{selectedDate}}" />
       <input type="hidden" name="order" value="{{#if (eq selectedOrder "asc")}}desc{{else}}asc{{/if}}" />
-      <button type="submit" class="btn-order">
+      <button type="submit" class="btn-order" title='{{#if (eq selectedOrder "asc")}}Mostrar los partidos más recientes primero{{else}}Mostrar los partidos más antiguos primero{{/if}}' aria-label='{{#if (eq selectedOrder "asc")}}Mostrar los partidos más recientes primero{{else}}Mostrar los partidos más antiguos primero{{/if}}'>
         {{#if (eq selectedOrder "asc")}}↑{{else}}↓{{/if}}
       </button>
     </form>
 
-    {{#if (or selectedVenue selectedDate)}}
+    {{#if selectedVenue}}
     <a href="/matches?season={{selectedSeason}}&order={{selectedOrder}}" class="btn-clear-filters">
       ✕ Limpiar
     </a>

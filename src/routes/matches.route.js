@@ -23,7 +23,7 @@ function isAdmin(req, res, next) {
 }
 
 router.get("/", async (req, res) => {
-  const { season = "2026", order = "desc", venue = "", date = "" } = req.query;
+  const { season = "2026", order = "desc", venue = "" } = req.query;
 
   const user = req.session.user || null;
 
@@ -43,16 +43,6 @@ router.get("/", async (req, res) => {
 
   if (venue) {
     filter.venue = new RegExp(venue, "i");
-  }
-
-  if (date) {
-    const start = new Date(date);
-    start.setUTCHours(0, 0, 0, 0);
-
-    const end = new Date(date);
-    end.setUTCHours(23, 59, 59, 999);
-
-    filter.date = { $gte: start, $lte: end };
   }
 
   const venues = await Match.distinct("venue").then((v) =>
@@ -118,7 +108,6 @@ router.get("/", async (req, res) => {
     matchCount: matches.length,
     selectedOrder: order,
     selectedVenue: venue,
-    selectedDate: date,
     venues,
     winsA,
     winsB,

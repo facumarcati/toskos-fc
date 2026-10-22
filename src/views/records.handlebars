@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/css/records.css" />
+
 <div class="page-header">
   <span class="eyebrow">Toskos FC</span>
   <h1>Récords</h1>
@@ -125,9 +127,9 @@
     {{#if topOwnGoals.length}}
       <div class="records-section">
         <h2 class="record-title">Goles en contra</h2>
-        <div class="record-list">
+        <div class="record-list" id="records-topOwnGoals">
           {{#each topOwnGoals}}
-            <div class="record-card">
+            <div class="record-card"{{#if (gt @index 2)}} hidden{{/if}}>
               <span class="record-pos record-pos-{{add @index 1}}">
                 {{add @index 1}}°
               </span>
@@ -140,15 +142,21 @@
               </div>
             </div>
           {{/each}}
+          {{#if (gt topOwnGoals.length 3)}}
+          <button type="button" class="records-toggle"
+          aria-expanded="false" aria-controls="records-topOwnGoals">
+          Mostrar más
+          </button>
+          {{/if}}
         </div>
       </div>
     {{/if}}
 
     <div class="records-section">
       <h2 class="record-title">Partidos con 5+ goles</h2>
-      <div class="record-list">
+      <div class="record-list" id="records-fiveGoalMatches">
         {{#each fiveGoalMatches}}
-          <div class="record-card">
+          <div class="record-card"{{#if (gt @index 2)}} hidden{{/if}}>
             <span class="record-pos record-pos-{{add @index 1}}">
               {{add @index 1}}°
             </span>
@@ -170,14 +178,20 @@
             </div>
           </div>
         {{/each}}
+        {{#if (gt fiveGoalMatches.length 3)}}
+        <button type="button" class="records-toggle"
+        aria-expanded="false" aria-controls="records-fiveGoalMatches">
+        Mostrar más
+        </button>
+        {{/if}}
       </div>
     </div>
 
     <div class="records-section">
       <h2 class="record-title">Partidos con 5+ asistencias</h2>
-      <div class="record-list">
+      <div class="record-list" id="records-fiveAssistMatches">
         {{#each fiveAssistMatches}}
-          <div class="record-card">
+          <div class="record-card"{{#if (gt @index 2)}} hidden{{/if}}>
             <span class="record-pos record-pos-{{add @index 1}}">
               {{add @index 1}}°
             </span>
@@ -199,15 +213,21 @@
             </div>
           </div>
         {{/each}}
+        {{#if (gt fiveAssistMatches.length 3)}}
+        <button type="button" class="records-toggle"
+        aria-expanded="false" aria-controls="records-fiveAssistMatches">
+        Mostrar más
+        </button>
+        {{/if}}
       </div>
     </div>
     
     {{#if topMVPs.length}}
       <div class="records-section">
         <h2 class="record-title">MVPs</h2>
-        <div class="record-list">
+        <div class="record-list" id="records-topMVPs">
           {{#each topMVPs}}
-            <div class="record-card">
+            <div class="record-card"{{#if (gt @index 2)}} hidden{{/if}}>
               <span class="record-pos record-pos-{{add @index 1}}">
                 {{add @index 1}}°
               </span>
@@ -222,6 +242,12 @@
               </div>
             </div>
           {{/each}}
+          {{#if (gt topMVPs.length 3)}}
+          <button type="button" class="records-toggle"
+          aria-expanded="false" aria-controls="records-topMVPs">
+          Mostrar más
+          </button>
+          {{/if}}
         </div>
       </div>
     {{/if}}
@@ -538,22 +564,4 @@
   </div>
 </div>
 
-<script>
-  document.querySelectorAll(".records-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
-      const category = tab.dataset.category;
-
-      document.querySelectorAll(".records-tab")
-        .forEach((t) => t.classList.remove("active"));
-
-      document.querySelectorAll(".records-category")
-        .forEach((section) => section.classList.remove("active"));
-
-      tab.classList.add("active");
-
-      document
-        .querySelector(`.records-category[data-category="${category}"]`)
-        .classList.add("active");
-    });
-  });
-</script>
+<script src="/js/records.js"></script>

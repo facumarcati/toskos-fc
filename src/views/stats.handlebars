@@ -26,12 +26,8 @@
         value="{{selectedOrderDir}}"
       />
       <select name="season" onchange="this.form.submit()">
-        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>
-          Todas las temporadas (P)
-        </option>
-        <option value="all_time" {{#if (eq selectedSeason "all_time")}}selected{{/if}}>
-          Todas las temporadas (A+P)
-        </option>
+        <option value="all_time" {{#if (eq selectedSeason "all_time")}}selected{{/if}}>TODAS (AMAT + PROF)</option>
+        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>TODAS (PROFESIONALISMO)</option>
         <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>
           2026
         </option>

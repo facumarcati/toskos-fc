@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/css/playerProfile.css" />
+
 <div class="page-header">
   <span class="eyebrow">
     Perfil de jugador
@@ -44,12 +46,8 @@
 <div class="matches-header">
   <form method="GET" class="season-filter">
     <select name="season" onchange="this.form.submit()">
-       <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>
-          Todas las temporadas (P)
-        </option>
-        <option value="all_time" {{#if (eq selectedSeason "all_time")}}selected{{/if}}>
-          Todas las temporadas (A+P)
-        </option>
+       <option value="all_time" {{#if (eq selectedSeason "all_time")}}selected{{/if}}>TODAS (AMAT + PROF)</option>
+        <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>TODAS (PROFESIONALISMO)</option>
         {{#each seasons}}
         <option value="{{this}}" {{#if (eq ../selectedSeason (toString this))}}selected{{/if}}>{{this}}</option>
         {{/each}}
@@ -212,66 +210,36 @@
   </div>
   <div id="matchesContainer">
     {{#each matches}}
-    <div class="match-card match-card-compact">
-        <div class="match-scoreboard
-        {{#if (gt this.teamA this.teamB)}}scoreboard-win-a
-        {{else if (gt this.teamB this.teamA)}}scoreboard-win-b
-        {{else}}scoreboard-draw
-        {{/if}}">
-          <div class="match-team">
-              <span class="match-team-label">Equipo</span>
-              <span class="match-team-name">Blanco</span>
-          </div>
-          <div class="match-score">
-              {{#if (eq this.matchType "friendly")}}
-                <span class="badge-friendly">Amistoso</span>
-              {{/if}}
-              <div class="match-date">
-                {{formatDate this.date}} · {{this.venue}}
-              </div>
-              <span class="match-score-number">
-              {{this.teamA}} — {{this.teamB}}
-              </span>
-          </div>
-          <div class="match-team match-team-right">
-              <span class="match-team-label">Equipo</span>
-              <span class="match-team-name">Negro</span>
-          </div>
+    <a href="/matches/{{this._id}}" class="match-card match-card-compact player-match-card player-match-card--{{this.playerResult}} player-match-card--side-{{this.playerStats.team}}">
+      <div class="match-scoreboard">
+        <div class="match-team {{#if (eq this.playerStats.team "A")}}player-match-team--own{{/if}}">
+          <span class="match-team-label">Equipo</span>
+          <span class="match-team-name">Blanco</span>
+          {{#if (eq this.playerStats.team "A")}}
+            <div class="player-match-performance">
+              <span><span aria-hidden="true">⚽</span> {{this.playerStats.goals}} G</span>
+              <span><span aria-hidden="true">🎯</span> {{this.playerStats.assists}} A</span>
+            </div>
+          {{/if}}
         </div>
-        <div class="match-card-footer match-card-footer-compact">
-        <div class="footer-left">
-            {{#if (gt this.teamA this.teamB)}}
-            {{#if (eq this.playerStats.team "A")}}
-                <span class="match-badge badge-win">Victoria</span>
-            {{else}}
-                <span class="match-badge badge-loss">Derrota</span>
-            {{/if}}
-            {{else if (gt this.teamB this.teamA)}}
-            {{#if (eq this.playerStats.team "B")}}
-                <span class="match-badge badge-win">Victoria</span>
-            {{else}}
-                <span class="match-badge badge-loss">Derrota</span>
-            {{/if}}
-            {{else}}
-            <span class="match-badge badge-draw">Empate</span>
-            {{/if}}
-            <span class="player-stat {{#if this.playerStats.goals}}stat-active{{/if}}">
-                ⚽ {{this.playerStats.goals}}
-            </span>
-            <span class="player-stat {{#if this.playerStats.assists}}stat-active{{/if}}">
-                🎯 {{this.playerStats.assists}}
-            </span>
+        <div class="match-score">
+          <div class="match-date">{{formatDate this.date}}</div>
+          <span class="match-score-number">{{this.teamA}} — {{this.teamB}}</span>
+          {{#if this.venue}}<span class="match-score-meta">{{this.venue}}</span>{{/if}}
+          {{#if (eq this.matchType "friendly")}}<span class="badge-friendly">Amistoso</span>{{/if}}
         </div>
-        <div class="footer-right">
-            <a
-            href="/matches?season=all#match-{{this._id}}"
-            class="btn-match-action btn-edit"
-            >
-            Ver
-            </a>
+        <div class="match-team match-team-right {{#if (eq this.playerStats.team "B")}}player-match-team--own{{/if}}">
+          <span class="match-team-label">Equipo</span>
+          <span class="match-team-name">Negro</span>
+          {{#if (eq this.playerStats.team "B")}}
+            <div class="player-match-performance">
+              <span><span aria-hidden="true">⚽</span> {{this.playerStats.goals}} G</span>
+              <span><span aria-hidden="true">🎯</span> {{this.playerStats.assists}} A</span>
+            </div>
+          {{/if}}
         </div>
-        </div>
-    </div>
+      </div>
+    </a>
     {{else}}
         <div class="list-empty-state">
         Sin partidos todavía
