@@ -13,15 +13,28 @@ router.get("/", async (req, res) => {
   try {
     const includeCurrentSeason = req.query.includeCurrent === "1";
 
-    const seasons = await Promise.all(
-      TROPHY_SEASONS.map(async (season) => ({
-        season,
-        isLive: season === CURRENT_YEAR,
-        categories: await getPodiumsForSeason(season),
-      })),
+    const seasonsToLoad = new Set(TROPHY_SEASONS);
+    for (let year = 2024; year <= CURRENT_YEAR; year++) {
+      if (includeCurrentSeason || year !== CURRENT_YEAR) seasonsToLoad.add(year);
+    }
+    const podiumsBySeason = new Map(
+      await Promise.all(
+        [...seasonsToLoad].map(async (season) => [
+          season,
+          await getPodiumsForSeason(season),
+        ]),
+      ),
     );
 
-    const leaderboard = await getTrophyLeaderboard({ includeCurrentSeason });
+    const seasons = TROPHY_SEASONS.map((season) => ({
+      season,
+      isLive: season === CURRENT_YEAR,
+      categories: podiumsBySeason.get(season),
+    }));
+    const leaderboard = await getTrophyLeaderboard({
+      includeCurrentSeason,
+      podiumsBySeason,
+    });
 
     const seasonEndISO = new Date(
       `${CURRENT_YEAR + 1}-01-01T00:00:00-03:00`,

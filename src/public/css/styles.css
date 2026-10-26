@@ -2802,9 +2802,16 @@ a {
   padding: 12px;
 }
 
-@media (min-width: 1600px) {
+@media (min-width: 1200px) {
+  body:has(.trophy-sidebar-fixed) .page {
+    max-width: 1240px;
+    padding-right: 308px;
+  }
+
   .trophy-sidebar-fixed {
     display: block;
+    left: auto;
+    right: max(24px, calc((100vw - 1240px) / 2 + 24px));
   }
   .trophy-leaderboard-inline {
     display: none;
@@ -2848,7 +2855,7 @@ a {
   min-width: 30px;
 }
 
-@media (min-width: 1600px) {
+@media (min-width: 1200px) {
   .trophy-leaderboard-sidebar {
     display: block;
   }
@@ -4812,7 +4819,7 @@ select.match-venue-input {
 
 .navbar {
   max-width: 1600px;
-  min-height: 88px;
+  min-height: 76px;
   margin: 0 auto;
   padding: 0 36px;
   display: flex;
@@ -4888,7 +4895,7 @@ select.match-venue-input {
 
 .nav-left > a {
   position: relative;
-  padding: 34px 11px;
+  padding: 28px 11px;
   color: var(--text-secondary);
   font-family: var(--font-body);
   font-size: 12px;
@@ -4956,12 +4963,53 @@ select.match-venue-input {
   transition: background 0.2s, color 0.2s;
 }
 
-.nav-register:hover, .nav-create:hover {
+.nav-register:hover {
   background: var(--accent);
   color: var(--bg-base);
 }
 
-.nav-register > span, .nav-create > span {
+.nav-create {
+  min-height: 38px;
+  padding: 0 12px;
+  gap: 8px;
+  border-radius: 8px;
+}
+
+.matches-create {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  gap: 8px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 8px;
+  padding-top: 13px;
+  padding-bottom: 13px;
+}
+
+.matches-create.btn-yellow-sm {
+  height: 36px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.nav-create, .matches-create {
+  border-color: #f9d553;
+  background-color: #eec019;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.13), transparent);
+  color: #171508;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav-create:hover, .matches-create:hover {
+  background-color: #f5cc33;
+  box-shadow: 0 3px 16px rgba(245, 197, 24, 0.15);
+  color: #171508;
+}
+
+.nav-register > span, .nav-create > span, .matches-create > span {
   font-size: 18px;
   line-height: 1;
 }
@@ -5071,7 +5119,7 @@ select.match-venue-input {
 
 @media (max-width: 1150px) {
   .navbar {
-    min-height: 78px;
+    min-height: 68px;
     padding: 0 24px;
     position: relative;
   }
@@ -5127,7 +5175,7 @@ select.match-venue-input {
     background: var(--bg-base);
     border-bottom: 1px solid var(--border-strong);
     box-shadow: 0 20px 30px rgba(0,0,0,0.3);
-    max-height: calc(100dvh - 78px);
+    max-height: calc(100dvh - 68px);
     overflow-y: auto;
     visibility: hidden;
     opacity: 0;
@@ -5239,7 +5287,7 @@ select.match-venue-input {
 
 @media (max-width: 480px) {
   .navbar {
-    min-height: 72px;
+    min-height: 64px;
     padding-inline: 18px;
   }
 
@@ -5263,7 +5311,7 @@ select.match-venue-input {
 
   .nav-menu {
     padding: 20px 18px;
-    max-height: calc(100dvh - 72px);
+    max-height: calc(100dvh - 64px);
   }
 
 }

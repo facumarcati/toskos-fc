@@ -480,64 +480,41 @@ export async function getPodiumsForSeason(season) {
     ],
   };
 
-  const scorers = await Match.aggregate([
-    ...basePipeline,
-    {
-      $group: {
-        _id: "$players.player",
-        name: { $first: "$playerInfo.name" },
-        value: { $sum: "$players.goals" },
-        assists: { $sum: "$players.assists" },
-        matches: { $sum: 1 },
-      },
-    },
-    { $sort: { value: -1, assists: -1, matches: 1 } },
-  ]);
-
-  const assists = await Match.aggregate([
-    ...basePipeline,
-    {
-      $group: {
-        _id: "$players.player",
-        name: { $first: "$playerInfo.name" },
-        value: { $sum: "$players.assists" },
-        goals: { $sum: "$players.goals" },
-        matches: { $sum: 1 },
-      },
-    },
-    { $sort: { value: -1, goals: -1, matches: 1 } },
-  ]);
-
-  const matchesPlayed = await Match.aggregate([
+  // Read and join each season once, then derive all four rankings from
+  // the same player totals. Keep category-specific fields for tie rules.
+  const [{ scorers, assists, matchesPlayed, wins }] = await Match.aggregate([
     ...basePipeline,
     { $addFields: { win: winCond } },
     {
       $group: {
         _id: "$players.player",
         name: { $first: "$playerInfo.name" },
-        value: { $sum: 1 },
+        goals: { $sum: "$players.goals" },
+        assists: { $sum: "$players.assists" },
+        matches: { $sum: 1 },
         wins: { $sum: "$win" },
-        goals: { $sum: "$players.goals" },
-        assists: { $sum: "$players.assists" },
       },
     },
-    { $sort: { value: -1, wins: -1, goals: -1, assists: -1 } },
-  ]);
-
-  const wins = await Match.aggregate([
-    ...basePipeline,
-    { $addFields: { win: winCond } },
     {
-      $group: {
-        _id: "$players.player",
-        name: { $first: "$playerInfo.name" },
-        value: { $sum: "$win" },
-        matches: { $sum: 1 },
-        goals: { $sum: "$players.goals" },
-        assists: { $sum: "$players.assists" },
+      $facet: {
+        scorers: [
+          { $project: { name: 1, value: "$goals", assists: 1, matches: 1 } },
+          { $sort: { value: -1, assists: -1, matches: 1 } },
+        ],
+        assists: [
+          { $project: { name: 1, value: "$assists", goals: 1, matches: 1 } },
+          { $sort: { value: -1, goals: -1, matches: 1 } },
+        ],
+        matchesPlayed: [
+          { $project: { name: 1, value: "$matches", wins: 1, goals: 1, assists: 1 } },
+          { $sort: { value: -1, wins: -1, goals: -1, assists: -1 } },
+        ],
+        wins: [
+          { $project: { name: 1, value: "$wins", matches: 1, goals: 1, assists: 1 } },
+          { $sort: { value: -1, matches: 1, goals: -1, assists: -1 } },
+        ],
       },
     },
-    { $sort: { value: -1, matches: 1, goals: -1, assists: -1 } },
   ]);
 
   const categories = [
@@ -568,6 +545,7 @@ export async function getPodiumsForSeason(season) {
 
 export async function getTrophyLeaderboard({
   includeCurrentSeason = true,
+  podiumsBySeason,
 } = {}) {
   const currentYear = new Date().getFullYear();
 
@@ -579,8 +557,13 @@ export async function getTrophyLeaderboard({
 
   const totals = {};
 
-  for (const season of seasons) {
-    const categories = await getPodiumsForSeason(season);
+  const seasonCategories = await Promise.all(
+    seasons.map((season) =>
+      podiumsBySeason?.get(season) ?? getPodiumsForSeason(season),
+    ),
+  );
+
+  for (const categories of seasonCategories) {
 
     categories.forEach((cat) => {
       cat.podium.forEach((p) => {
