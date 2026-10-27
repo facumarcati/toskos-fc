@@ -16,6 +16,7 @@ import adminRouter from "./routes/admin.route.js";
 import profileRouter from "./routes/profile.route.js";
 import h2hRouter from "./routes/h2h.route.js";
 import trophiesRouter from "./routes/trophies.routes.js";
+import clubSummaryRouter from "./routes/clubSummary.route.js";
 
 import Player from "./models/player.model.js";
 
@@ -33,6 +34,7 @@ connectMongoDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("src/public"));
+app.use("/api/club-summary", clubSummaryRouter);
 
 app.use(
   session({

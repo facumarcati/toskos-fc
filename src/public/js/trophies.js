@@ -16,11 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((p, i) => {
         const rank = i + 1;
         return `
-          <div class="trophy-table-row" data-rank="${rank}">
+          <a class="trophy-table-row" href="/players/${encodeURIComponent(p.playerId)}?season=all" data-rank="${rank}">
             <span class="trophy-table-rank">${rank}</span>
             <span class="trophy-table-name">${escapeHtml(p.name)}</span>
             <span class="trophy-table-count">${p.titles}</span>
-          </div>`;
+          </a>`;
       })
       .join("");
   }
@@ -92,3 +92,39 @@ function initSeasonCountdown() {
 }
 
 document.addEventListener("DOMContentLoaded", initSeasonCountdown);
+
+function initSeasonTabs() {
+  const tabs = [...document.querySelectorAll(".awards-tabs [role='tab']")];
+  const panels = [...document.querySelectorAll(".awards-season")];
+  const countdown = document.querySelector(".awards-countdown");
+
+  function selectTab(tab) {
+    tabs.forEach((item) => {
+      const selected = item === tab;
+      item.setAttribute("aria-selected", String(selected));
+      item.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach((panel) => { panel.hidden = panel.id !== tab.getAttribute("aria-controls"); });
+    if (countdown) countdown.hidden = countdown.dataset.season !== tab.dataset.season;
+    const url = new URL(window.location.href);
+    url.searchParams.set("season", tab.dataset.season);
+    window.history.replaceState(null, "", url);
+  }
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => selectTab(tab));
+    tab.addEventListener("keydown", (event) => {
+      let next;
+      if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+      else if (event.key === "ArrowLeft") next = (index - 1 + tabs.length) % tabs.length;
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = tabs.length - 1;
+      else return;
+      event.preventDefault();
+      selectTab(tabs[next]);
+      tabs[next].focus();
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initSeasonTabs);

@@ -12,6 +12,10 @@ const CURRENT_YEAR = new Date().getFullYear();
 router.get("/", async (req, res) => {
   try {
     const includeCurrentSeason = req.query.includeCurrent === "1";
+    const requestedSeason = Number(req.query.season);
+    const selectedSeason = TROPHY_SEASONS.includes(requestedSeason)
+      ? requestedSeason
+      : TROPHY_SEASONS[0];
 
     const seasonsToLoad = new Set(TROPHY_SEASONS);
     for (let year = 2024; year <= CURRENT_YEAR; year++) {
@@ -29,7 +33,19 @@ router.get("/", async (req, res) => {
     const seasons = TROPHY_SEASONS.map((season) => ({
       season,
       isLive: season === CURRENT_YEAR,
-      categories: podiumsBySeason.get(season),
+      isSelected: season === selectedSeason,
+      categories: podiumsBySeason.get(season).map((category) => ({
+        ...category,
+        steps: [2, 1, 3].map((position) => {
+          const players = category.podium
+            .filter((player) => player.position === position)
+            .map((player) => ({
+              ...player,
+              profileUrl: `/players/${encodeURIComponent(player.playerId)}?season=${season}`,
+            }));
+          return { position, players, isShared: players.length > 1, unit: category.unit };
+        }),
+      })),
     }));
     const leaderboard = await getTrophyLeaderboard({
       includeCurrentSeason,
@@ -45,6 +61,7 @@ router.get("/", async (req, res) => {
       leaderboard,
       includeCurrentSeason,
       currentYear: CURRENT_YEAR,
+      selectedSeason,
       seasonEndISO,
     });
   } catch (error) {

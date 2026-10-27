@@ -8,6 +8,7 @@
     />
     <link rel="icon" href="/img/escudo-tsk.png" />
     <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/clubTicker.css" />
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#d4af37">
     <link rel="apple-touch-icon" href="/img/icons/apple-touch-icon.png">
@@ -16,6 +17,7 @@
   </head>
   <body class="{{#if (eq activePage "/")}}no-scroll-home{{/if}}">
     <header class="site-header">
+      {{> clubTicker}}
       <nav class="navbar" aria-label="Navegación principal">
         <div class="nav-brand">
           <a href="/" class="nav-logo" aria-label="Toskos FC — Inicio">
@@ -109,6 +111,7 @@
     </button>
 
     <script src="/js/ui.js"></script>
+    <script src="/js/clubTicker.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/realTime.js"></script>
     <script src="/js/auth.js"></script>

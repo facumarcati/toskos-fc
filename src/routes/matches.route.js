@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { io } from "../app.js";
 import { getMatchMVP } from "../services/mvp.service.js";
+import { invalidateClubSummary } from "../services/clubSummary.service.js";
 import Match from "../models/match.model.js";
 import Player from "../models/player.model.js";
 
@@ -269,6 +270,7 @@ router.post("/", isAdmin, async (req, res) => {
     goalTimeline,
   });
 
+  invalidateClubSummary();
   io.emit("match:created");
   res.redirect("/matches");
 });
@@ -374,6 +376,7 @@ router.post("/:id/edit", isAdmin, async (req, res) => {
 
   await Match.findByIdAndUpdate(req.params.id, update);
 
+  invalidateClubSummary();
   io.emit("match:updated");
   res.redirect(`/matches?season=${season}`);
 });
@@ -382,6 +385,7 @@ router.post("/:id/delete", isAdmin, async (req, res) => {
   const { season = "2026" } = req.query;
   await Match.findByIdAndDelete(req.params.id);
 
+  invalidateClubSummary();
   io.emit("match:deleted");
   res.redirect(`/matches?season=${season}`);
 });
@@ -397,6 +401,7 @@ router.post("/:id/type", isAdmin, async (req, res) => {
 
   if (!match) return res.status(404).send("Partido no encontrado");
 
+  invalidateClubSummary();
   io.emit("match:updated");
   res.redirect(req.get("Referer") || "/matches");
 });

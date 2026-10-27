@@ -1,0 +1,22 @@
+<div class="awards-ranking">
+  <span class="awards-ranking-eyebrow">Palmarés histórico</span>
+  <h2 class="trophy-leaderboard-title">Ranking de títulos</h2>
+  <label class="filter-checkbox trophy-toggle-checkbox">
+    <input type="checkbox" class="js-trophy-toggle" {{#if includeCurrentSeason}}checked{{/if}} />
+    Incluir {{currentYear}}
+  </label>
+  <div class="trophy-table">
+    <div class="trophy-table-header"><span>#</span><span>Jugador</span><span>Títulos</span></div>
+    <div class="js-trophy-table-rows">
+      {{#each leaderboard}}
+        <a class="trophy-table-row" href="/players/{{this.playerId}}?season=all" data-rank="{{add @index 1}}">
+          <span class="trophy-table-rank">{{add @index 1}}</span>
+          <span class="trophy-table-name">{{this.name}}</span>
+          <span class="trophy-table-count">{{this.titles}}</span>
+        </a>
+      {{else}}
+        <div class="trophy-table-empty">Sin datos todavía</div>
+      {{/each}}
+    </div>
+  </div>
+</div>

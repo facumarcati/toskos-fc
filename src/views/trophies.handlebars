@@ -1,150 +1,86 @@
-<div class="page-header">
-  <span class="eyebrow">Trofeos</span>
+<link rel="stylesheet" href="/css/trophies.css" />
+
+<svg class="awards-symbols" aria-hidden="true" width="0" height="0" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="awards-medal" viewBox="0 0 48 60">
+    <path d="m12 2 12 18L19 30 5 5Zm24 0L24 20l5 10L43 5Z" fill="currentColor" opacity=".38" />
+    <circle cx="24" cy="35" r="19" fill="currentColor" opacity=".12" />
+    <circle cx="24" cy="35" r="17" fill="none" stroke="currentColor" stroke-width="1.5" />
+    <circle cx="24" cy="35" r="13" fill="none" stroke="currentColor" stroke-opacity=".3" />
+    <path d="m24 26 2.6 5.4 6 .8-4.3 4.2 1 5.9-5.3-2.8-5.3 2.8 1-5.9-4.3-4.2 6-.8Z" fill="currentColor" />
+  </symbol>
+</svg>
+
+<div class="page-header awards-header">
+  <span class="eyebrow">Toskos FC · Palmarés</span>
   <h1>Podio por temporada</h1>
 </div>
 
-<div class="trophy-sidebar-fixed">
-  <div class="season-countdown" data-end="{{seasonEndISO}}">
-    <span class="season-countdown-label">Cierre de temporada {{currentYear}}</span>
-    <div class="season-countdown-timer">
-      <div class="countdown-unit">
-        <span class="countdown-value" data-unit="days">00</span>
-        <span class="countdown-unit-label">Días</span>
-      </div>
-      <span class="countdown-sep">:</span>
-      <div class="countdown-unit">
-        <span class="countdown-value" data-unit="hours">00</span>
-        <span class="countdown-unit-label">Hs</span>
-      </div>
-      <span class="countdown-sep">:</span>
-      <div class="countdown-unit">
-        <span class="countdown-value" data-unit="minutes">00</span>
-        <span class="countdown-unit-label">Min</span>
-      </div>
-      <span class="countdown-sep">:</span>
-      <div class="countdown-unit">
-        <span class="countdown-value" data-unit="seconds">00</span>
-        <span class="countdown-unit-label">Seg</span>
-      </div>
-    </div>
-  </div>
-
-  <aside class="trophy-leaderboard-sidebar">
-    <div>
-      <p class="trophy-leaderboard-title">Ranking de títulos</p>
-      <label class="filter-checkbox trophy-toggle-checkbox">
-        <input type="checkbox" class="js-trophy-toggle" {{#if includeCurrentSeason}}checked{{/if}} />
-        Incluir {{currentYear}}
-      </label>
-    </div>
-    <div class="trophy-table">
-      <div class="trophy-table-header">
-        <span>#</span>
-        <span>Jugador</span>
-        <span>Títulos</span>
-      </div>
-      <div class="js-trophy-table-rows">
-        {{#each leaderboard}}
-        <div class="trophy-table-row" data-rank="{{add @index 1}}">
-          <span class="trophy-table-rank">{{add @index 1}}</span>
-          <span class="trophy-table-name">{{this.name}}</span>
-          <span class="trophy-table-count">{{this.titles}}</span>
-        </div>
-        {{else}}
-        <div class="trophy-table-empty">Sin datos todavía</div>
-        {{/each}}
-      </div>
-    </div>
-  </aside>
-</div>
-
-<div class="season-countdown trophy-countdown-mobile" data-end="{{seasonEndISO}}">
-  <span class="season-countdown-label">Cierre de temporada {{currentYear}}</span>
-  <div class="season-countdown-timer">
-    <div class="countdown-unit">
-      <span class="countdown-value" data-unit="days">00</span>
-      <span class="countdown-unit-label">Días</span>
-    </div>
-    <span class="countdown-sep">:</span>
-    <div class="countdown-unit">
-      <span class="countdown-value" data-unit="hours">00</span>
-      <span class="countdown-unit-label">Hs</span>
-    </div>
-    <span class="countdown-sep">:</span>
-    <div class="countdown-unit">
-      <span class="countdown-value" data-unit="minutes">00</span>
-      <span class="countdown-unit-label">Min</span>
-    </div>
-    <span class="countdown-sep">:</span>
-    <div class="countdown-unit">
-      <span class="countdown-value" data-unit="seconds">00</span>
-      <span class="countdown-unit-label">Seg</span>
-    </div>
-  </div>
-</div>
-
-<div class="trophy-leaderboard-inline">
-  <p class="trophy-leaderboard-title">Ranking de títulos</p>
-  <label class="filter-checkbox trophy-toggle-checkbox">
-    <input type="checkbox" class="js-trophy-toggle" {{#if includeCurrentSeason}}checked{{/if}} />
-    Incluir {{currentYear}}
-  </label>
-  <div class="trophy-table">
-    <div class="trophy-table-header">
-      <span>#</span>
-      <span>Jugador</span>
-      <span>Títulos</span>
-    </div>
-    <div class="js-trophy-table-rows">
-      {{#each leaderboard}}
-      <div class="trophy-table-row" data-rank="{{add @index 1}}">
-        <span class="trophy-table-rank">{{add @index 1}}</span>
-        <span class="trophy-table-name">{{this.name}}</span>
-        <span class="trophy-table-count">{{this.titles}}</span>
-      </div>
-      {{else}}
-      <div class="trophy-table-empty">Sin datos todavía</div>
-      {{/each}}
-    </div>
-  </div>
-</div>
-
-{{#each seasons}}
-<div class="trophy-season">
-  <div class="trophy-season-header">
-    <h2>Temporada {{this.season}}</h2>
-    {{#if this.isLive}}
-      <span class="badge-live">En vivo</span>
-    {{/if}}
-  </div>
-
-  <div class="trophy-categories-grid">
-    {{#each this.categories}}
-    <div class="trophy-category-panel">
-      <p class="trophy-category-label">{{this.label}}</p>
-
-      <div class="trophy-podium-grid">
-        {{#if this.podium.length}}
-          {{#each this.podium}}
-          <div class="trophy-podium-card" data-position="{{this.position}}">
-            <span class="trophy-podium-medal">
-              {{#if (eq this.position 1)}}🥇
-              {{else if (eq this.position 2)}}🥈
-              {{else}}🥉
-              {{/if}}
-            </span>
-            <span class="trophy-podium-name">{{this.name}}</span>
-            <span class="trophy-podium-value">{{this.value}} {{../unit}}</span>
-          </div>
-          {{/each}}
-        {{else}}
-          <div class="trophy-podium-empty">Sin datos todavía</div>
-        {{/if}}
-      </div>
-    </div>
+<div class="awards-season-toolbar">
+  <div class="awards-tabs" role="tablist" aria-label="Temporada de los podios">
+    {{#each seasons}}
+      <button type="button" role="tab" id="awards-tab-{{this.season}}"
+        aria-controls="awards-season-{{this.season}}" aria-selected="{{#if this.isSelected}}true{{else}}false{{/if}}"
+        tabindex="{{#if this.isSelected}}0{{else}}-1{{/if}}" data-season="{{this.season}}">
+        {{this.season}}{{#if this.isLive}}<span class="awards-tab-live" aria-label="En curso"></span>{{/if}}
+      </button>
     {{/each}}
   </div>
+  <div class="season-countdown awards-countdown" data-end="{{seasonEndISO}}" data-season="{{currentYear}}" {{#unless (eq selectedSeason currentYear)}}hidden{{/unless}}>
+    <span class="season-countdown-label">Cierre de temporada</span>
+    <div class="season-countdown-timer">
+      <span><strong data-unit="days">00</strong>días</span>
+      <span><strong data-unit="hours">00</strong>hs</span>
+      <span><strong data-unit="minutes">00</strong>min</span>
+      <span><strong data-unit="seconds">00</strong>seg</span>
+    </div>
+  </div>
 </div>
+
+<aside class="trophy-sidebar-fixed awards-sidebar" aria-label="Ranking histórico de títulos">
+  {{> trophyLeaderboard}}
+</aside>
+
+{{#each seasons}}
+  <section class="awards-season" id="awards-season-{{this.season}}" role="tabpanel"
+    aria-labelledby="awards-tab-{{this.season}}" tabindex="0" {{#unless this.isSelected}}hidden{{/unless}}>
+    <div class="awards-season-heading">
+      <h2>Temporada {{this.season}}</h2>
+      <span class="awards-status {{#if this.isLive}}awards-status--live{{/if}}">{{#if this.isLive}}Podio provisional{{else}}Resultados finales{{/if}}</span>
+    </div>
+    <div class="awards-categories">
+      {{#each this.categories}}
+        <article class="awards-category" aria-label="{{this.label}} · Temporada {{../season}}">
+          <header class="awards-category-heading"><h3>{{this.label}}</h3><span>Top 3</span></header>
+          {{#if this.podium.length}}
+            <div class="awards-podium">
+              {{#each this.steps}}
+                <div class="awards-step" data-position="{{this.position}}" role="group" aria-label="{{this.position}}.º puesto{{#if this.isShared}}, compartido{{/if}}">
+                  <div class="awards-winners">
+                    {{#if this.players.length}}
+                      <svg class="awards-medal" aria-hidden="true" width="40" height="50"><use href="#awards-medal" /></svg>
+                      {{#if this.isShared}}<span class="awards-shared">Puesto compartido</span>{{/if}}
+                      {{#each this.players}}
+                        <a href="{{this.profileUrl}}" class="awards-player">
+                          <span class="awards-player-name">{{this.name}}</span>
+                          <span class="awards-player-mark"><strong>{{this.value}}</strong><span>{{../unit}}</span></span>
+                        </a>
+                      {{/each}}
+                    {{else}}<span class="awards-unclaimed">Sin registro</span>{{/if}}
+                  </div>
+                  <div class="awards-pedestal" aria-hidden="true"></div>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="awards-empty"><svg aria-hidden="true" width="44" height="55"><use href="#awards-medal" /></svg><p>El podio todavía está por escribirse.</p></div>
+          {{/if}}
+        </article>
+      {{/each}}
+    </div>
+  </section>
 {{/each}}
 
+<aside class="trophy-leaderboard-inline awards-ranking-inline" aria-label="Ranking histórico de títulos">
+  {{> trophyLeaderboard}}
+</aside>
 <script src="/js/trophies.js"></script>

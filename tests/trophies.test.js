@@ -74,9 +74,24 @@ test("trophies page reuses season podiums for leaderboard with and without curre
       assert.equal(calls.length, expectedYears.size, "Load each season only once");
       assert.deepEqual(new Set(calls), expectedYears);
       assert.equal(rendered.seasons.length, 3);
+      assert.equal(rendered.seasons.filter((season) => season.isSelected).length, 1);
+      assert.equal(rendered.selectedSeason, 2026);
+      const steps = rendered.seasons[0].categories[0].steps;
+      assert.deepEqual(steps.map((step) => step.position), [2, 1, 3]);
+      assert.equal(steps[1].isShared, true);
+      assert.deepEqual(steps[1].players.map((player) => player.playerId), ["a", "b"]);
+      assert.equal(steps[1].players[0].profileUrl, "/players/a?season=2026");
       assert.equal(rendered.includeCurrentSeason, includeCurrent === "1");
       assert.equal(rendered.leaderboard.length, 4);
       assert.ok(rendered.leaderboard.every((player) => player.titles === 4 * leaderboardYears.length));
+    }
+    for (const [requested, expected] of [["2025", 2025], ["invalid", 2026]]) {
+      await handler({ query: { season: requested } }, {
+        render(view, data) {
+          assert.equal(data.selectedSeason, expected);
+          assert.equal(data.seasons.find((season) => season.isSelected).season, expected);
+        },
+      });
     }
     calls.length = 0;
     await getTrophyLeaderboard({ includeCurrentSeason: true });
