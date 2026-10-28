@@ -1,0 +1,49 @@
+.matches-overview { display: grid; grid-template-columns: 128px minmax(170px, 1fr); align-items: center; gap: 12px 20px; width: 340px; max-width: 100%; }
+.matches-ring { position: relative; width: 128px; height: 128px; }
+.matches-ring svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.matches-ring-track { stroke: var(--border-strong); }
+.matches-ring-segment { transform: rotate(-90deg); transform-origin: 60px 60px; stroke-dasharray: var(--segment) 100; cursor: pointer; transition: opacity .15s; animation: matches-ring-enter .6s ease-out both; }
+.matches-overview.has-detail .matches-ring-segment:not(.is-highlighted) { opacity: .3; }
+.matches-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; gap: 3px; }
+.matches-ring-center strong { font-family: var(--font-display); font-size: 30px; line-height: 1; padding-top: 5px; }
+.matches-ring-center span { color: var(--text-secondary); font-size: 9px; }
+.matches-overview-label { color: var(--text-secondary); font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+.matches-balance-row { display: grid; grid-template-columns: minmax(0,1fr) 28px 40px; align-items: center; gap: 6px; width: 100%; min-height: 30px; padding: 3px 5px; border: 0; border-radius: 5px; background: transparent; color: var(--text-primary); font: inherit; font-size: 11px; text-align: left; cursor: pointer; transition: background-color .15s; }
+.matches-balance-row:hover, .matches-balance-row.is-highlighted { background: var(--bg-raised); }
+.matches-balance-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.matches-balance-name { display: flex; align-items: center; gap: 8px; }
+.matches-balance-name i { width: 7px; height: 7px; flex-shrink: 0; border-radius: 50%; background: var(--result-color); }
+.matches-balance-row strong { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.matches-balance-percent { text-align: right; font-size: 10px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.matches-goals-summary { grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid var(--border); }
+.matches-goals-labels { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 10px; color: var(--text-secondary); }
+.matches-goals-labels strong { color: var(--text-primary); font-weight: 600; }
+.matches-goals-total { font-size: 9px; }
+.matches-goals-bar { display: flex; gap: 3px; height: 4px; margin-top: 8px; border-radius: 4px; overflow: hidden; background: var(--border-strong); }
+.matches-goals-bar span:first-child { background: #f2f3f5; }
+.matches-goals-bar span:last-child { background: #828b97; }
+@keyframes matches-ring-enter { from { stroke-dasharray: 0 100; } }
+@media (max-width: 640px) {
+  .matches-overview { width: 100%; grid-template-columns: 112px minmax(0,1fr); gap: 10px 16px; }
+  .matches-ring { width: 112px; height: 112px; }
+  .matches-balance-row { min-height: 34px; }
+}
+@media (prefers-reduced-motion: reduce) { .matches-ring-segment { animation: none; transition: none; } }
+.matches-filter-feedback { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 12px; color: var(--text-secondary); }
+.matches-filter-feedback[hidden] { display: none; }
+.matches-filter-feedback button { border: 0; background: transparent; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
+#matchesContent[aria-busy="true"] .match-card { opacity: .55; }
+.matches-month-heading { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; }
+.matches-month-heading h2 { flex-shrink: 0; margin: 0; font-family: var(--font-body); font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-primary-soft); }
+.matches-month-heading span { flex-shrink: 0; font-size: 11px; color: var(--text-secondary); }
+.matches-month-heading::after { content: ""; flex: 1; height: 1px; background: var(--border-strong); }
+.matches-header + .matches-month-heading { margin-top: 8px; }
+@media (max-width: 480px) {
+  .matches-month-heading { gap: 9px; margin-top: 26px; }
+  .matches-month-heading h2 { font-size: 11px; }
+  .matches-month-heading span { font-size: 10px; }
+}
+.matches-header { gap: 16px; }
+@media (min-width: 641px) and (max-width: 1100px) {
+  .matches-header { flex-wrap: wrap; }
+}

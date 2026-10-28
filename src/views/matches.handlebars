@@ -1,3 +1,7 @@
+<link rel="stylesheet" href="/css/matchesOverview.css" />
+<link rel="stylesheet" href="/css/matchCards.css" />
+<div class="matches-filter-feedback" id="matchesFilterFeedback" hidden><span role="status" id="matchesFilterStatus"></span><button type="button" id="matchesFilterRetry" hidden>Reintentar</button></div>
+<div id="matchesContent">
 <div class="page-header">
   <div class="page-header-top">
     <div>
@@ -15,18 +19,22 @@
       </p>
     </div>
     {{#if matchCount}}
-    <div class="match-donut-wrapper">
-      <canvas id="matchDonut" width="110" height="110"></canvas>
-      <div class="donut-legend">
-        <span class="donut-legend-item"><span class="dot dot-white"></span>Blanco {{winsA}}</span>
-        <span class="donut-legend-item"><span class="dot dot-draw"></span>Empate {{draws}}</span>
-        <span class="donut-legend-item"><span class="dot dot-black"></span>Negro {{winsB}}</span>
-        <div class="donut-goals">
-          <span class="donut-goals-item"><span class="dot dot-white"></span>{{goalsA}} goles</span>
-          <span class="donut-goals-item"><span class="dot dot-black"></span>{{goalsB}} goles</span>
-        </div>
+    <section class="matches-overview" aria-label="Balance de partidos, incluidos amistosos" data-wins-a="{{winsA}}" data-draws="{{draws}}" data-wins-b="{{winsB}}" data-goals-a="{{goalsA}}" data-goals-b="{{goalsB}}">
+      <div class="matches-ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="matches-ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="10"/><g class="matches-ring-segments"></g></svg>
+        <div class="matches-ring-center" aria-live="polite" aria-atomic="true"><strong>{{add (add winsA draws) winsB}}</strong><span>Partidos</span></div>
       </div>
-    </div>
+      <div class="matches-balance">
+        <p class="matches-overview-label">Balance de resultados</p>
+        <button type="button" class="matches-balance-row" data-result="0"><span class="matches-balance-name"><i style="--result-color: #f2f3f5" aria-hidden="true"></i>Blanco</span><strong>{{winsA}}</strong><span class="matches-balance-percent"></span></button>
+        <button type="button" class="matches-balance-row" data-result="1"><span class="matches-balance-name"><i style="--result-color: #f5c518" aria-hidden="true"></i>Empates</span><strong>{{draws}}</strong><span class="matches-balance-percent"></span></button>
+        <button type="button" class="matches-balance-row" data-result="2"><span class="matches-balance-name"><i style="--result-color: #828b97" aria-hidden="true"></i>Negro</span><strong>{{winsB}}</strong><span class="matches-balance-percent"></span></button>
+      </div>
+      <div class="matches-goals-summary">
+        <div class="matches-goals-labels"><span>Blanco <strong>{{goalsA}}</strong></span><span class="matches-goals-total">{{add goalsA goalsB}} goles</span><span><strong>{{goalsB}}</strong> Negro</span></div>
+        <div class="matches-goals-bar" role="img" aria-label="Goles de Blanco: {{goalsA}}. Goles de Negro: {{goalsB}}."><span></span><span></span></div>
+      </div>
+    </section>
     {{/if}}
   </div>
 </div>
@@ -36,7 +44,7 @@
     <form method="GET" action="/matches" class="season-filter">
       <input type="hidden" name="order" value="{{selectedOrder}}" />
       <input type="hidden" name="venue" value="{{selectedVenue}}" />
-      <select name="season" onchange="this.form.submit()">
+      <select name="season" data-matches-filter aria-label="Temporada">
         <option value="all" {{#if (eq selectedSeason "all")}}selected{{/if}}>Todas las temporadas</option>
         <option value="2026" {{#if (eq selectedSeason "2026")}}selected{{/if}}>2026</option>
         <option value="2025" {{#if (eq selectedSeason "2025")}}selected{{/if}}>2025</option>
@@ -45,10 +53,23 @@
       </select>
     </form>
 
+    <form method="GET" action="/matches" class="season-filter matches-month-filter">
+      <input type="hidden" name="season" value="{{selectedSeason}}" />
+      <input type="hidden" name="order" value="{{selectedOrder}}" />
+      <input type="hidden" name="venue" value="{{selectedVenue}}" />
+      <select name="month" data-matches-filter aria-label="Mes">
+        <option value="">Todos los meses</option>
+        {{#each months}}
+          <option value="{{this.value}}" {{#if (eq this.value ../selectedMonth)}}selected{{/if}}>{{this.label}}</option>
+        {{/each}}
+      </select>
+    </form>
+
     <form method="GET" action="/matches" class="season-filter">
       <input type="hidden" name="season" value="{{selectedSeason}}" />
       <input type="hidden" name="order" value="{{selectedOrder}}" />
-      <select name="venue" onchange="this.form.submit()">
+      <input type="hidden" name="month" value="{{selectedMonth}}" />
+      <select name="venue" data-matches-filter aria-label="Cancha">
         <option value="">Todas las canchas</option>
         {{#each venues}}
           <option value="{{this}}" {{#if (eq this ../selectedVenue)}}selected{{/if}}>{{this}}</option>
@@ -60,13 +81,14 @@
       <input type="hidden" name="season" value="{{selectedSeason}}" />
       <input type="hidden" name="venue" value="{{selectedVenue}}" />
       <input type="hidden" name="order" value="{{#if (eq selectedOrder "asc")}}desc{{else}}asc{{/if}}" />
+      <input type="hidden" name="month" value="{{selectedMonth}}" />
       <button type="submit" class="btn-order" title='{{#if (eq selectedOrder "asc")}}Mostrar los partidos más recientes primero{{else}}Mostrar los partidos más antiguos primero{{/if}}' aria-label='{{#if (eq selectedOrder "asc")}}Mostrar los partidos más recientes primero{{else}}Mostrar los partidos más antiguos primero{{/if}}'>
         {{#if (eq selectedOrder "asc")}}↑{{else}}↓{{/if}}
       </button>
     </form>
 
-    {{#if selectedVenue}}
-    <a href="/matches?season={{selectedSeason}}&order={{selectedOrder}}" class="btn-clear-filters">
+    {{#if (or selectedVenue selectedMonth)}}
+    <a href="/matches?season={{selectedSeason}}&order={{selectedOrder}}" class="btn-clear-filters" data-matches-filter-link>
       ✕ Limpiar
     </a>
     {{/if}}
@@ -78,201 +100,13 @@
 </div>
 
 {{#each matches}}
-<div class="match-card" id="match-{{this._id}}">
-  <div class="match-scoreboard
-  {{#if (gt this.teamA this.teamB)}}scoreboard-win-a
-  {{else if (gt this.teamB this.teamA)}}scoreboard-win-b
-  {{else}}scoreboard-draw
-  {{/if}}">
-    <div class="match-team">
-      <span class="match-team-label">Equipo</span>
-      <span class="match-team-name">Blanco</span>
-    </div>
-
-    <div class="match-score">
-      {{#if (eq this.matchType "friendly")}}
-        <span class="badge-friendly">Amistoso</span>
-      {{/if}}
-      <div class="match-date">{{formatDate this.date}} · {{this.venue}}</div>
-      <span class="match-score-number">{{this.teamA}} — {{this.teamB}}</span>
-    </div>
-
-    <div class="match-team match-team-right">
-      <span class="match-team-label">Equipo</span>
-      <span class="match-team-name">Negro</span>
-    </div>
-  </div>
-
-  <div class="match-players">
-    <div class="match-team-col">
-      <div class="player-list-header">
-        <span class="player-list-header-name">Jugador</span>
-        <div class="player-list-header-stats">
-          <span>G</span>
-          <span>A</span>
-        </div>
-      </div>
-      <ul class="player-list">
-        {{#each this.players}}
-          {{#if (eq this.team "A")}}
-          <li class="player-item 
-                {{#if this.player.guest}}player-guest{{/if}}
-                {{#if (includes ../mvpPlayers this.player._id)}}player-mvp{{/if}}"
-            {{#if @root.user}}
-              onclick="voteMVP('{{../_id}}','{{this.player._id}}')"
-            {{else}}
-              title="Logueate para votar"
-              style="cursor: default;"
-            {{/if}}>
-            <span class="player-item-name {{#if this.ownGoalScorer}}player-owngoal{{/if}}">
-              {{#if this.ownGoalScorer}}
-                {{this.ownGoalScorer.name}} <span class="player-owngoal-tag">(e/c)</span>
-              {{else}}
-                {{this.player.name}}
-              {{/if}}
-              {{#if (gt (getVoteCount ../voteCountByPlayer this.player._id) 0)}}
-                <span class="mvp-badge {{#if (includes ../mvpPlayers this.player._id)}}mvp-badge-leader{{/if}}">
-                  {{#if (includes ../mvpPlayers this.player._id)}}
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                  {{/if}}
-                  {{getVoteCount ../voteCountByPlayer this.player._id}}
-                </span>
-              {{/if}}
-            </span>
-            <div class="player-item-stats">
-              <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
-                {{this.goals}}
-              </span>
-              <span class="player-stat {{#if (gt this.assists 0)}}stat-active{{/if}}">
-                {{this.assists}}
-              </span>
-            </div>
-          </li>
-          {{/if}}
-        {{/each}}
-      </ul>
-    </div>
-
-    <div class="match-team-col">
-      <div class="player-list-header">
-        <span class="player-list-header-name">Jugador</span>
-        <div class="player-list-header-stats">
-          <span>G</span>
-          <span>A</span>
-        </div>
-      </div>
-      <ul class="player-list">
-        {{#each this.players}}
-          {{#if (eq this.team "B")}}
-          <li class="player-item 
-                {{#if this.player.guest}}player-guest{{/if}}
-                {{#if (includes ../mvpPlayers this.player._id)}}player-mvp{{/if}}"
-          {{#if @root.user}}
-            onclick="voteMVP('{{../_id}}','{{this.player._id}}')"
-          {{else}}
-            title="Logueate para votar"
-            style="cursor: default;"
-          {{/if}}>
-          <span class="player-item-name {{#if this.ownGoalScorer}}player-owngoal{{/if}}">
-            {{#if this.ownGoalScorer}}
-              {{this.ownGoalScorer.name}} <span class="player-owngoal-tag">(e/c)</span>
-            {{else}}
-              {{this.player.name}}
-            {{/if}}
-            {{#if (gt (getVoteCount ../voteCountByPlayer this.player._id) 0)}}
-              <span class="mvp-badge {{#if (includes ../mvpPlayers this.player._id)}}mvp-badge-leader{{/if}}">
-                {{#if (includes ../mvpPlayers this.player._id)}}
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                {{/if}}
-                {{getVoteCount ../voteCountByPlayer this.player._id}}
-              </span>
-            {{/if}}
-          </span>
-          <div class="player-item-stats">
-            <span class="player-stat {{#if (gt this.goals 0)}}stat-active{{/if}}">
-              {{this.goals}}
-            </span>
-            <span class="player-stat {{#if (gt this.assists 0)}}stat-active{{/if}}">
-              {{this.assists}}
-            </span>
-          </div>
-          </li>
-          {{/if}}
-        {{/each}}
-      </ul>
-    </div>
-  </div>
-
-  <div class="match-card-footer">
-    <div class="footer-left">
-      {{#if this.youtubeUrl}}
-      <a href="{{this.youtubeUrl}}" target="_blank" class="btn-youtube btn-youtube-full" title="Ver partido completo">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#ff0000" xmlns="http://www.w3.org/2000/svg">
-          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-        </svg>
-      </a>
-      {{/if}}
-      {{#if this.youtubeHlUrl}}
-      <a href="{{this.youtubeHlUrl}}" target="_blank" class="btn-youtube btn-youtube-hl" title="Ver highlight">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
-          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-        </svg>
-      </a>
-      {{/if}}
-      {{#if @root.user}}
-        <span class="match-user-vote
-          {{#if this.userVotePlayerName}}
-            match-user-vote-active
-          {{/if}}
-        ">
-          {{#if this.userVotePlayerName}}
-            ⭐ {{this.userVotePlayerName}}
-          {{else}}
-            Sin voto MVP
-          {{/if}}
-        </span>
-      {{/if}}
-    </div>
-
-    <div class="footer-right">
-      <button 
-        type="button" 
-        class="btn-match-action btn-copy"
-        onclick="copyMatch('{{this._id}}', event)"
-        title="Copiar imagen">
-        <svg viewBox="0 0 24 24" width="16" height="16">
-          <path d="M16 1H4C2.9 1 2 1.9 2 3v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-        </svg>
-      </button>
-      <a href="/matches/{{this._id}}" class="btn-match-action" title="Ver detalle">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="white">
-          <path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
-        </svg>
-      </a>
-      {{#if (and @root.user (eq @root.user.role "admin"))}}
-        <a href="/matches/{{this._id}}/edit?season={{../selectedSeason}}" 
-          class="btn-match-action btn-edit" 
-          title="Editar">
-          <svg viewBox="0 0 24 24" width="16" height="16">
-            <path d="M3 17.25V21h3.75L19.81 7.94l-3.75-3.75L3 17.25zm2.92 2.33H5v-.92l9.06-9.06.92.92L5.92 19.58zM20.71 6.04a1 1 0 0 0 0-1.41l-1.34-1.34a1 1 0 0 0-1.41 0l-1.13 1.13 2.75 2.75 1.13-1.13z"/>
-          </svg>
-        </a>
-        <button type="button" 
-                class="btn-match-action btn-delete" 
-                onclick="openDeleteModal('/matches/{{this._id}}/delete')" 
-                title="Eliminar">
-          <svg viewBox="0 0 448 512" width="16" height="16">
-            <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
-          </svg> 
-        </button>
-      {{/if}}
-    </div>
-  </div>
+{{#if this.monthHeading}}
+<div class="matches-month-heading">
+  <h2>{{this.monthHeading.label}}</h2>
+  <span>{{this.monthHeading.count}} {{#if (eq this.monthHeading.count 1)}}partido{{else}}partidos{{/if}}</span>
 </div>
+{{/if}}
+{{> matchCard this selectedSeason=../selectedSeason}}
 {{else}}
 <div class="list-empty-state" style="text-align:center; padding:80px 20px">
   <p>No hay partidos todavía</p>
@@ -280,25 +114,12 @@
 </div>
 {{/each}}
 
+</div>
 <script src="/js/auth.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script>
-  const donutData = { winsA: {{winsA}}, winsB: {{winsB}}, draws: {{draws}} };
-</script>
-<script>
-async function voteMVP(matchId, playerId) {
-  try {
-    await fetch(`/matches/${matchId}/vote-mvp`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ playerId })
-    });
-    location.reload();
-  } catch(err) {
-    console.error(err);
-  }
-}
-</script>
+<script src="/js/matchesOverview.js"></script>
+<script src="/js/matchesFilters.js"></script>
+<script src="/js/matchMvp.js"></script>
 <script>
 async function copyMatch(matchId) {
   const element = document.getElementById(`match-${matchId}`);

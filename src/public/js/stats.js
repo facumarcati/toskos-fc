@@ -1,64 +1,93 @@
-async function fetchStats() {
-  const season =
-    document.querySelector('select[name="season"]')?.value || "2026";
+(() => {
+  const table = document.getElementById("stats-table");
+  if (!table) return;
+  const season = document.querySelector('select[name="season"]');
+  const guests = document.getElementById("toggleGuests");
+  const sort = document.getElementById("selectedSort");
+  const direction = document.getElementById("selectedOrderDir");
+  const label = document.getElementById("statsSeasonLabel");
+  const feedback = document.getElementById("statsFeedback");
+  const status = document.getElementById("statsStatus");
+  const retry = document.getElementById("statsRetry");
+  let request;
+  let animation;
+  let retryRequest;
 
-  const sortBy = document.getElementById("selectedSort")?.value || "goals";
-
-  const orderDir = document.getElementById("selectedOrderDir")?.value || "desc";
-
-  const guests = document.getElementById("toggleGuests")?.checked ? "1" : "";
-
-  const params = new URLSearchParams({
-    season,
-    sortBy,
-    orderDir,
-  });
-
-  if (guests) {
-    params.set("guests", "1");
+  function message(text, failed = false) {
+    feedback.hidden = !text;
+    status.textContent = text;
+    retry.hidden = !failed;
   }
 
-  history.pushState({}, "", `/stats?${params}`);
-
-  const res = await fetch(`/stats?${params}`, {
-    headers: {
-      "X-Requested-With": "XMLHttpRequest",
-    },
-  });
-
-  const html = await res.text();
-  const doc = new DOMParser().parseFromString(html, "text/html");
-
-  document.querySelector("#stats-table").innerHTML =
-    doc.querySelector("#stats-table").innerHTML;
-
-  attachSortEvents();
-}
-
-function attachSortEvents() {
-  document.querySelectorAll(".sortable-header").forEach((header) => {
-    header.addEventListener("click", () => {
-      const selectedSort = document.getElementById("selectedSort");
-      const selectedOrderDir = document.getElementById("selectedOrderDir");
-      const clickedSort = header.dataset.sort;
-
-      if (selectedSort.value === clickedSort) {
-        selectedOrderDir.value =
-          selectedOrderDir.value === "desc" ? "asc" : "desc";
-      } else {
-        selectedSort.value = clickedSort;
-        selectedOrderDir.value = "desc";
+  async function load(url, pushHistory = true) {
+    request?.abort();
+    animation?.cancel();
+    const controller = new AbortController();
+    request = controller;
+    retryRequest = { url, pushHistory };
+    table.setAttribute("aria-busy", "true");
+    message("Actualizando estadísticas…");
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        cache: "no-store",
+      });
+      if (!response.ok) throw new Error("Stats request failed");
+      const page = new DOMParser().parseFromString(await response.text(), "text/html");
+      if (request !== controller) return;
+      const nextTable = page.getElementById("stats-table");
+      const nextLabel = page.getElementById("statsSeasonLabel");
+      if (!nextTable || !nextLabel) throw new Error("Stats content missing");
+      table.replaceChildren(...nextTable.childNodes);
+      label.textContent = nextLabel.textContent;
+      season.value = page.querySelector('select[name="season"]').value;
+      guests.checked = page.getElementById("toggleGuests").checked;
+      sort.value = page.getElementById("selectedSort").value;
+      direction.value = page.getElementById("selectedOrderDir").value;
+      if (pushHistory) window.history.pushState({ ...window.history.state, statsFilters: true }, "", url);
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        animation = table.animate([
+          { opacity: .35, transform: "translateY(5px)" },
+          { opacity: 1, transform: "translateY(0)" },
+        ], { duration: 200, easing: "ease-out" });
       }
+      message("");
+    } catch {
+      if (request === controller) message("No se pudieron actualizar las estadísticas. Intentá de nuevo.", true);
+    } finally {
+      clearTimeout(timeout);
+      if (request === controller) {
+        request = null;
+        table.removeAttribute("aria-busy");
+      }
+    }
+  }
 
-      fetchStats();
-    });
+  function fetchStats() {
+    const url = new URL("/stats", window.location.href);
+    url.search = new URLSearchParams({ season: season.value, sortBy: sort.value, orderDir: direction.value }).toString();
+    if (guests.checked) url.searchParams.set("guests", "1");
+    load(url);
+  }
+
+  season.addEventListener("change", fetchStats);
+  guests.addEventListener("change", fetchStats);
+  document.querySelectorAll("[data-stats-filter-form]").forEach((form) => {
+    form.addEventListener("submit", (event) => { event.preventDefault(); fetchStats(); });
   });
-}
-
-document
-  .querySelector('select[name="season"]')
-  ?.addEventListener("change", fetchStats);
-
-document.getElementById("toggleGuests")?.addEventListener("change", fetchStats);
-
-attachSortEvents();
+  // Delegation keeps sorting active after replacing the table.
+  table.addEventListener("click", (event) => {
+    const header = event.target.closest(".sortable-header");
+    if (!header || !table.contains(header)) return;
+    direction.value = sort.value === header.dataset.sort && direction.value === "desc" ? "asc" : "desc";
+    sort.value = header.dataset.sort;
+    fetchStats();
+  });
+  retry.addEventListener("click", () => load(retryRequest.url, retryRequest.pushHistory));
+  window.history.replaceState({ ...window.history.state, statsFilters: true }, "");
+  window.addEventListener("popstate", () => {
+    if (window.location.pathname === "/stats") load(new URL(window.location.href), false);
+  });
+})();

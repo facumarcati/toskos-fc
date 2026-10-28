@@ -17,3 +17,12 @@ export function getMatchMVP(match) {
     .filter(([_, votes]) => votes === maxVotes)
     .map(([playerId]) => playerId);
 }
+
+export function getMatchVoteSummary(match) {
+  const voteCountByPlayer = {};
+  for (const vote of match.mvpVotes || []) {
+    const id = vote.voted.toString();
+    voteCountByPlayer[id] = (voteCountByPlayer[id] || 0) + 1;
+  }
+  return { voteCountByPlayer, mvpPlayers: getMatchMVP(match) };
+}

@@ -1,0 +1,241 @@
+/* Shared by the list and match detail; profile and H2H cards keep their layout. */
+.matches-list-card {
+  border-color: var(--border-strong);
+  box-shadow: none;
+}
+.matches-list-card:hover {
+  box-shadow: none;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.matches-list-card .match-scoreboard {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  padding: 22px 28px;
+  gap: 16px;
+  background: var(--bg-surface);
+}
+.matches-list-card .match-score-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: 6px;
+}
+.matches-list-card .match-score-link:hover .match-score-number {
+  color: var(--accent);
+}
+.matches-list-card .match-score-number {
+  font-size: 38px;
+  line-height: 1.2;
+  padding-top: 4px;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.15s;
+}
+.match-score-divider {
+  display: inline-block;
+  margin-inline: 5px;
+  font-size: 0.65em;
+  color: var(--text-secondary);
+  vertical-align: 3px;
+}
+.matches-list-card .match-team-col {
+  min-width: 0;
+  padding: 16px 18px;
+}
+.matches-list-card .player-list-header {
+  padding: 0 8px 10px;
+  margin-bottom: 4px;
+}
+.matches-list-card .player-list-header-name {
+  font-weight: 600;
+  font-size: 10px;
+}
+.matches-list-card .player-list-header-stats {
+  gap: 8px;
+}
+.matches-list-card .player-list-header-stats span,
+.matches-list-card .player-stat {
+  width: 28px;
+  min-width: 28px;
+  text-align: center;
+}
+.matches-list-card .player-item {
+  padding: 7px 8px;
+  min-height: 37px;
+  gap: 10px;
+}
+.matches-list-card .player-item {
+  position: relative;
+  isolation: isolate;
+}
+.matches-list-card .player-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    rgba(245, 197, 24, 0.15),
+    rgba(245, 197, 24, 0.045) 65%,
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.matches-list-card .player-item.player-mvp {
+  box-shadow: none;
+}
+.matches-list-card .player-item.player-mvp::before {
+  opacity: 1;
+}
+.matches-list-card .player-item-name {
+  transition: color 0.25s ease;
+}
+.matches-list-card .player-item.player-mvp:hover {
+  background-color: rgba(245, 197, 24, 0.045);
+}
+.matches-list-card[data-voting="true"] .player-item {
+  cursor: progress;
+}
+.matches-list-card .player-item-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.matches-list-card .player-item-stats {
+  flex-shrink: 0;
+  gap: 8px;
+}
+.matches-list-card .mvp-badge {
+  gap: 3px;
+  padding-inline: 3px;
+  font-size: 11px;
+}
+.matches-list-card .mvp-badge svg {
+  width: 12px;
+  height: 12px;
+}
+.matches-list-card .match-card-footer {
+  padding: 12px 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.07);
+}
+.matches-list-card .footer-left {
+  flex: 1;
+  min-width: 0;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.matches-list-card .footer-right {
+  gap: 6px;
+}
+.matches-list-card .match-user-vote {
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  text-align: left;
+}
+.matches-list-card .match-user-vote svg {
+  flex-shrink: 0;
+}
+.matches-list-card .btn-match-action {
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+.matches-list-card .btn-match-action:hover {
+  border-color: var(--border-strong);
+}
+.matches-list-card .match-open {
+  width: auto;
+  padding-inline: 12px;
+  gap: 8px;
+  border-color: var(--border-strong);
+  color: var(--text-primary-soft);
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  order: 1;
+}
+.matches-list-card .match-open svg {
+  fill: none;
+}
+.matches-list-card :is(a, button):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (min-width: 601px) {
+  .matches-list-card .match-players {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .matches-list-card .match-team-col:first-child {
+    border-right: 1px solid var(--border);
+    border-bottom: 0;
+  }
+}
+@media (max-width: 600px) {
+  .matches-list-card .match-scoreboard {
+    padding: 20px 16px;
+    gap: 10px;
+  }
+  .matches-list-card .match-score-number {
+    font-size: 30px;
+  }
+  .match-score-divider {
+    margin-inline: 1px;
+  }
+  .matches-list-card .match-players {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .matches-list-card .match-team-col {
+    padding: 14px 16px;
+  }
+  .matches-list-card .match-card-footer {
+    padding: 10px 12px;
+  }
+  .matches-list-card .footer-left {
+    flex-basis: 100%;
+  }
+  .matches-list-card .footer-left:empty {
+    display: none;
+  }
+  .matches-list-card .footer-left:not(:has(> *)) {
+    display: none;
+  }
+  .matches-list-card .footer-right {
+    width: 100%;
+  }
+  .matches-list-card .match-open {
+    margin-left: auto;
+  }
+}
+@media (max-width: 380px) {
+  .matches-list-card .match-score-number {
+    font-size: 28px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .matches-list-card .match-score-number,
+  .matches-list-card .player-item::before,
+  .matches-list-card .player-item-name {
+    transition: none;
+  }
+}
+
+.match-card-date {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.matches-list-card .match-scoreboard {
+  row-gap: 12px;
+}
+.match-card-date .badge-friendly {
+  margin: 0 0 0 8px;
+}
+@media (max-width: 600px) {
+  .match-card-date {
+    font-size: 11px;
+  }
+}

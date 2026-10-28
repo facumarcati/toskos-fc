@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { io } from "../app.js";
-import { getMatchMVP } from "../services/mvp.service.js";
+import { getMatchMVP, getMatchVoteSummary } from "../services/mvp.service.js";
 import { invalidateClubSummary } from "../services/clubSummary.service.js";
+import { addMatchMonthHeadings } from "../services/matchMonths.js";
 import Match from "../models/match.model.js";
 import Player from "../models/player.model.js";
 
@@ -24,7 +25,7 @@ function isAdmin(req, res, next) {
 }
 
 router.get("/", async (req, res) => {
-  const { season = "2026", order = "desc", venue = "" } = req.query;
+  const { season = "2026", order = "desc", venue = "", month = "" } = req.query;
 
   const user = req.session.user || null;
 
@@ -42,13 +43,33 @@ router.get("/", async (req, res) => {
     };
   }
 
-  if (venue) {
-    filter.venue = new RegExp(venue, "i");
+  const monthRows = await Match.aggregate([
+    { $match: filter },
+    { $group: { _id: { $month: { date: "$date", timezone: "America/Argentina/Buenos_Aires" } } } },
+    { $sort: { _id: 1 } },
+  ]);
+  const months = monthRows.filter((row) => row._id >= 1 && row._id <= 12).map((row) => ({
+    value: String(row._id),
+    label: new Intl.DateTimeFormat("es-AR", { month: "long", timeZone: "UTC" }).format(new Date(Date.UTC(2026, row._id - 1, 15))),
+  }));
+  const selectedMonth = months.some((item) => item.value === month) ? month : "";
+  if (selectedMonth) {
+    if (validSeasons.includes(season)) {
+      filter.date = {
+        $gte: new Date(Date.UTC(Number(season), Number(selectedMonth) - 1, 1, 3)),
+        $lt: new Date(Date.UTC(Number(season), Number(selectedMonth), 1, 3)),
+      };
+    } else {
+      filter.$expr = { $eq: [{ $month: { date: "$date", timezone: "America/Argentina/Buenos_Aires" } }, Number(selectedMonth)] };
+    }
   }
 
-  const venues = await Match.distinct("venue").then((v) =>
+  const venues = await Match.distinct("venue", filter).then((v) =>
     v.filter(Boolean).sort(),
   );
+
+  const selectedVenue = venues.includes(venue) ? venue : "";
+  if (selectedVenue) filter.venue = selectedVenue;
 
   const matchesRaw = await Match.find(filter)
     .populate("players.player")
@@ -94,21 +115,21 @@ router.get("/", async (req, res) => {
     };
   });
 
-  const officialMatches = matches.filter((m) => m.matchType !== "friendly");
+  const winsA = matches.filter((m) => m.teamA > m.teamB).length;
+  const winsB = matches.filter((m) => m.teamB > m.teamA).length;
+  const draws = matches.filter((m) => m.teamA === m.teamB).length;
 
-  const winsA = officialMatches.filter((m) => m.teamA > m.teamB).length;
-  const winsB = officialMatches.filter((m) => m.teamB > m.teamA).length;
-  const draws = officialMatches.filter((m) => m.teamA === m.teamB).length;
-
-  const goalsA = officialMatches.reduce((acc, m) => acc + m.teamA, 0);
-  const goalsB = officialMatches.reduce((acc, m) => acc + m.teamB, 0);
+  const goalsA = matches.reduce((acc, m) => acc + m.teamA, 0);
+  const goalsB = matches.reduce((acc, m) => acc + m.teamB, 0);
 
   res.render("matches", {
-    matches,
+    matches: addMatchMonthHeadings(matches),
     selectedSeason: season || "all",
     matchCount: matches.length,
     selectedOrder: order,
-    selectedVenue: venue,
+    selectedVenue,
+    selectedMonth,
+    months,
     venues,
     winsA,
     winsB,
@@ -129,6 +150,7 @@ router.get("/new", isAdmin, async (req, res) => {
 router.get("/:id", async (req, res) => {
   const match = await Match.findById(req.params.id)
     .populate("players.player")
+    .populate("players.ownGoalScorer")
     .lean();
 
   if (!match) return res.status(404).send("Partido no encontrado");
@@ -175,12 +197,20 @@ router.get("/:id", async (req, res) => {
     };
   });
 
+  const userVote = req.session?.userId ? (match.mvpVotes || []).find(
+    (vote) => vote.voter?.toString() === req.session.userId.toString(),
+  ) : null;
+  const userVotePlayerName = userVote
+    ? match.players.find((entry) => entry.player?._id.toString() === userVote.voted.toString())?.player?.name || null
+    : null;
+
   res.render("matchDetail", {
     match: {
       ...match,
       isFriendly: match.matchType === "friendly",
       mvpPlayers: getMatchMVP(match),
       voteCountByPlayer,
+      userVotePlayerName,
       goalTimelineProcessed,
     },
     user,
@@ -417,6 +447,9 @@ router.post("/:id/vote-mvp", async (req, res) => {
   if (!match) return res.status(404).send("Partido no encontrado");
 
   const voterId = req.session.userId.toString();
+  if (!match.players.some((entry) => entry.player?.toString() === playerId)) {
+    return res.status(400).json({ error: "El jugador no pertenece a este partido" });
+  }
 
   match.mvpVotes = match.mvpVotes.filter(
     (v) => v.voter?.toString() !== voterId,
@@ -426,8 +459,9 @@ router.post("/:id/vote-mvp", async (req, res) => {
 
   await match.save();
 
-  io.emit("mvp:voted", { matchId: req.params.id });
-  res.json({ ok: true });
+  const summary = { matchId: req.params.id, ...getMatchVoteSummary(match) };
+  io.emit("mvp:voted", summary);
+  res.json({ ok: true, ...summary, userVotePlayerId: playerId });
 });
 
 export default router;

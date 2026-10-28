@@ -33,6 +33,6 @@ socket.on("match:deleted", () => {
   if (window.location.pathname === "/stats") location.reload();
 });
 
-socket.on("mvp:voted", ({ matchId }) => {
-  if (window.location.pathname === "/matches") location.reload();
+socket.on("mvp:voted", (summary) => {
+  document.dispatchEvent(new CustomEvent("match:mvp-voted", { detail: summary }));
 });

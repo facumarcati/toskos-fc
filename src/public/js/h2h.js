@@ -43,6 +43,7 @@ function renderH2HChart() {
   const chart = document.getElementById("h2hChart");
   if (!chart) return;
   const chartData = {
+    mode: chart.dataset.mode,
     playerA: chart.dataset.playerA,
     playerB: chart.dataset.playerB,
     matches: JSON.parse(chart.dataset.matches || "[]"),
@@ -70,6 +71,7 @@ function renderH2HChart() {
       const paddingRight = 20;
 
       let progression = [0];
+      const outcomes = [0];
       let current = 0;
 
       chartData.matches
@@ -81,8 +83,9 @@ function renderH2HChart() {
           const goalsA = isWhite ? match.teamA : match.teamB;
           const goalsB = isWhite ? match.teamB : match.teamA;
 
-          if (goalsA > goalsB) current++;
-          else if (goalsA < goalsB) current--;
+          const outcome = Math.sign(goalsA - goalsB);
+          current += outcome;
+          outcomes.push(outcome);
 
           progression.push(current);
         });
@@ -124,13 +127,13 @@ function renderH2HChart() {
       ctx.textAlign = "left";
 
       ctx.fillStyle = "#ffffff";
-      ctx.fillText(chartData.playerA, 8, getY(maxValue) + 4);
+      ctx.fillText(chartData.mode === "duo" ? `+${maxValue}` : chartData.playerA, 8, getY(maxValue) + 4);
 
       ctx.fillStyle = "#ffffff";
-      ctx.fillText(chartData.playerB, 8, getY(minValue) + 4);
+      ctx.fillText(chartData.mode === "duo" ? `${minValue}` : chartData.playerB, 8, getY(minValue) + 4);
 
       ctx.fillStyle = "rgba(255,255,255,.55)";
-      ctx.fillText("E", 8, getY(0) + 4);
+      ctx.fillText(chartData.mode === "duo" ? "0" : "E", 8, getY(0) + 4);
 
       ctx.strokeStyle = "rgba(255,255,255,.18)";
 
@@ -166,7 +169,8 @@ function renderH2HChart() {
 
         ctx.arc(x, y, 5, 0, Math.PI * 2);
 
-        ctx.fillStyle = value > 0 ? "#22c55e" : value < 0 ? "#ef4444" : "#facc15";
+        const colorValue = chartData.mode === "duo" ? outcomes[index] : value;
+        ctx.fillStyle = colorValue > 0 ? "#22c55e" : colorValue < 0 ? "#ef4444" : "#facc15";
 
         ctx.fill();
 
@@ -176,8 +180,9 @@ function renderH2HChart() {
 
         ctx.fillStyle = "white";
 
-        const label =
-          value > 0 ? `${value}` : value < 0 ? `${Math.abs(value)}` : "0";
+        const label = chartData.mode === "duo"
+          ? (value > 0 ? `+${value}` : `${value}`)
+          : `${Math.abs(value)}`;
 
         ctx.fillText(label, x, y - 12);
       });
@@ -223,6 +228,54 @@ function renderH2HChart() {
 }
 
 renderH2HChart();
+
+// Both rankings arrive with the records page; switch the existing tables in place.
+(function initRecordsCategories() {
+  const section = document.querySelector('#records-section[data-loaded="true"]');
+  if (!section) return;
+  const links = section.querySelectorAll("[data-records-category]");
+  const panels = section.querySelectorAll(".records-category");
+  const categoryInput = section.querySelector('[name="recordsCategory"]');
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let animation;
+
+  function selectCategory(category, animate = false) {
+    animation?.cancel();
+    links.forEach((link) => {
+      const active = link.dataset.recordsCategory === category;
+      link.classList.toggle("active", active);
+      if (active) link.setAttribute("aria-current", "true");
+      else link.removeAttribute("aria-current");
+    });
+    panels.forEach((panel) => {
+      const active = panel.dataset.category === (category === "duos" ? "duo-records" : "h2h-records");
+      panel.classList.toggle("active", active);
+      panel.style.display = active ? "" : "none";
+      if (active && animate && !reducedMotion.matches) {
+        animation = panel.animate([
+          { opacity: 0, transform: "translateY(6px)" },
+          { opacity: 1, transform: "translateY(0)" },
+        ], { duration: 200, easing: "ease-out" });
+      }
+    });
+    categoryInput.value = category;
+  }
+
+  links.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      const category = link.dataset.recordsCategory;
+      if (categoryInput.value === category) return;
+      selectCategory(category, true);
+      const url = new URL(window.location.href);
+      url.searchParams.set("view", "records");
+      url.searchParams.set("recordsCategory", category);
+      window.history.replaceState(null, "", url);
+    });
+  });
+  selectCategory(categoryInput.value === "duos" ? "duos" : "h2h");
+})();
 
 (function () {
   const h2hHeader = document.querySelector(".h2h-list-header");
@@ -479,7 +532,7 @@ renderH2HChart();
       showStatus("");
     } catch (error) {
       if (controller.signal.aborted) return;
-      showStatus("No se pudo cargar la comparación. Intentá de nuevo con Ver.");
+      showStatus("No se pudo cargar la comparación. Intentá de nuevo con Comparar.");
     } finally {
       if (currentRequest === controller) {
         currentRequest = null;
