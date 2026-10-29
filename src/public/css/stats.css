@@ -30,4 +30,3 @@
 .stats-feedback { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; font-size: 12px; color: var(--text-secondary); }
 .stats-feedback[hidden] { display: none; }
 .stats-feedback button { border: 0; background: transparent; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
-#stats-table[aria-busy="true"] .product-list { opacity: .55; }

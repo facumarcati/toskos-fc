@@ -26,7 +26,7 @@
     request = controller;
     retryRequest = { url, pushHistory };
     table.setAttribute("aria-busy", "true");
-    message("Actualizando estadísticas…");
+    message("");
     const timeout = setTimeout(() => controller.abort(), 15000);
     try {
       const response = await fetch(url, {
@@ -49,9 +49,9 @@
       if (pushHistory) window.history.pushState({ ...window.history.state, statsFilters: true }, "", url);
       if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         animation = table.animate([
-          { opacity: .35, transform: "translateY(5px)" },
-          { opacity: 1, transform: "translateY(0)" },
-        ], { duration: 200, easing: "ease-out" });
+          { opacity: .75 },
+          { opacity: 1 },
+        ], { duration: 120, easing: "ease-out" });
       }
       message("");
     } catch {

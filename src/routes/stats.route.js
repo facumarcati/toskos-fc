@@ -87,7 +87,7 @@ router.get("/", async (req, res) => {
     sortObj.goals = -1;
   }
 
-  const stats = await Match.aggregate([
+  const [stats, titlesMap] = await Promise.all([Match.aggregate([
     { $match: matchFilter },
     { $unwind: "$players" },
     {
@@ -191,19 +191,14 @@ router.get("/", async (req, res) => {
     {
       $sort: sortObj,
     },
-  ]);
-
-  let titlesMap = {};
-
-  if (season !== "2026") {
-    titlesMap = await getTitlesByPlayer(season);
-  }
+  ]), season !== "2026" ? getTitlesByPlayer(season) : Promise.resolve({})]);
 
   stats.forEach((player) => {
     player.titles = titlesMap[player._id?.toString()] || 0;
   });
 
   res.render("stats", {
+    ...(req.xhr ? { layout: false } : {}),
     stats,
     selectedSeason: season,
     includeGuests,

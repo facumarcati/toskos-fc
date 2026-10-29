@@ -32,202 +32,23 @@ function getRankingPosition(ranking) {
 }
 
 export async function getTitlesByPlayer(season = "all") {
-  const today = new Date();
-
   const completedSeasons = [2024, 2025];
+  if (new Date() >= new Date("2027-01-01")) completedSeasons.push(2026);
+  const seasons = season === "all"
+    ? completedSeasons
+    : completedSeasons.includes(Number(season)) ? [Number(season)] : [];
 
-  if (today >= new Date("2027-01-01")) {
-    completedSeasons.push(2026);
+  // Reuse the same rankings and tie rules as Trophies, with one query per season.
+  const podiums = await Promise.all(seasons.map((year) => getPodiumsForSeason(year)));
+  const titles = {};
+  for (const categories of podiums) {
+    for (const category of categories) {
+      for (const player of category.podium) {
+        titles[player.playerId] = (titles[player.playerId] || 0) + 1;
+      }
+    }
   }
-
-  let seasonsToEvaluate;
-
-  if (season === "all") {
-    seasonsToEvaluate = completedSeasons;
-  } else {
-    const year = Number(season);
-    seasonsToEvaluate = completedSeasons.includes(year) ? [year] : [];
-  }
-
-  const titlesMap = {};
-
-  for (const s of seasonsToEvaluate) {
-    const start = new Date(`${s}-01-01`);
-    const end = new Date(`${s + 1}-01-01`);
-
-    const seasonFilter = {
-      date: { $gte: start, $lt: end },
-      matchType: { $ne: "friendly" },
-    };
-
-    const basePipeline = [
-      { $match: seasonFilter },
-      { $unwind: "$players" },
-      {
-        $lookup: {
-          from: "players",
-          localField: "players.player",
-          foreignField: "_id",
-          as: "playerInfo",
-        },
-      },
-      { $unwind: "$playerInfo" },
-      {
-        $match: {
-          "playerInfo.guest": { $ne: true },
-          "playerInfo.name": { $ne: "E/C" },
-        },
-      },
-    ];
-
-    const scorers = await Match.aggregate([
-      ...basePipeline,
-      {
-        $group: {
-          _id: "$players.player",
-          value: { $sum: "$players.goals" },
-          assists: { $sum: "$players.assists" },
-          matches: { $sum: 1 },
-        },
-      },
-      {
-        $sort: {
-          value: -1,
-          assists: -1,
-          matches: 1,
-        },
-      },
-    ]);
-
-    const assists = await Match.aggregate([
-      ...basePipeline,
-      {
-        $group: {
-          _id: "$players.player",
-          value: { $sum: "$players.assists" },
-          goals: { $sum: "$players.goals" },
-          matches: { $sum: 1 },
-        },
-      },
-      {
-        $sort: {
-          value: -1,
-          goals: -1,
-          matches: 1,
-        },
-      },
-    ]);
-
-    const matchesPlayed = await Match.aggregate([
-      ...basePipeline,
-      {
-        $addFields: {
-          win: {
-            $cond: [
-              {
-                $or: [
-                  {
-                    $and: [
-                      { $eq: ["$players.team", "A"] },
-                      { $gt: ["$teamA", "$teamB"] },
-                    ],
-                  },
-                  {
-                    $and: [
-                      { $eq: ["$players.team", "B"] },
-                      { $gt: ["$teamB", "$teamA"] },
-                    ],
-                  },
-                ],
-              },
-              1,
-              0,
-            ],
-          },
-        },
-      },
-      {
-        $group: {
-          _id: "$players.player",
-          value: { $sum: 1 },
-          wins: { $sum: "$win" },
-          goals: { $sum: "$players.goals" },
-          assists: { $sum: "$players.assists" },
-        },
-      },
-      {
-        $sort: {
-          value: -1,
-          wins: -1,
-          goals: -1,
-          assists: -1,
-        },
-      },
-    ]);
-
-    const wins = await Match.aggregate([
-      ...basePipeline,
-      {
-        $addFields: {
-          win: {
-            $cond: [
-              {
-                $or: [
-                  {
-                    $and: [
-                      { $eq: ["$players.team", "A"] },
-                      { $gt: ["$teamA", "$teamB"] },
-                    ],
-                  },
-                  {
-                    $and: [
-                      { $eq: ["$players.team", "B"] },
-                      { $gt: ["$teamB", "$teamA"] },
-                    ],
-                  },
-                ],
-              },
-              1,
-              0,
-            ],
-          },
-        },
-      },
-      {
-        $group: {
-          _id: "$players.player",
-          value: { $sum: "$win" },
-          matches: { $sum: 1 },
-          goals: { $sum: "$players.goals" },
-          assists: { $sum: "$players.assists" },
-        },
-      },
-      {
-        $sort: {
-          value: -1,
-          matches: 1,
-          goals: -1,
-          assists: -1,
-        },
-      },
-    ]);
-
-    const rankings = [scorers, assists, matchesPlayed, wins];
-
-    rankings.forEach((ranking) => {
-      const ranked = getRankingPosition(ranking);
-
-      ranked.forEach((p) => {
-        if (p.position < medalsLimit) {
-          const id = p._id.toString();
-
-          titlesMap[id] = (titlesMap[id] || 0) + 1;
-        }
-      });
-    });
-  }
-
-  return titlesMap;
+  return titles;
 }
 
 export async function getPlayerTrophies(playerId) {

@@ -249,6 +249,11 @@ router.get("/", async (req, res) => {
         return b.played - a.played;
       });
 
+    const balancedH2Hs = Object.values(h2hMap)
+      .filter((h2h) => h2h.played >= 5 && h2h.winsA === h2h.winsB)
+      .sort((a, b) => b.played - a.played || a.playerA.localeCompare(b.playerA, "es"))
+      .map((h2h) => ({ ...h2h, winrate: ((h2h.winsA / h2h.played) * 100).toFixed(1) }));
+
     const duoMap = {};
     h2hMatches.forEach((match) => {
       const validPlayers = match.players.filter(
@@ -309,6 +314,7 @@ router.get("/", async (req, res) => {
       view,
       selectedSeason: season,
       biggestH2HDiffs,
+      balancedH2Hs,
       bestDuos,
       recordsCategory,
       mode,

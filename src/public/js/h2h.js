@@ -278,13 +278,14 @@ renderH2HChart();
 })();
 
 (function () {
-  const h2hHeader = document.querySelector(".h2h-list-header");
+  document.querySelectorAll(".h2h-list-section").forEach((section) => {
+  const h2hHeader = section.querySelector(".h2h-list-header");
   if (!h2hHeader) return;
 
-  const h2hList = document.querySelector(".h2h-list");
+  const h2hList = section.querySelector(".h2h-list");
   if (!h2hList) return;
 
-  let currentSort = "diff";
+  let currentSort = section.dataset.defaultSort || "diff";
   let currentDir = "desc";
 
   function sortH2H(key, dir) {
@@ -351,6 +352,7 @@ renderH2HChart();
       sortH2H(currentSort, currentDir);
       updateH2HHeaders(currentSort, currentDir);
     });
+  });
   });
 })();
 

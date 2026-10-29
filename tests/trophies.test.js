@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mock, test } from "node:test";
 import Match from "../src/models/match.model.js";
-import { getPodiumsForSeason, getTrophyLeaderboard } from "../src/services/titles.service.js";
+import { getPodiumsForSeason, getTrophyLeaderboard, getTitlesByPlayer } from "../src/services/titles.service.js";
 import router from "../src/routes/trophies.routes.js";
 
 const tiedRanking = [
@@ -15,6 +15,24 @@ const tiedRanking = [
 function rankings(rows = tiedRanking) {
   return [{ scorers: rows, assists: rows, matchesPlayed: rows, wins: rows }];
 }
+
+test("stats titles reuse one season query while retaining ties and medal counts", async () => {
+  mock.method(Match, "aggregate", async () => rankings());
+  try {
+    const titles = await getTitlesByPlayer("2025");
+    assert.equal(Match.aggregate.mock.callCount(), 1);
+    assert.deepEqual(titles, { a: 4, b: 4, c: 4, d: 4 });
+    assert.equal(titles.e, undefined);
+    assert.deepEqual(await getTitlesByPlayer("2021"), {});
+    assert.equal(Match.aggregate.mock.callCount(), 1);
+    const all = await getTitlesByPlayer("all");
+    const seasons = new Date() >= new Date("2027-01-01") ? 3 : 2;
+    assert.equal(Match.aggregate.mock.callCount(), 1 + seasons);
+    assert.equal(all.a, 4 * seasons);
+  } finally {
+    mock.restoreAll();
+  }
+});
 
 test("one season query shares totals, retaining dense podium positions and tiebreakers", async () => {
   let pipeline;
