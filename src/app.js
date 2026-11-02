@@ -6,6 +6,7 @@ import connectMongoDB from "./config/db.js";
 import dotenv from "dotenv";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import mongoose from "mongoose";
 
 import matchesRouter from "./routes/matches.route.js";
 import statsRouter from "./routes/stats.route.js";
@@ -35,6 +36,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("src/public"));
 app.use("/api/club-summary", clubSummaryRouter);
+// Only editor pages call this; it does not read or write session data.
+app.get("/api/keep-alive", (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  res.sendStatus(mongoose.connection.readyState === 1 ? 204 : 503);
+});
 
 app.use(
   session({

@@ -1,7 +1,10 @@
+<link rel="stylesheet" href="/css/matchEditor.css" />
 <div class="page-header">
   <span class="eyebrow">Nuevo Partido</span>
   <h1>Cargar Resultado</h1>
 </div>
+
+{{> matchEditorSafety}}
 
 <datalist id="playersList">
   {{#each players}}
@@ -9,7 +12,7 @@
   {{/each}}
 </datalist>
 
-<form action="/matches" method="POST">
+<form id="matchEditorForm" data-draft-owner="{{userId}}" data-draft-id="new" action="/matches" method="POST">
   <div class="form-panel">
     <div class="form-row">
       <div>
@@ -108,3 +111,4 @@
 </form>
 
 <script src="/js/newMatch.js"></script>
+<script src="/js/matchEditorSafety.js"></script>

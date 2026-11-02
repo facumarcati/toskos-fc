@@ -1,7 +1,10 @@
+<link rel="stylesheet" href="/css/matchEditor.css" />
 <div class="page-header">
   <span class="eyebrow">Editar Partido</span>
   <h1>Modificar Resultado</h1>
 </div>
+
+{{> matchEditorSafety}}
 
 <datalist id="playersList">
   {{#each players}}
@@ -9,7 +12,7 @@
   {{/each}}
 </datalist>
 
-<form action="/matches/{{match._id}}/edit?season={{season}}" method="POST">
+<form id="matchEditorForm" data-draft-owner="{{userId}}" data-draft-id="{{match._id}}" action="/matches/{{match._id}}/edit?season={{season}}" method="POST">
   <div class="form-panel">
     <div class="form-row">
       <div>
@@ -233,3 +236,4 @@
   window.goalIndex = {{match.goalTimeline.length}};
 </script>
 <script src="/js/newMatch.js"></script>
+<script src="/js/matchEditorSafety.js"></script>

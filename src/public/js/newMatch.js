@@ -1,7 +1,7 @@
 let index = window.index ?? 0;
 let goalIndex = window.goalIndex ?? 0;
 
-function addPlayer(team) {
+function addPlayer(team, { focus = true } = {}) {
   const container =
     team === "A"
       ? document.getElementById("teamA")
@@ -34,7 +34,7 @@ function addPlayer(team) {
   index++;
 
   const newRow = container.lastElementChild;
-  newRow.querySelector('input[type="text"]').focus();
+  if (focus) newRow.querySelector('input[type="text"]').focus();
 
   updateScore();
 }
@@ -190,3 +190,60 @@ function toggleOwnGoal(btn) {
 }
 
 document.addEventListener("DOMContentLoaded", renumberPlayers);
+
+// Drafts contain values only. Rebuild rows with the regular controls, never saved HTML.
+window.matchEditorData = {
+  capture(form) {
+    function rowValues(row) {
+      return Object.fromEntries([...row.querySelectorAll("input[name]")].map((input) => [
+        input.name.match(/\[([^\]]+)\]$/)[1],
+        input.type === "checkbox" ? input.checked : input.value,
+      ]));
+    }
+    return {
+      fields: Object.fromEntries(["date", "venue", "youtubeUrl", "youtubeHlUrl", "matchType"].map((name) => [name, form.elements.namedItem(name)?.value || ""])),
+      players: ["A", "B"].flatMap((team) => [...document.querySelectorAll(`#team${team} .player-row`)].map((row) => ({ ...rowValues(row), team }))),
+      goals: [...document.querySelectorAll("#goal-timeline-list .player-row")].map(rowValues),
+    };
+  },
+  restore(form, snapshot) {
+    if (!snapshot?.fields || !Array.isArray(snapshot.players) || !Array.isArray(snapshot.goals) || snapshot.players.length > 200 || snapshot.goals.length > 1000) {
+      throw new Error("Invalid draft");
+    }
+    for (const name of ["date", "venue", "youtubeUrl", "youtubeHlUrl", "matchType"]) {
+      const field = form.elements.namedItem(name);
+      if (field) field.value = String(snapshot.fields[name] || "");
+    }
+    for (const id of ["teamA", "teamB", "goal-timeline-list"]) {
+      const container = document.getElementById(id);
+      const empty = document.createElement("p");
+      empty.className = "empty-state";
+      empty.textContent = id === "goal-timeline-list" ? "Sin goles cargados" : "Sin jugadores aún";
+      if (id === "goal-timeline-list") empty.id = "goals-empty";
+      container.replaceChildren(empty);
+    }
+    index = 0;
+    goalIndex = 0;
+    function fill(row, values) {
+      for (const input of row.querySelectorAll("input[name]")) {
+        const key = input.name.match(/\[([^\]]+)\]$/)[1];
+        if (input.type === "checkbox") input.checked = values[key] === true;
+        else input.value = String(values[key] ?? "");
+      }
+      const flag = row.querySelector('input[name$="[isOwnGoal]"], input[name$="[ownGoal]"]');
+      row.querySelector(".btn-og")?.classList.toggle("btn-og-active", flag?.value === "true");
+    }
+    for (const player of snapshot.players) {
+      if (!["A", "B"].includes(player.team)) continue;
+      addPlayer(player.team, { focus: false });
+      fill(document.getElementById(`team${player.team}`).lastElementChild, player);
+    }
+    for (const goal of snapshot.goals) {
+      addGoalRow();
+      fill(document.getElementById("goal-timeline-list").lastElementChild, goal);
+    }
+    renumberPlayers();
+    reindexGoals();
+    updateScore();
+  },
+};

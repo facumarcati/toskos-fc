@@ -1,0 +1,9 @@
+.match-editor-safety { margin: -8px 0 24px; color: var(--text-secondary); font-size: 12px; line-height: 1.6; }
+.match-editor-draft, .match-editor-feedback { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; }
+.match-editor-draft button { padding: 2px 0; border: 0; background: transparent; color: var(--text-secondary); text-decoration: underline; font: inherit; cursor: pointer; }
+.match-editor-draft button:hover { color: var(--text-primary); }
+.match-editor-feedback { margin-top: 12px; }
+.match-editor-feedback[data-error="true"] { color: var(--loss); }
+.match-editor-feedback a { color: var(--accent); text-underline-offset: 3px; }
+.match-editor-safety [hidden] { display: none; }
+#matchEditorForm[aria-busy="true"] { cursor: progress; }

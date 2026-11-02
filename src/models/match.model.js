@@ -22,6 +22,8 @@ const playerStatsSchema = new mongoose.Schema({
 });
 
 const matchSchema = new mongoose.Schema({
+  submissionId: String,
+  submissionHash: String,
   date: {
     type: Date,
     required: true,
@@ -54,6 +56,11 @@ const matchSchema = new mongoose.Schema({
       ownGoal: { type: Boolean, default: false },
     },
   ],
+});
+
+matchSchema.index({ submissionId: 1 }, {
+  unique: true,
+  partialFilterExpression: { submissionId: { $type: "string" } },
 });
 
 const Match = mongoose.model("Match", matchSchema);

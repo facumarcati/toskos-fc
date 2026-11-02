@@ -3,10 +3,13 @@ import { io } from "../app.js";
 import { getMatchMVP, getMatchVoteSummary } from "../services/mvp.service.js";
 import { invalidateClubSummary } from "../services/clubSummary.service.js";
 import { addMatchMonthHeadings } from "../services/matchMonths.js";
+import { parseMatchSubmission, createMatchOnce } from "../services/matchSubmission.js";
 import Match from "../models/match.model.js";
 import Player from "../models/player.model.js";
 
 const router = Router();
+
+const wantsJson = (req) => req.get("Accept")?.includes("application/json");
 
 function isAuthenticated(req, res, next) {
   if (!req.session?.user) {
@@ -18,6 +21,7 @@ function isAuthenticated(req, res, next) {
 
 function isAdmin(req, res, next) {
   if (req.session?.role !== "admin") {
+    if (wantsJson(req)) return res.status(403).json({ error: "Volvé a iniciar sesión para guardar. Tus datos siguen en el formulario.", loginRequired: true });
     return res.status(403).render("error");
   }
 
@@ -219,90 +223,102 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", isAdmin, async (req, res) => {
-  const { teamA, teamB, date, venue, youtubeUrl, youtubeHlUrl } = req.body;
-  let players = req.body.players;
+  try {
+    const submission = parseMatchSubmission(req.body);
+    const result = await createMatchOnce(Match, submission, async () => {
+      const { teamA, teamB, date, venue, youtubeUrl, youtubeHlUrl } = req.body;
+      let players = req.body.players;
 
-  players = Object.values(players || {});
+      players = Object.values(players || {});
 
-  players = players.filter((p) => p.name && p.name.trim() !== "");
+      players = players.filter((p) => p.name && p.name.trim() !== "");
 
-  if (players.length === 0) {
-    return res.send("Debe haber al menos un jugador");
-  }
+      if (players.length === 0) {
+        throw Object.assign(new Error("Debe haber al menos un jugador"), { status: 400 });
+      }
 
-  const playerStats = [];
+      const playerStats = [];
 
-  let ecPlayer = null;
+      let ecPlayer = null;
 
-  for (const p of players) {
-    const name = p.name.trim();
+      for (const p of players) {
+        const name = p.name.trim();
 
-    let player = await Player.findOne({ name: new RegExp(`^${name}$`, "i") });
+        let player = await Player.findOne({ name: new RegExp(`^${name}$`, "i") });
 
-    const isGuest = p.guest === "on";
-    const isOwnGoal = p.isOwnGoal === "true";
+        const isGuest = p.guest === "on";
+        const isOwnGoal = p.isOwnGoal === "true";
 
-    if (!player) {
-      player = await Player.create({
-        name,
-      });
-    }
+        if (!player) {
+          player = await Player.create({
+            name,
+          });
+        }
 
-    if (isOwnGoal) {
-      if (!ecPlayer) {
-        ecPlayer = await Player.findOne({ name: "E/C" });
+        if (isOwnGoal) {
+          if (!ecPlayer) {
+            ecPlayer = await Player.findOne({ name: "E/C" });
 
-        if (!ecPlayer) {
-          ecPlayer = await Player.create({ name: "E/C" });
+            if (!ecPlayer) {
+              ecPlayer = await Player.create({ name: "E/C" });
+            }
+          }
+
+          playerStats.push({
+            player: ecPlayer._id,
+            team: p.team,
+            goals: Number(p.goals) || 0,
+            assists: 0,
+            ownGoalScorer: player._id,
+          });
+        } else {
+          playerStats.push({
+            player: player._id,
+            team: p.team,
+            goals: Number(p.goals) || 0,
+            assists: Number(p.assists) || 0,
+            guest: isGuest,
+          });
         }
       }
 
-      playerStats.push({
-        player: ecPlayer._id,
-        team: p.team,
-        goals: Number(p.goals) || 0,
-        assists: 0,
-        ownGoalScorer: player._id,
-      });
-    } else {
-      playerStats.push({
-        player: player._id,
-        team: p.team,
-        goals: Number(p.goals) || 0,
-        assists: Number(p.assists) || 0,
-        guest: isGuest,
-      });
+      const matchDate = new Date(date);
+      matchDate.setHours(matchDate.getHours() + 3);
+
+      const goalTimeline = Object.values(req.body.goalTimeline || {})
+        .filter((g) => g.scorer?.trim())
+        .map((g) => ({
+          scorer: g.scorer.trim(),
+          assist: g.assist?.trim() || "",
+          ownGoal: g.ownGoal === "true",
+        }));
+
+      const matchType = req.body.matchType === "friendly" ? "friendly" : "official";
+
+      return {
+        teamA,
+        teamB,
+        date: matchDate,
+        venue,
+        youtubeUrl,
+        youtubeHlUrl,
+        matchType,
+        players: playerStats,
+        goalTimeline,
+      };
+    });
+
+    if (result.created) {
+      invalidateClubSummary();
+      io.emit("match:created");
     }
+    if (wantsJson(req)) return res.status(result.created ? 201 : 200).json({ ok: true, matchId: result.match._id.toString(), redirectUrl: "/matches" });
+    res.redirect("/matches");
+  } catch (error) {
+    if (!error.status) throw error;
+    if (wantsJson(req)) return res.status(error.status).json({ error: error.message, ...(error.matchId ? { recoveryUrl: "/matches/" + error.matchId + "/edit" } : {}) });
+    res.status(error.status).send(error.message);
   }
-
-  const matchDate = new Date(date);
-  matchDate.setHours(matchDate.getHours() + 3);
-
-  const goalTimeline = Object.values(req.body.goalTimeline || {})
-    .filter((g) => g.scorer?.trim())
-    .map((g) => ({
-      scorer: g.scorer.trim(),
-      assist: g.assist?.trim() || "",
-      ownGoal: g.ownGoal === "true",
-    }));
-
-  const matchType = req.body.matchType === "friendly" ? "friendly" : "official";
-
-  await Match.create({
-    teamA,
-    teamB,
-    date: matchDate,
-    venue,
-    youtubeUrl,
-    youtubeHlUrl,
-    matchType,
-    players: playerStats,
-    goalTimeline,
-  });
-
-  invalidateClubSummary();
-  io.emit("match:created");
-  res.redirect("/matches");
 });
 
 router.get("/:id/edit", isAdmin, async (req, res) => {
@@ -404,10 +420,15 @@ router.post("/:id/edit", isAdmin, async (req, res) => {
     update.matchType = req.body.matchType;
   }
 
-  await Match.findByIdAndUpdate(req.params.id, update);
+  const savedMatch = await Match.findByIdAndUpdate(req.params.id, update);
+  if (!savedMatch) {
+    if (wantsJson(req)) return res.status(404).json({ error: "El partido ya no existe. El borrador sigue disponible." });
+    return res.status(404).send("Partido no encontrado");
+  }
 
   invalidateClubSummary();
   io.emit("match:updated");
+  if (wantsJson(req)) return res.json({ ok: true, matchId: req.params.id, redirectUrl: `/matches?season=${encodeURIComponent(season)}` });
   res.redirect(`/matches?season=${season}`);
 });
 
